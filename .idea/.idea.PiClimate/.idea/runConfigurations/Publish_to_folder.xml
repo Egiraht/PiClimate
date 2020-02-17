@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish runtime="Portable" target_folder="bin/Publish" target_framework="netcoreapp3.1" uuid_high="4651453513081899661" uuid_low="-6625085544049162822" />
+    <method v="2" />
+  </configuration>
+</component>

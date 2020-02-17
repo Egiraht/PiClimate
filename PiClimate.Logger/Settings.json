@@ -1,0 +1,18 @@
+{
+  "HardwareOptions": {
+    "I2cBusId": 1
+  },
+
+  "DatabaseOptions": {
+    "ConnectionStrings": [
+      "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
+    ],
+    "SelectedConnectionStringKey": 0,
+    "MeasurementsTableName": "Measurements"
+  },
+
+  "MeasurementOptions": {
+    "UseRandomData": false,
+    "MeasurementLoopDelay": 60
+  }
+}
