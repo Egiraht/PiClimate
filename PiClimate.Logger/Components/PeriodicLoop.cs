@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PiClimate.Logger.Measurements
+namespace PiClimate.Logger.Components
 {
   public class PeriodicLoop : IDisposable
   {
@@ -42,6 +42,9 @@ namespace PiClimate.Logger.Measurements
 
     public void StartLoop()
     {
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(PeriodicLoop));
+
       if (_loopTask != null)
         return;
 
@@ -51,6 +54,9 @@ namespace PiClimate.Logger.Measurements
 
     public void StopLoop()
     {
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(PeriodicLoop));
+
       if (_loopTask == null || _cancellationTokenSource == null)
         return;
 

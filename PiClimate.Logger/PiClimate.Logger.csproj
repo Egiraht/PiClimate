@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Settings.json" />
-    <Content Include="Settings.json">
+    <None Remove="Configuration.json" />
+    <Content Include="Configuration.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,6 +1,6 @@
 using System;
 
-namespace PiClimate.Logger
+namespace PiClimate.Logger.Components
 {
   internal class ConsoleWriter
   {

@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace PiClimate.Logger.Hardware
+namespace PiClimate.Logger.Models
 {
   public class Measurement
   {

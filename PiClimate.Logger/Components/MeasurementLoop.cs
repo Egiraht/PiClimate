@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using PiClimate.Logger.Database;
-using PiClimate.Logger.Hardware;
+using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Loggers;
+using PiClimate.Logger.Providers;
 
-namespace PiClimate.Logger.Measurements
+namespace PiClimate.Logger.Components
 {
   public class MeasurementLoop : IDisposable
   {
+    private readonly IConfiguration _configuration;
+
     private readonly IMeasurementProvider _measurementProvider;
 
     private readonly List<IMeasurementLogger> _measurementLoggers = new List<IMeasurementLogger>();
@@ -23,12 +26,13 @@ namespace PiClimate.Logger.Measurements
       remove => _pollingLoop.LoopException -= value;
     }
 
-    internal MeasurementLoop(IMeasurementProvider measurementProvider,
+    internal MeasurementLoop(IConfiguration configuration, IMeasurementProvider measurementProvider,
       IEnumerable<IMeasurementLogger> measurementLoggers, MeasurementLoopOptions? options = null)
     {
       if (options == null)
         options = new MeasurementLoopOptions();
 
+      _configuration = configuration;
       _measurementProvider = measurementProvider;
       _measurementLoggers.AddRange(measurementLoggers);
       _pollingLoop = new PeriodicLoop
@@ -40,21 +44,33 @@ namespace PiClimate.Logger.Measurements
 
     public void StartLoop()
     {
-      _measurementProvider.Initialize();
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(MeasurementLoop));
+
+      _measurementProvider.Configure(_configuration);
       foreach (var logger in _measurementLoggers)
-        logger.Initialize();
+        logger.Configure(_configuration);
       _pollingLoop.StartLoop();
     }
 
     public async Task StartLoopAsync()
     {
-      await _measurementProvider.InitializeAsync();
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(MeasurementLoop));
+
+      await _measurementProvider.ConfigureAsync(_configuration);
       foreach (var logger in _measurementLoggers)
-        await logger.InitializeAsync();
+        await logger.ConfigureAsync(_configuration);
       _pollingLoop.StartLoop();
     }
 
-    public void StopLoop() => _pollingLoop.StopLoop();
+    public void StopLoop()
+    {
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(MeasurementLoop));
+
+      _pollingLoop.StopLoop();
+    }
 
     private async Task MeasureAndLogAsync(CancellationToken cancellationToken)
     {

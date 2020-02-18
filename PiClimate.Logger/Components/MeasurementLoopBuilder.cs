@@ -1,17 +1,26 @@
 using System;
 using System.Collections.Generic;
-using PiClimate.Logger.Database;
-using PiClimate.Logger.Hardware;
+using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Loggers;
+using PiClimate.Logger.Providers;
 
-namespace PiClimate.Logger.Measurements
+namespace PiClimate.Logger.Components
 {
   public class MeasurementLoopBuilder
   {
+    private IConfiguration _configuration = new ConfigurationBuilder().Build();
+
     private IMeasurementProvider? _measurementProvider;
 
     private readonly List<IMeasurementLogger> _measurementLoggers = new List<IMeasurementLogger>();
 
     private readonly MeasurementLoopOptions _options = new MeasurementLoopOptions();
+
+    public MeasurementLoopBuilder UseConfiguration(IConfiguration configuration)
+    {
+      _configuration = configuration;
+      return this;
+    }
 
     public MeasurementLoopBuilder UseMeasurementProvider(IMeasurementProvider measurementProvider)
     {
@@ -37,7 +46,7 @@ namespace PiClimate.Logger.Measurements
       if (_measurementProvider == null)
         throw new InvalidOperationException("Cannot build the measurement loop as no measurement provider is set.");
 
-      return new MeasurementLoop(_measurementProvider, _measurementLoggers, _options);
+      return new MeasurementLoop(_configuration, _measurementProvider, _measurementLoggers, _options);
     }
   }
 }

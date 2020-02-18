@@ -1,19 +1,22 @@
 using System;
 using System.Device.I2c;
+using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
 using Microsoft.Extensions.Configuration;
-using static PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Components;
+using PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Models;
 
 // ReSharper disable InconsistentNaming
-namespace PiClimate.Logger.Hardware
+namespace PiClimate.Logger.Providers
 {
   public class Bme280Provider : IMeasurementProvider
   {
     private bool _disposed = false;
 
-    private readonly Bme280 _device;
+    private Bme280? _device;
 
     public StandbyTime StandbyTime { get; set; } = StandbyTime.Ms62_5;
 
@@ -29,24 +32,27 @@ namespace PiClimate.Logger.Hardware
 
     public bool IsConfigured { get; private set; }
 
-    public Bme280Provider(IConfiguration configuration)
+    public void Configure(IConfiguration configuration)
     {
-      var busId = int.TryParse(configuration[HardwareOptions.BusId], out var value) ? value : 1;
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(Bme280Provider));
 
-      byte i2cAddress;
-      if (I2cUtils.TryConnect(busId, Bmx280Base.DefaultI2cAddress))
-        i2cAddress = Bmx280Base.DefaultI2cAddress;
-      else if (I2cUtils.TryConnect(busId, Bmx280Base.SecondaryI2cAddress))
-        i2cAddress = Bmx280Base.SecondaryI2cAddress;
-      else
-        throw new Exception($"No BME280 devices found on the I2C bus 0x{busId:X}. " +
-          $"Checked I2C addresses: 0x{Bmx280Base.DefaultI2cAddress:X}, 0x{Bmx280Base.SecondaryI2cAddress:X}.");
+      var busId = int.TryParse(configuration[HardwareOptions.I2cBusId], out var value) ? value : 1;
+
+      byte[] i2cAddresses =
+      {
+        Bmx280Base.DefaultI2cAddress,
+        Bmx280Base.SecondaryI2cAddress
+      };
+      var i2cAddress = i2cAddresses.FirstOrDefault(address => I2cUtils.TryConnect(busId, address));
+      if (i2cAddress == default)
+      {
+        var checkedAddresses = string.Join(", ", i2cAddresses.Select(address => $"0x{address:X}"));
+        throw new Exception(
+          $"No BME280 devices found on the I2C bus 0x{busId:X}. Checked I2C addresses: {checkedAddresses}.");
+      }
 
       _device = new Bme280(I2cDevice.Create(new I2cConnectionSettings(busId, i2cAddress)));
-    }
-
-    public virtual void Initialize()
-    {
       _device.Reset();
       _device.SetStandbyTime(StandbyTime);
       _device.SetFilterMode(FilteringMode);
@@ -54,37 +60,45 @@ namespace PiClimate.Logger.Hardware
       _device.SetTemperatureSampling(TemperatureSampling);
       _device.SetHumiditySampling(HumiditySampling);
       _device.SetPowerMode(PowerMode);
+
       IsConfigured = true;
     }
 
-    public virtual Task InitializeAsync() => Task.Run(Initialize);
+    public Task ConfigureAsync(IConfiguration configuration) => Task.Run(() => Configure(configuration));
 
     private double ConvertPressureToMmHg(double pressureInPa) => pressureInPa * 0.00750062;
 
-    public virtual Measurement Measure()
+    public Measurement Measure()
     {
       var measurementTask = MeasureAsync();
       measurementTask.Wait();
       return measurementTask.Result;
     }
 
-    public virtual async Task<Measurement> MeasureAsync() =>
-      new Measurement
+    public async Task<Measurement> MeasureAsync()
+    {
+      if (_disposed)
+        throw new ObjectDisposedException(nameof(Bme280Provider));
+
+      if (!IsConfigured || _device == null)
+        throw new InvalidOperationException("The BME280 device is not configured.");
+
+      return new Measurement
       {
         Timestamp = DateTime.Now,
         Pressure = ConvertPressureToMmHg(await _device.ReadPressureAsync()),
         Temperature = (await _device.ReadTemperatureAsync()).Celsius,
         Humidity = await _device.ReadHumidityAsync()
       };
+    }
 
     public void Dispose()
     {
       if (_disposed)
         return;
 
-      // The _device field may appear uninitialized if an exception was thrown in the constructor.
-      // ReSharper disable once ConstantConditionalAccessQualifier
       _device?.Dispose();
+
       GC.SuppressFinalize(this);
       _disposed = true;
     }

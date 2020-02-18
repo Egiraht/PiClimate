@@ -1,6 +1,6 @@
 using System;
 
-namespace PiClimate.Logger.Measurements
+namespace PiClimate.Logger.Components
 {
   public class MeasurementLoopOptions
   {

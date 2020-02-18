@@ -5,34 +5,40 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using PiClimate.Logger.Database;
-using PiClimate.Logger.Hardware;
-using PiClimate.Logger.Measurements;
-using static PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Components;
+using PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Loggers;
+using PiClimate.Logger.Providers;
 
 namespace PiClimate.Logger
 {
   internal static class Program
   {
-    private const string ConfigurationJsonFileName = "Settings.json";
+    private const string ConfigurationJsonFileName = "Configuration.json";
 
     private const int DefaultMeasurementLoopDelay = 60;
 
     private static readonly ConsoleWriter ConsoleWriter = new ConsoleWriter();
 
+    private static readonly string ProgramName = Assembly.GetExecutingAssembly()
+      .GetCustomAttribute<AssemblyTitleAttribute>()?.Title ?? $"{nameof(PiClimate)}.{nameof(Logger)}";
+
+    private static readonly string ProgramVersion = Assembly.GetExecutingAssembly()
+      .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "???";
+
     private static async Task<int> Main(string[] args)
     {
       try
       {
-        ConsoleWriter.WriteNotice("Configuring the measurement loop...");
+        ConsoleWriter.WriteNotice($"{ProgramName} v{ProgramVersion}\n");
+        ConsoleWriter.WriteNotice("Starting the measurement loop...");
 
         var configuration = ConfigureConfigurationBuilder(args).Build();
         using (var measurementLoop = ConfigureMeasurementLoopBuilder(configuration).Build())
         {
           measurementLoop.LoopException += OnLoopException;
-          ConsoleWriter.WriteNotice("The measurement loop is configured.");
-
           await measurementLoop.StartLoopAsync();
+          ConsoleWriter.WriteNotice("The measurement loop has started.");
 
           WaitForExitRequested();
         }
@@ -43,7 +49,7 @@ namespace PiClimate.Logger
       }
       catch (Exception e)
       {
-        ConsoleWriter.WriteError($"Failed to start the measurement loop: {e.Message}");
+        ConsoleWriter.WriteError($"The fatal error encountered: {e.Message}");
         return -1;
       }
     }
@@ -54,6 +60,7 @@ namespace PiClimate.Logger
       var jsonFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? ".",
         ConfigurationJsonFileName);
 
+      // Command line argument values have priority over the configuration file values.
       configurationBuilder.AddJsonFile(jsonFilePath);
       configurationBuilder.AddCommandLine(commandLineArguments ?? Array.Empty<string>());
 
@@ -62,20 +69,17 @@ namespace PiClimate.Logger
 
     private static MeasurementLoopBuilder ConfigureMeasurementLoopBuilder(IConfiguration configuration)
     {
-      var measurementLoopBuilder = new MeasurementLoopBuilder();
+      var measurementLoopBuilder = new MeasurementLoopBuilder()
+        .UseConfiguration(configuration)
+        .UseMeasurementProvider(new Bme280Provider())
+        .AddMeasurementLogger(new ConsoleMeasurementLogger())
+        .AddMeasurementLogger(new MySqlLogger())
+        .SetMeasurementLoopDelay(int.TryParse(configuration[MeasurementOptions.MeasurementLoopDelay], out var value)
+          ? value
+          : DefaultMeasurementLoopDelay);
 
       if (configuration[MeasurementOptions.UseRandomData]?.ToLower() == true.ToString().ToLower())
         measurementLoopBuilder.UseMeasurementProvider(new RandomMeasurementProvider());
-      else
-        measurementLoopBuilder.UseMeasurementProvider(new Bme280Provider(configuration));
-
-      measurementLoopBuilder.AddMeasurementLogger(new ConsoleMeasurementLogger(ConsoleWriter));
-      measurementLoopBuilder.AddMeasurementLogger(new MySqlLogger(configuration));
-
-      measurementLoopBuilder.SetMeasurementLoopDelay(
-        int.TryParse(configuration[MeasurementOptions.MeasurementLoopDelay], out var value)
-          ? value
-          : DefaultMeasurementLoopDelay);
 
       return measurementLoopBuilder;
     }

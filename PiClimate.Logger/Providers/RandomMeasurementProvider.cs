@@ -1,18 +1,19 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Models;
 
-namespace PiClimate.Logger.Hardware
+namespace PiClimate.Logger.Providers
 {
   class RandomMeasurementProvider : IMeasurementProvider
   {
-    public bool IsConfigured { get; private set; }
+    public bool IsConfigured { get; } = true;
 
-    public void Initialize()
+    public void Configure(IConfiguration configuration)
     {
-      IsConfigured = true;
     }
 
-    public Task InitializeAsync() => Task.Run(Initialize);
+    public Task ConfigureAsync(IConfiguration configuration) => Task.Run(() => Configure(configuration));
 
     public Measurement Measure()
     {

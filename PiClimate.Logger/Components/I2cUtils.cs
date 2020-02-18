@@ -1,7 +1,7 @@
 using System.Device.I2c;
 
 // ReSharper disable InconsistentNaming
-namespace PiClimate.Logger.Hardware
+namespace PiClimate.Logger.Components
 {
   public static class I2cUtils
   {
