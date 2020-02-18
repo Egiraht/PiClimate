@@ -27,11 +27,8 @@ namespace PiClimate.Logger.Components
     }
 
     internal MeasurementLoop(IConfiguration configuration, IMeasurementProvider measurementProvider,
-      IEnumerable<IMeasurementLogger> measurementLoggers, MeasurementLoopOptions? options = null)
+      IEnumerable<IMeasurementLogger> measurementLoggers, MeasurementLoopOptions options)
     {
-      if (options == null)
-        options = new MeasurementLoopOptions();
-
       _configuration = configuration;
       _measurementProvider = measurementProvider;
       _measurementLoggers.AddRange(measurementLoggers);

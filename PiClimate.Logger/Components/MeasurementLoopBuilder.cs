@@ -9,6 +9,10 @@ namespace PiClimate.Logger.Components
 {
   public class MeasurementLoopBuilder
   {
+    private const string MeasurementProviderClassNameSuffix = "Provider";
+
+    private const string MeasurementLoggerClassNameSuffix = "Logger";
+
     private IConfiguration _configuration = new ConfigurationBuilder().Build();
 
     private IMeasurementProvider? _measurementProvider;
@@ -32,10 +36,13 @@ namespace PiClimate.Logger.Components
 
     public MeasurementLoopBuilder UseMeasurementProvider(string measurementProviderClassName)
     {
+      if (string.IsNullOrWhiteSpace(measurementProviderClassName))
+        return this;
+
       var measurementProviderType = GetType().Assembly.GetTypes()
         .FirstOrDefault(type =>
           type.GetInterfaces().Contains(typeof(IMeasurementProvider)) && (type.Name == measurementProviderClassName ||
-            type.Name == $"{measurementProviderClassName}Provider"));
+            type.Name == $"{measurementProviderClassName}{MeasurementProviderClassNameSuffix}"));
       if (measurementProviderType == null)
         throw new ArgumentException(
           $"Cannot find a measurement provider class with the name \"{measurementProviderClassName}\".");
@@ -56,10 +63,13 @@ namespace PiClimate.Logger.Components
 
     public MeasurementLoopBuilder AddMeasurementLogger(string measurementLoggerClassName)
     {
+      if (string.IsNullOrWhiteSpace(measurementLoggerClassName))
+        return this;
+
       var measurementLoggerType = GetType().Assembly.GetTypes()
         .FirstOrDefault(type =>
           type.GetInterfaces().Contains(typeof(IMeasurementLogger)) && (type.Name == measurementLoggerClassName ||
-            type.Name == $"{measurementLoggerClassName}Logger"));
+            type.Name == $"{measurementLoggerClassName}{MeasurementLoggerClassNameSuffix}"));
       if (measurementLoggerType == null)
         throw new ArgumentException(
           $"Cannot find a measurement logger class with the name \"{measurementLoggerClassName}\".");
