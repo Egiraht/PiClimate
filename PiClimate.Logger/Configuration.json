@@ -9,7 +9,8 @@
     "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
   ],
   "Bme280Options": {
-    "I2cBusId": 1
+    "I2cBusId": 1,
+    "CustomI2cAddress": null
   },
   "MySqlOptions": {
     "UseConnectionStringKey": 0,
