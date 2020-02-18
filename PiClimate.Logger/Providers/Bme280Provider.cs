@@ -37,7 +37,7 @@ namespace PiClimate.Logger.Providers
       if (_disposed)
         throw new ObjectDisposedException(nameof(Bme280Provider));
 
-      var busId = int.TryParse(configuration[HardwareOptions.I2cBusId], out var value) ? value : 1;
+      var busId = int.TryParse(configuration[Bme280Options.I2cBusId], out var value) ? value : 1;
 
       byte[] i2cAddresses =
       {

@@ -5,7 +5,7 @@ using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Providers
 {
-  class RandomMeasurementProvider : IMeasurementProvider
+  class RandomDataProvider : IMeasurementProvider
   {
     public bool IsConfigured { get; } = true;
 

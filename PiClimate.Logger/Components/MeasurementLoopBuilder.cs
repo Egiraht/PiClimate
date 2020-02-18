@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
@@ -29,9 +30,58 @@ namespace PiClimate.Logger.Components
       return this;
     }
 
+    public MeasurementLoopBuilder UseMeasurementProvider(string measurementProviderClassName)
+    {
+      var measurementProviderType = GetType().Assembly.GetTypes()
+        .FirstOrDefault(type =>
+          type.GetInterfaces().Contains(typeof(IMeasurementProvider)) && (type.Name == measurementProviderClassName ||
+            type.Name == $"{measurementProviderClassName}Provider"));
+      if (measurementProviderType == null)
+        throw new ArgumentException(
+          $"Cannot find a measurement provider class with the name \"{measurementProviderClassName}\".");
+
+      var measurementProvider = Activator.CreateInstance(measurementProviderType) as IMeasurementProvider;
+      if (measurementProvider == null)
+        throw new ArgumentException(
+          $"Failed to create an instance of \"{measurementProviderClassName}\" class.");
+
+      return UseMeasurementProvider(measurementProvider);
+    }
+
     public MeasurementLoopBuilder AddMeasurementLogger(IMeasurementLogger measurementLogger)
     {
       _measurementLoggers.Add(measurementLogger);
+      return this;
+    }
+
+    public MeasurementLoopBuilder AddMeasurementLogger(string measurementLoggerClassName)
+    {
+      var measurementLoggerType = GetType().Assembly.GetTypes()
+        .FirstOrDefault(type =>
+          type.GetInterfaces().Contains(typeof(IMeasurementLogger)) && (type.Name == measurementLoggerClassName ||
+            type.Name == $"{measurementLoggerClassName}Logger"));
+      if (measurementLoggerType == null)
+        throw new ArgumentException(
+          $"Cannot find a measurement logger class with the name \"{measurementLoggerClassName}\".");
+
+      var measurementLogger = Activator.CreateInstance(measurementLoggerType) as IMeasurementLogger;
+      if (measurementLogger == null)
+        throw new ArgumentException(
+          $"Failed to create an instance of \"{measurementLoggerClassName}\" class.");
+
+      return AddMeasurementLogger(measurementLogger);
+    }
+
+    public MeasurementLoopBuilder AddMeasurementLoggers(params IMeasurementLogger[] measurementLoggers)
+    {
+      _measurementLoggers.AddRange(measurementLoggers);
+      return this;
+    }
+
+    public MeasurementLoopBuilder AddMeasurementLoggers(params string[] measurementLoggerClassNames)
+    {
+      foreach (var className in measurementLoggerClassNames)
+        AddMeasurementLogger(className);
       return this;
     }
 

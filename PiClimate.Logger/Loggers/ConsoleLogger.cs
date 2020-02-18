@@ -5,7 +5,7 @@ using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Loggers
 {
-  class ConsoleMeasurementLogger : IMeasurementLogger
+  class ConsoleLogger : IMeasurementLogger
   {
     private readonly ConsoleWriter _consoleWriter = new ConsoleWriter();
 

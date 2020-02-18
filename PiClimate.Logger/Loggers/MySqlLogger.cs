@@ -47,9 +47,9 @@ namespace PiClimate.Logger.Loggers
 
     public void Configure(IConfiguration configuration)
     {
-      _connectionString = configuration.GetSection(DatabaseOptions.ConnectionStrings)[
-        configuration[DatabaseOptions.SelectedConnectionStringKey] ?? "0"] ?? "";
-      _measurementsTableName = configuration[DatabaseOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
+      _connectionString =
+        configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
+      _measurementsTableName = configuration[MySqlOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
 
       using (var connection = new MySqlConnection(_connectionString))
         connection.Execute(InitializeSqlTemplate);
@@ -59,9 +59,9 @@ namespace PiClimate.Logger.Loggers
 
     public async Task ConfigureAsync(IConfiguration configuration)
     {
-      _connectionString = configuration.GetSection(DatabaseOptions.ConnectionStrings)[
-        configuration[DatabaseOptions.SelectedConnectionStringKey] ?? "0"] ?? "";
-      _measurementsTableName = configuration[DatabaseOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
+      _connectionString =
+        configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
+      _measurementsTableName = configuration[MySqlOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
 
       await using (var connection = new MySqlConnection(_connectionString))
         await connection.ExecuteAsync(InitializeSqlTemplate);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,13 @@ namespace PiClimate.Logger
     private const string ConfigurationJsonFileName = "Configuration.json";
 
     private const int DefaultMeasurementLoopDelay = 60;
+
+    private const string DefaultMeasurementProviderClassName = nameof(RandomDataProvider);
+
+    private static readonly string[] DefaultMeasurementLoggerClassNames =
+    {
+      nameof(ConsoleLogger)
+    };
 
     private static readonly ConsoleWriter ConsoleWriter = new ConsoleWriter();
 
@@ -69,17 +77,24 @@ namespace PiClimate.Logger
 
     private static MeasurementLoopBuilder ConfigureMeasurementLoopBuilder(IConfiguration configuration)
     {
+      var measurementProvider = configuration[Root.UseMeasurementProvider];
+      if (string.IsNullOrEmpty(measurementProvider))
+        measurementProvider = DefaultMeasurementProviderClassName;
+
+      var measurementLoggers = configuration.GetSection(Root.AddMeasurementLoggers)
+        .GetChildren()
+        .Select(section => section.Value)
+        .ToArray();
+      if (!measurementLoggers.Any())
+        measurementLoggers = DefaultMeasurementLoggerClassNames;
+
       var measurementLoopBuilder = new MeasurementLoopBuilder()
         .UseConfiguration(configuration)
-        .UseMeasurementProvider(new Bme280Provider())
-        .AddMeasurementLogger(new ConsoleMeasurementLogger())
-        .AddMeasurementLogger(new MySqlLogger())
-        .SetMeasurementLoopDelay(int.TryParse(configuration[MeasurementOptions.MeasurementLoopDelay], out var value)
+        .UseMeasurementProvider(measurementProvider)
+        .AddMeasurementLoggers(measurementLoggers)
+        .SetMeasurementLoopDelay(int.TryParse(configuration[Root.MeasurementLoopDelay], out var value)
           ? value
           : DefaultMeasurementLoopDelay);
-
-      if (configuration[MeasurementOptions.UseRandomData]?.ToLower() == true.ToString().ToLower())
-        measurementLoopBuilder.UseMeasurementProvider(new RandomMeasurementProvider());
 
       return measurementLoopBuilder;
     }
