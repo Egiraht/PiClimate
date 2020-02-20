@@ -130,14 +130,16 @@ namespace PiClimate.Logger
 
     private static void WaitForExitRequested()
     {
-      Console.TreatControlCAsInput = true;
+      var exit = false;
 
-      while (true)
+      Console.CancelKeyPress += (sender, args) =>
       {
-        var key = Console.ReadKey(true);
-        if (key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control)
-          break;
-      }
+        args.Cancel = true;
+        exit = true;
+      };
+
+      while (!exit)
+        Task.Delay(100).Wait();
     }
   }
 }
