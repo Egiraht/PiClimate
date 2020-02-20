@@ -10,7 +10,7 @@ namespace PiClimate.Logger.Loggers
 {
   class MySqlLogger : IMeasurementLogger
   {
-    private const string DefaultMeasurementsTableName = "Measurements";
+    public const string DefaultMeasurementsTableName = "Measurements";
 
     private string? _connectionString;
 
@@ -74,8 +74,8 @@ namespace PiClimate.Logger.Loggers
       if (!IsConfigured)
         throw new InvalidOperationException("The MySQL logger is not configured.");
 
-      using (var connection = new MySqlConnection(_connectionString))
-        connection.Execute(InsertSqlTemplate, measurement);
+      using var connection = new MySqlConnection(_connectionString);
+      connection.Execute(InsertSqlTemplate, measurement);
     }
 
     public async Task LogMeasurementAsync(Measurement measurement)
@@ -83,8 +83,8 @@ namespace PiClimate.Logger.Loggers
       if (!IsConfigured)
         throw new InvalidOperationException("The MySQL logger is not configured.");
 
-      await using (var connection = new MySqlConnection(_connectionString))
-        await connection.ExecuteAsync(InsertSqlTemplate, measurement);
+      await using var connection = new MySqlConnection(_connectionString);
+      await connection.ExecuteAsync(InsertSqlTemplate, measurement);
     }
 
     public void Dispose()

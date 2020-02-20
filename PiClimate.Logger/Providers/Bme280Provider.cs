@@ -15,7 +15,7 @@ namespace PiClimate.Logger.Providers
 {
   public class Bme280Provider : IMeasurementProvider
   {
-    private const int DefaultI2cBusId = 0x1;
+    public const int DefaultI2cBusId = 1;
 
     private bool _disposed = false;
 

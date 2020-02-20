@@ -6,6 +6,8 @@ namespace PiClimate.Logger.ConfigurationLayout
 
     public const string UseMeasurementLoggers = nameof(UseMeasurementLoggers);
 
+    public const string UseMeasurementLimiters = nameof(UseMeasurementLimiters);
+
     public const string MeasurementLoopDelay = nameof(MeasurementLoopDelay);
 
     public const string ConnectionStrings = nameof(ConnectionStrings);

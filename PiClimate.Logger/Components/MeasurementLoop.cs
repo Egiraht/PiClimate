@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
 
@@ -16,20 +17,26 @@ namespace PiClimate.Logger.Components
 
     private readonly List<IMeasurementLogger> _measurementLoggers = new List<IMeasurementLogger>();
 
+    private readonly List<IMeasurementLimiter> _measurementLimiters = new List<IMeasurementLimiter>();
+
     private readonly PeriodicLoop _pollingLoop;
 
     private bool _disposed = false;
 
     public event ThreadExceptionEventHandler? MeasurementException;
 
-    public event ThreadExceptionEventHandler? LoggingException;
+    public event ThreadExceptionEventHandler? LoggerException;
+
+    public event ThreadExceptionEventHandler? LimiterException;
 
     internal MeasurementLoop(IConfiguration configuration, IMeasurementProvider measurementProvider,
-      IEnumerable<IMeasurementLogger> measurementLoggers, MeasurementLoopOptions options)
+      IEnumerable<IMeasurementLogger> measurementLoggers, IEnumerable<IMeasurementLimiter> measurementLimiters,
+      MeasurementLoopOptions options)
     {
       _configuration = configuration;
       _measurementProvider = measurementProvider;
       _measurementLoggers.AddRange(measurementLoggers);
+      _measurementLimiters.AddRange(measurementLimiters);
       _pollingLoop = new PeriodicLoop
       {
         LoopDelay = TimeSpan.FromSeconds(options.MeasurementLoopDelay),
@@ -45,6 +52,8 @@ namespace PiClimate.Logger.Components
       _measurementProvider.Configure(_configuration);
       foreach (var logger in _measurementLoggers)
         logger.Configure(_configuration);
+      foreach (var limiter in _measurementLimiters)
+        limiter.Configure(_configuration);
       _pollingLoop.StartLoop();
     }
 
@@ -56,6 +65,8 @@ namespace PiClimate.Logger.Components
       await _measurementProvider.ConfigureAsync(_configuration);
       foreach (var logger in _measurementLoggers)
         await logger.ConfigureAsync(_configuration);
+      foreach (var limiter in _measurementLimiters)
+        await limiter.ConfigureAsync(_configuration);
       _pollingLoop.StartLoop();
     }
 
@@ -87,7 +98,22 @@ namespace PiClimate.Logger.Components
           }
           catch (Exception e)
           {
-            LoggingException?.Invoke(logger, new ThreadExceptionEventArgs(e));
+            LoggerException?.Invoke(logger, new ThreadExceptionEventArgs(e));
+          }
+        }
+
+        foreach (var limiter in _measurementLimiters)
+        {
+          if (cancellationToken.IsCancellationRequested)
+            return;
+
+          try
+          {
+            await limiter.ApplyAsync();
+          }
+          catch (Exception e)
+          {
+            LimiterException?.Invoke(limiter, new ThreadExceptionEventArgs(e));
           }
         }
       }
@@ -106,6 +132,8 @@ namespace PiClimate.Logger.Components
       _measurementProvider.Dispose();
       foreach (var logger in _measurementLoggers)
         logger.Dispose();
+      foreach (var limiter in _measurementLimiters)
+        limiter.Dispose();
 
       GC.SuppressFinalize(this);
       _disposed = true;

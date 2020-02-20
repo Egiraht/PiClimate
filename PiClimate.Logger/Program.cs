@@ -22,10 +22,9 @@ namespace PiClimate.Logger
 
     private const string DefaultMeasurementProviderClassName = nameof(RandomDataProvider);
 
-    private static readonly List<string> DefaultMeasurementLoggerClassNames = new List<string>
-    {
-      nameof(ConsoleLogger)
-    };
+    private static readonly List<string> DefaultMeasurementLoggerClassNames = new List<string> {nameof(ConsoleLogger)};
+
+    private static readonly List<string> DefaultMeasurementLimiterClassNames = new List<string>();
 
     private static readonly ConsoleWriter ConsoleWriter = new ConsoleWriter();
 
@@ -46,7 +45,8 @@ namespace PiClimate.Logger
         using (var measurementLoop = ConfigureMeasurementLoopBuilder(configuration).Build())
         {
           measurementLoop.MeasurementException += OnMeasurementException;
-          measurementLoop.LoggingException += OnLoggingException;
+          measurementLoop.LoggerException += OnLoggerException;
+          measurementLoop.LimiterException += OnLimiterException;
 
           await measurementLoop.StartLoopAsync();
           ConsoleWriter.WriteNotice("The measurement loop has started.");
@@ -84,17 +84,25 @@ namespace PiClimate.Logger
       if (string.IsNullOrEmpty(measurementProvider))
         measurementProvider = DefaultMeasurementProviderClassName;
 
-      var measurementLoggers = configuration[Root.UseMeasurementLoggers]
+      var measurementLoggers = (configuration[Root.UseMeasurementLoggers] ?? "")
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
         .Select(className => className.Trim())
         .ToList();
       if (!measurementLoggers.Any())
         measurementLoggers = DefaultMeasurementLoggerClassNames;
 
+      var measurementLimiters = (configuration[Root.UseMeasurementLimiters] ?? "")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(className => className.Trim())
+        .ToList();
+      if (!measurementLimiters.Any())
+        measurementLimiters = DefaultMeasurementLimiterClassNames;
+
       var measurementLoopBuilder = new MeasurementLoopBuilder()
         .UseConfiguration(configuration)
         .UseMeasurementProvider(measurementProvider)
         .AddMeasurementLoggers(measurementLoggers)
+        .AddMeasurementLimiters(measurementLimiters)
         .SetMeasurementLoopDelay(int.TryParse(configuration[Root.MeasurementLoopDelay], out var value)
           ? value
           : DefaultMeasurementLoopDelay);
@@ -105,13 +113,19 @@ namespace PiClimate.Logger
     private static void OnMeasurementException(object sender, ThreadExceptionEventArgs eventArgs)
     {
       ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
-        $"[{sender.GetType().Name}] Measurement failed: {eventArgs.Exception.Message}");
+        $"[{sender.GetType().Name}] Measuring failed: {eventArgs.Exception.Message}");
     }
 
-    private static void OnLoggingException(object sender, ThreadExceptionEventArgs eventArgs)
+    private static void OnLoggerException(object sender, ThreadExceptionEventArgs eventArgs)
     {
       ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
         $"[{sender.GetType().Name}] Logging failed: {eventArgs.Exception.Message}");
+    }
+
+    private static void OnLimiterException(object sender, ThreadExceptionEventArgs eventArgs)
+    {
+      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
+        $"[{sender.GetType().Name}] Limiting failed: {eventArgs.Exception.Message}");
     }
 
     private static void WaitForExitRequested()

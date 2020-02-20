@@ -1,6 +1,7 @@
 {
   "UseMeasurementProvider": "Bme280",
   "UseMeasurementLoggers": "Console, MySql",
+  "UseMeasurementLimiters": "MySqlCount",
   "MeasurementLoopDelay": 60,
   "ConnectionStrings": {
     "Main": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
@@ -12,5 +13,8 @@
   "MySqlOptions": {
     "UseConnectionStringKey": "Main",
     "MeasurementsTableName": "Measurements"
+  },
+  "CountLimiterOptions": {
+    "MaxMeasurementsCount": 1440
   }
 }
