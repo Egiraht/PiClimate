@@ -1,19 +1,16 @@
 {
   "UseMeasurementProvider": "Bme280",
-  "AddMeasurementLoggers": [
-    "Console",
-    "MySql"
-  ],
+  "UseMeasurementLoggers": "Console, MySql",
   "MeasurementLoopDelay": 60,
-  "ConnectionStrings": [
-    "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
-  ],
+  "ConnectionStrings": {
+    "Main": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
+  },
   "Bme280Options": {
     "I2cBusId": 1,
     "CustomI2cAddress": null
   },
   "MySqlOptions": {
-    "UseConnectionStringKey": 0,
+    "UseConnectionStringKey": "Main",
     "MeasurementsTableName": "Measurements"
   }
 }

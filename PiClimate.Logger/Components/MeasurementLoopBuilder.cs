@@ -82,18 +82,24 @@ namespace PiClimate.Logger.Components
       return AddMeasurementLogger(measurementLogger);
     }
 
-    public MeasurementLoopBuilder AddMeasurementLoggers(params IMeasurementLogger[] measurementLoggers)
+    public MeasurementLoopBuilder AddMeasurementLoggers(IEnumerable<IMeasurementLogger> measurementLoggers)
     {
       _measurementLoggers.AddRange(measurementLoggers);
       return this;
     }
 
-    public MeasurementLoopBuilder AddMeasurementLoggers(params string[] measurementLoggerClassNames)
+    public MeasurementLoopBuilder AddMeasurementLoggers(params IMeasurementLogger[] measurementLoggers) =>
+      AddMeasurementLoggers(measurementLoggers.AsEnumerable());
+
+    public MeasurementLoopBuilder AddMeasurementLoggers(IEnumerable<string> measurementLoggerClassNames)
     {
       foreach (var className in measurementLoggerClassNames)
         AddMeasurementLogger(className);
       return this;
     }
+
+    public MeasurementLoopBuilder AddMeasurementLoggers(params string[] measurementLoggerClassNames) =>
+      AddMeasurementLoggers(measurementLoggerClassNames.AsEnumerable());
 
     public MeasurementLoopBuilder SetMeasurementLoopDelay(int delay)
     {

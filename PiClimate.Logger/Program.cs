@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace PiClimate.Logger
 
     private const string DefaultMeasurementProviderClassName = nameof(RandomDataProvider);
 
-    private static readonly string[] DefaultMeasurementLoggerClassNames =
+    private static readonly List<string> DefaultMeasurementLoggerClassNames = new List<string>
     {
       nameof(ConsoleLogger)
     };
@@ -81,10 +82,10 @@ namespace PiClimate.Logger
       if (string.IsNullOrEmpty(measurementProvider))
         measurementProvider = DefaultMeasurementProviderClassName;
 
-      var measurementLoggers = configuration.GetSection(Root.AddMeasurementLoggers)
-        .GetChildren()
-        .Select(section => section.Value)
-        .ToArray();
+      var measurementLoggers = configuration[Root.UseMeasurementLoggers]
+        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(className => className.Trim())
+        .ToList();
       if (!measurementLoggers.Any())
         measurementLoggers = DefaultMeasurementLoggerClassNames;
 
