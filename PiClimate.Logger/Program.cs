@@ -45,7 +45,9 @@ namespace PiClimate.Logger
         var configuration = ConfigureConfigurationBuilder(args).Build();
         using (var measurementLoop = ConfigureMeasurementLoopBuilder(configuration).Build())
         {
-          measurementLoop.LoopException += OnLoopException;
+          measurementLoop.MeasurementException += OnMeasurementException;
+          measurementLoop.LoggingException += OnLoggingException;
+
           await measurementLoop.StartLoopAsync();
           ConsoleWriter.WriteNotice("The measurement loop has started.");
 
@@ -100,10 +102,16 @@ namespace PiClimate.Logger
       return measurementLoopBuilder;
     }
 
-    private static void OnLoopException(object sender, ThreadExceptionEventArgs eventArgs)
+    private static void OnMeasurementException(object sender, ThreadExceptionEventArgs eventArgs)
     {
-      ConsoleWriter.WriteWarning(
-        $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] Measurement warning: {eventArgs.Exception.Message}");
+      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
+        $"[{sender.GetType().Name}] Measurement failed: {eventArgs.Exception.Message}");
+    }
+
+    private static void OnLoggingException(object sender, ThreadExceptionEventArgs eventArgs)
+    {
+      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
+        $"[{sender.GetType().Name}] Logging failed: {eventArgs.Exception.Message}");
     }
 
     private static void WaitForExitRequested()

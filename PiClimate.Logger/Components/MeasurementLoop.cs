@@ -20,11 +20,9 @@ namespace PiClimate.Logger.Components
 
     private bool _disposed = false;
 
-    public event ThreadExceptionEventHandler LoopException
-    {
-      add => _pollingLoop.LoopException += value;
-      remove => _pollingLoop.LoopException -= value;
-    }
+    public event ThreadExceptionEventHandler? MeasurementException;
+
+    public event ThreadExceptionEventHandler? LoggingException;
 
     internal MeasurementLoop(IConfiguration configuration, IMeasurementProvider measurementProvider,
       IEnumerable<IMeasurementLogger> measurementLoggers, MeasurementLoopOptions options)
@@ -71,14 +69,31 @@ namespace PiClimate.Logger.Components
 
     private async Task MeasureAndLogAsync(CancellationToken cancellationToken)
     {
-      var measurement = await _measurementProvider.MeasureAsync();
-
-      foreach (var logger in _measurementLoggers)
+      try
       {
         if (cancellationToken.IsCancellationRequested)
-          break;
+          return;
 
-        await logger.LogMeasurementAsync(measurement);
+        var measurement = await _measurementProvider.MeasureAsync();
+
+        foreach (var logger in _measurementLoggers)
+        {
+          if (cancellationToken.IsCancellationRequested)
+            return;
+
+          try
+          {
+            await logger.LogMeasurementAsync(measurement);
+          }
+          catch (Exception e)
+          {
+            LoggingException?.Invoke(logger, new ThreadExceptionEventArgs(e));
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        MeasurementException?.Invoke(_measurementProvider, new ThreadExceptionEventArgs(e));
       }
     }
 
