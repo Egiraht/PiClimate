@@ -51,7 +51,7 @@ namespace PiClimate.Logger
           await measurementLoop.StartLoopAsync();
           ConsoleWriter.WriteNotice("The measurement loop has started.");
 
-          WaitForExitRequested();
+          await WaitForShutdownAsync();
         }
 
         ConsoleWriter.WriteNotice("Shutting down...");
@@ -128,18 +128,24 @@ namespace PiClimate.Logger
         $"[{sender.GetType().Name}] Limiting failed: {eventArgs.Exception.Message}");
     }
 
-    private static void WaitForExitRequested()
+    private static async Task WaitForShutdownAsync()
     {
-      var exit = false;
+      var cancellationTokenSource = new CancellationTokenSource();
 
       Console.CancelKeyPress += (sender, args) =>
       {
         args.Cancel = true;
-        exit = true;
+        cancellationTokenSource.Cancel();
       };
 
-      while (!exit)
-        Task.Delay(100).Wait();
+      try
+      {
+        await Task.Delay(-1, cancellationTokenSource.Token);
+      }
+      catch
+      {
+        // Ignore the task cancellation exception.
+      }
     }
   }
 }
