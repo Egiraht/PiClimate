@@ -72,7 +72,7 @@ namespace PiClimate.Logger.Loggers
     public void LogMeasurement(Measurement measurement)
     {
       if (!IsConfigured)
-        throw new InvalidOperationException("The MySQL logger is not configured.");
+        throw new InvalidOperationException($"{nameof(MySqlLogger)} is not configured.");
 
       using var connection = new MySqlConnection(_connectionString);
       connection.Execute(InsertSqlTemplate, measurement);
@@ -81,7 +81,7 @@ namespace PiClimate.Logger.Loggers
     public async Task LogMeasurementAsync(Measurement measurement)
     {
       if (!IsConfigured)
-        throw new InvalidOperationException("The MySQL logger is not configured.");
+        throw new InvalidOperationException($"{nameof(MySqlLogger)} is not configured.");
 
       await using var connection = new MySqlConnection(_connectionString);
       await connection.ExecuteAsync(InsertSqlTemplate, measurement);

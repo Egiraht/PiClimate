@@ -125,7 +125,7 @@ namespace PiClimate.Logger.Providers
         throw new ObjectDisposedException(nameof(Bme280Provider));
 
       if (!IsConfigured || _device == null)
-        throw new InvalidOperationException("The BME280 device is not configured.");
+        throw new InvalidOperationException($"{nameof(Bme280Provider)} is not configured.");
 
       return new Measurement
       {

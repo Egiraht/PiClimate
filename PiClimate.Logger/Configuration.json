@@ -15,6 +15,9 @@
     "MeasurementsTableName": "Measurements"
   },
   "CountLimiterOptions": {
-    "MaxMeasurementsCount": 1440
+    "CountLimit": 1440
+  },
+  "PeriodLimiterOptions": {
+    "PeriodLimit": 86400
   }
 }

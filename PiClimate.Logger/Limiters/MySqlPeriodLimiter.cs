@@ -8,24 +8,21 @@ using PiClimate.Logger.Loggers;
 
 namespace PiClimate.Logger.Limiters
 {
-  class MySqlCountLimiter : IMeasurementLimiter
+  class MySqlPeriodLimiter : IMeasurementLimiter
   {
-    public const int DefaultCountLimit = 1440;
+    public const int DefaultPeriodLimit = 86400;
 
     private string? _connectionString;
 
     private string _measurementsTableName = MySqlLogger.DefaultMeasurementsTableName;
 
-    private int _countLimit = DefaultCountLimit;
+    private int _periodLimit = DefaultPeriodLimit;
 
     public bool IsConfigured { get; private set; }
 
-    private string CountSqlTemplate => $@"SELECT COUNT(*) FROM {_measurementsTableName}";
-
     private string DeleteSqlTemplate => $@"
       DELETE FROM {_measurementsTableName}
-      ORDER BY Timestamp
-      LIMIT @Count;
+      WHERE `Timestamp` < @Timestamp;
     ";
 
     public void Configure(IConfiguration configuration)
@@ -34,9 +31,9 @@ namespace PiClimate.Logger.Limiters
         configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
       _measurementsTableName =
         configuration[MySqlOptions.MeasurementsTableName] ?? MySqlLogger.DefaultMeasurementsTableName;
-      _countLimit = int.TryParse(configuration[CountLimiterOptions.CountLimit], out var value)
+      _periodLimit = int.TryParse(configuration[PeriodLimiterOptions.PeriodLimit], out var value)
         ? value
-        : DefaultCountLimit;
+        : DefaultPeriodLimit;
 
       using var connection = new MySqlConnection(_connectionString);
       connection.Open();
@@ -51,9 +48,9 @@ namespace PiClimate.Logger.Limiters
         configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
       _measurementsTableName =
         configuration[MySqlOptions.MeasurementsTableName] ?? MySqlLogger.DefaultMeasurementsTableName;
-      _countLimit = int.TryParse(configuration[CountLimiterOptions.CountLimit], out var value)
+      _periodLimit = int.TryParse(configuration[PeriodLimiterOptions.PeriodLimit], out var value)
         ? value
-        : DefaultCountLimit;
+        : DefaultPeriodLimit;
 
       await using var connection = new MySqlConnection(_connectionString);
       await connection.OpenAsync();
@@ -65,23 +62,21 @@ namespace PiClimate.Logger.Limiters
     public void Apply()
     {
       if (!IsConfigured)
-        throw new InvalidOperationException($"{nameof(MySqlCountLimiter)} is not configured.");
+        throw new InvalidOperationException($"{nameof(MySqlPeriodLimiter)} is not configured.");
 
       using var connection = new MySqlConnection(_connectionString);
-      var count = (long) connection.ExecuteScalar(CountSqlTemplate);
-      if (count > _countLimit)
-        connection.Execute(DeleteSqlTemplate, new {Count = count - _countLimit});
+      connection.Execute(DeleteSqlTemplate,
+        new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
     public async Task ApplyAsync()
     {
       if (!IsConfigured)
-        throw new InvalidOperationException($"{nameof(MySqlCountLimiter)} is not configured.");
+        throw new InvalidOperationException($"{nameof(MySqlPeriodLimiter)} is not configured.");
 
       await using var connection = new MySqlConnection(_connectionString);
-      var count = (long) await connection.ExecuteScalarAsync(CountSqlTemplate);
-      if (count > _countLimit)
-        await connection.ExecuteAsync(DeleteSqlTemplate, new {Count = count - _countLimit});
+      await connection.ExecuteAsync(DeleteSqlTemplate,
+        new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
     public void Dispose()
