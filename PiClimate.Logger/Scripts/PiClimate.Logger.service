@@ -1,0 +1,17 @@
+[Unit]
+Description=PiClimate.Logger
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/home/pi/PiClimate/.pid
+WorkingDirectory=/home/pi/PiClimate
+User=pi
+Group=pi
+ExecStart=/home/pi/PiClimate/Scripts/StartService.sh
+ExecStop=/home/pi/PiClimate/Scripts/StopService.sh
+RestartSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
