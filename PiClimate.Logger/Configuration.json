@@ -1,23 +1,58 @@
 {
+  // Defines the used measurement provider.
+  // Available values: Bme280 (Bme280Provider), RandomData (RandomDataProvider).
   "UseMeasurementProvider": "Bme280",
+
+  // Defines a comma-separated list of the used measurement loggers.
+  // Available values: Console (ConsoleLogger), MySql (MySqlLogger).
   "UseMeasurementLoggers": "Console, MySql",
+
+  // Defines a comma-separated list of the used measurement limiters.
+  // The order of the used limiters in the list defines the limiter appliance order, so it may matter.
+  // Available values: MySqlCount (MySqlCountLimiter), MySqlPeriod (MySqlPeriodLimiter).
   "UseMeasurementLimiters": "MySqlCount",
+
+  // Defines the measurement loop delay value in seconds.
   "MeasurementLoopDelay": 60,
+
+  // Defines the named list of connection strings providing the database connection parameters.
   "ConnectionStrings": {
-    "Main": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
+    "MySql": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
   },
+
+  // The configuration's section related to BME280 sensor options.
+  // Matters only if the BME280 measurement provider is used.
   "Bme280Options": {
+    // Defines the I2C bus ID.
+    // Can be a decimal or hexadecimal numeric value.
     "I2cBusId": 1,
+
+    // Defines the I2C bus ID.
+    // Can be a decimal or hexadecimal numeric value, or "null" if not used.
     "CustomI2cAddress": null
   },
+
+  // The configuration's section related to MySQL options.
+  // Matters only if the corresponding MySQL-related components are used.
   "MySqlOptions": {
-    "UseConnectionStringKey": "Main",
+    // Defines the connection string key from the root "ConnectionStrings" section to be used for MySQL connection.
+    "UseConnectionStringKey": "MySql",
+
+    // Defines the database table name for the measurements.
     "MeasurementsTableName": "Measurements"
   },
+
+  // The configuration's section for data row count limiters.
+  // Matters only if the corresponding limiters are used.
   "CountLimiterOptions": {
+    // Defines the total count of data rows to keep in the database table.
     "CountLimit": 1440
   },
+
+  // The configuration's section for period limiters.
+  // Matters only if the corresponding limiters are used.
   "PeriodLimiterOptions": {
+    // Defines the time period in seconds that limits the data row lifetime.
     "PeriodLimit": 86400
   }
 }

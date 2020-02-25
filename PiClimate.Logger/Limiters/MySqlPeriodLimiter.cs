@@ -8,23 +8,43 @@ using PiClimate.Logger.Loggers;
 
 namespace PiClimate.Logger.Limiters
 {
+  /// <summary>
+  ///   The MySQL data row limiter based on the maximal time period.
+  /// </summary>
   class MySqlPeriodLimiter : IMeasurementLimiter
   {
+    /// <summary>
+    ///   The default time period limiting value in seconds.
+    /// </summary>
     public const int DefaultPeriodLimit = 86400;
 
+    /// <summary>
+    ///   The connection string used for MySQL database connection.
+    /// </summary>
     private string? _connectionString;
 
+    /// <summary>
+    ///   The database table name for data limiting.
+    /// </summary>
     private string _measurementsTableName = MySqlLogger.DefaultMeasurementsTableName;
 
+    /// <summary>
+    ///   The time period limiting value in seconds.
+    /// </summary>
     private int _periodLimit = DefaultPeriodLimit;
 
+    /// <inheritdoc />
     public bool IsConfigured { get; private set; }
 
+    /// <summary>
+    ///   Gets the SQL query used for data row deletion.
+    /// </summary>
     private string DeleteSqlTemplate => $@"
       DELETE FROM {_measurementsTableName}
       WHERE `Timestamp` < @Timestamp;
     ";
 
+    /// <inheritdoc />
     public void Configure(IConfiguration configuration)
     {
       _connectionString =
@@ -42,6 +62,7 @@ namespace PiClimate.Logger.Limiters
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public async Task ConfigureAsync(IConfiguration configuration)
     {
       _connectionString =
@@ -59,6 +80,7 @@ namespace PiClimate.Logger.Limiters
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public void Apply()
     {
       if (!IsConfigured)
@@ -69,6 +91,7 @@ namespace PiClimate.Logger.Limiters
         new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
+    /// <inheritdoc />
     public async Task ApplyAsync()
     {
       if (!IsConfigured)
@@ -79,6 +102,7 @@ namespace PiClimate.Logger.Limiters
         new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }

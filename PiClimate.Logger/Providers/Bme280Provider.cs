@@ -13,28 +13,68 @@ using PiClimate.Logger.Models;
 // ReSharper disable InconsistentNaming
 namespace PiClimate.Logger.Providers
 {
+  /// <summary>
+  ///   A measurement provider that uses the BME280 climatic sensor connected via I2C bus.
+  /// </summary>
   public class Bme280Provider : IMeasurementProvider
   {
+    /// <summary>
+    ///   The default I2C bus ID.
+    /// </summary>
     public const int DefaultI2cBusId = 1;
 
+    /// <summary>
+    ///   The object's disposal flag.
+    /// </summary>
     private bool _disposed = false;
 
+    /// <summary>
+    ///   The BME280 device descriptor.
+    /// </summary>
     private Bme280? _device;
 
+    /// <summary>
+    ///   Gets or sets the BME280 standby time.
+    /// </summary>
     public StandbyTime StandbyTime { get; set; } = StandbyTime.Ms62_5;
 
+    /// <summary>
+    ///   Gets or sets the BME280 measurement filtering.
+    /// </summary>
     public FilteringMode FilteringMode { get; set; } = FilteringMode.Off;
 
+    /// <summary>
+    ///   Gets or sets the BME280 pressure oversampling rate.
+    /// </summary>
     public Sampling PressureSampling { get; set; } = Sampling.UltraHighResolution;
 
+    /// <summary>
+    ///   Gets or sets the BME280 temperature oversampling rate.
+    /// </summary>
     public Sampling TemperatureSampling { get; set; } = Sampling.UltraHighResolution;
 
+    /// <summary>
+    ///   Gets or sets the BME280 humidity oversampling rate.
+    /// </summary>
     public Sampling HumiditySampling { get; set; } = Sampling.UltraHighResolution;
 
+    /// <summary>
+    ///   Gets or sets the BME280 active power mode.
+    /// </summary>
     public Bmx280PowerMode PowerMode { get; set; } = Bmx280PowerMode.Normal;
 
+    /// <inheritdoc />
     public bool IsConfigured { get; private set; }
 
+    /// <summary>
+    ///   Converts the decimal or hexadecimal string value to integer value.
+    /// </summary>
+    /// <param name="value">
+    ///   The decimal or hexadecimal string value to be converted.
+    /// </param>
+    /// <returns>
+    ///   The converted integer value on success or <c>null</c> otherwise.
+    /// </returns>
     private int? ConvertToInt(string? value)
     {
       if (value == null)
@@ -53,6 +93,18 @@ namespace PiClimate.Logger.Providers
         : null;
     }
 
+    /// <summary>
+    ///   Tries to connect to a BME280 device using the provided I2C bus ID and I2C device address.
+    /// </summary>
+    /// <param name="i2cBusId">
+    ///   The I2C bus ID for connection.
+    /// </param>
+    /// <param name="i2cDeviceAddress">
+    ///   The I2C device address for connection.
+    /// </param>
+    /// <returns>
+    ///   <c>true</c> on successful BME280 device connection, otherwise <c>false</c>.
+    /// </returns>
     public bool TryConnect(int i2cBusId, int i2cDeviceAddress)
     {
       try
@@ -68,6 +120,7 @@ namespace PiClimate.Logger.Providers
       }
     }
 
+    /// <inheritdoc />
     public void Configure(IConfiguration configuration)
     {
       if (_disposed)
@@ -108,10 +161,21 @@ namespace PiClimate.Logger.Providers
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public Task ConfigureAsync(IConfiguration configuration) => Task.Run(() => Configure(configuration));
 
+    /// <summary>
+    ///   Converts the pressure in Pa to mmHg.
+    /// </summary>
+    /// <param name="pressureInPa">
+    ///   The pressure value in Pa.
+    /// </param>
+    /// <returns>
+    ///   The pressure value in mmHg.
+    /// </returns>
     private double ConvertPressureToMmHg(double pressureInPa) => pressureInPa * 0.00750062;
 
+    /// <inheritdoc />
     public Measurement Measure()
     {
       var measurementTask = MeasureAsync();
@@ -119,6 +183,7 @@ namespace PiClimate.Logger.Providers
       return measurementTask.Result;
     }
 
+    /// <inheritdoc />
     public async Task<Measurement> MeasureAsync()
     {
       if (_disposed)
@@ -136,6 +201,7 @@ namespace PiClimate.Logger.Providers
       };
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
       if (_disposed)
@@ -148,6 +214,7 @@ namespace PiClimate.Logger.Providers
       _disposed = true;
     }
 
+    /// <inheritdoc />
     ~Bme280Provider()
     {
       Dispose();

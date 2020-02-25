@@ -8,16 +8,32 @@ using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Loggers
 {
+  /// <summary>
+  ///   The MySQL database measurement data logger.
+  /// </summary>
   class MySqlLogger : IMeasurementLogger
   {
+    /// <summary>
+    ///   The default database table name for data logging.
+    /// </summary>
     public const string DefaultMeasurementsTableName = "Measurements";
 
+    /// <summary>
+    ///   The connection string used for MySQL database connection.
+    /// </summary>
     private string? _connectionString;
 
+    /// <summary>
+    ///   The database table name for data logging.
+    /// </summary>
     private string _measurementsTableName = DefaultMeasurementsTableName;
 
+    /// <inheritdoc />
     public bool IsConfigured { get; private set; }
 
+    /// <summary>
+    ///   Gets the SQL query for database table initialization.
+    /// </summary>
     private string InitializeSqlTemplate => $@"
       CREATE TABLE IF NOT EXISTS `{_measurementsTableName}`
       (
@@ -28,6 +44,9 @@ namespace PiClimate.Logger.Loggers
       );
     ";
 
+    /// <summary>
+    ///   Gets the SQL query for new data row insertion.
+    /// </summary>
     private string InsertSqlTemplate => $@"
       INSERT INTO `{_measurementsTableName}`
       (
@@ -45,6 +64,7 @@ namespace PiClimate.Logger.Loggers
       );
     ";
 
+    /// <inheritdoc />
     public void Configure(IConfiguration configuration)
     {
       _connectionString =
@@ -57,6 +77,7 @@ namespace PiClimate.Logger.Loggers
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public async Task ConfigureAsync(IConfiguration configuration)
     {
       _connectionString =
@@ -69,6 +90,7 @@ namespace PiClimate.Logger.Loggers
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public void LogMeasurement(Measurement measurement)
     {
       if (!IsConfigured)
@@ -78,6 +100,7 @@ namespace PiClimate.Logger.Loggers
       connection.Execute(InsertSqlTemplate, measurement);
     }
 
+    /// <inheritdoc />
     public async Task LogMeasurementAsync(Measurement measurement)
     {
       if (!IsConfigured)
@@ -87,6 +110,7 @@ namespace PiClimate.Logger.Loggers
       await connection.ExecuteAsync(InsertSqlTemplate, measurement);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }

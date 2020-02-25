@@ -8,26 +8,49 @@ using PiClimate.Logger.Loggers;
 
 namespace PiClimate.Logger.Limiters
 {
+  /// <summary>
+  ///   The MySQL data row limiter based on the maximal data row count.
+  /// </summary>
   class MySqlCountLimiter : IMeasurementLimiter
   {
+    /// <summary>
+    ///   The default total data row count limit.
+    /// </summary>
     public const int DefaultCountLimit = 1440;
 
+    /// <summary>
+    ///   The connection string used for MySQL database connection.
+    /// </summary>
     private string? _connectionString;
 
+    /// <summary>
+    ///   The database table name for data limiting.
+    /// </summary>
     private string _measurementsTableName = MySqlLogger.DefaultMeasurementsTableName;
 
+    /// <summary>
+    ///   The total data row count limit.
+    /// </summary>
     private int _countLimit = DefaultCountLimit;
 
+    /// <inheritdoc />
     public bool IsConfigured { get; private set; }
 
+    /// <summary>
+    ///   Gets the SQL query used for data row counting.
+    /// </summary>
     private string CountSqlTemplate => $@"SELECT COUNT(*) FROM {_measurementsTableName}";
 
+    /// <summary>
+    ///   Gets the SQL query used for data row deletion.
+    /// </summary>
     private string DeleteSqlTemplate => $@"
       DELETE FROM {_measurementsTableName}
       ORDER BY Timestamp
       LIMIT @Count;
     ";
 
+    /// <inheritdoc />
     public void Configure(IConfiguration configuration)
     {
       _connectionString =
@@ -45,6 +68,7 @@ namespace PiClimate.Logger.Limiters
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public async Task ConfigureAsync(IConfiguration configuration)
     {
       _connectionString =
@@ -62,6 +86,7 @@ namespace PiClimate.Logger.Limiters
       IsConfigured = true;
     }
 
+    /// <inheritdoc />
     public void Apply()
     {
       if (!IsConfigured)
@@ -73,6 +98,7 @@ namespace PiClimate.Logger.Limiters
         connection.Execute(DeleteSqlTemplate, new {Count = count - _countLimit});
     }
 
+    /// <inheritdoc />
     public async Task ApplyAsync()
     {
       if (!IsConfigured)
@@ -84,6 +110,7 @@ namespace PiClimate.Logger.Limiters
         await connection.ExecuteAsync(DeleteSqlTemplate, new {Count = count - _countLimit});
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }
