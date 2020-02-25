@@ -7,6 +7,8 @@ ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiClimate.Monitor", "PiClimate.Monitor\PiClimate.Monitor.csproj", "{617312B8-A1DE-4778-AE07-0E4F9F5C308C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,10 @@ Global
 		{408D4853-607D-4A8D-A40E-F7CC845FC5BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{408D4853-607D-4A8D-A40E-F7CC845FC5BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{408D4853-607D-4A8D-A40E-F7CC845FC5BA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

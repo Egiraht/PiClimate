@@ -1,0 +1,40 @@
+<Router AppAssembly="@typeof(Program).Assembly">
+  @* Routed page component was found. *@
+  <Found Context="routeData">
+    <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(AppLayout)">
+      <NotAuthorized Context="authenticationState">
+        @if (authenticationState.User.Identity.IsAuthenticated)
+        {
+          @* Authenticated user is not allowed to access a routed page component. *@
+          <div>
+            You do not have access to this page.
+            <br />
+            <button onclick="history.back()">Back</button>
+          </div>
+        }
+        else
+        {
+          @* Anonymous user needs authentication to access a routed page component. *@
+          <div>
+            You are not logged in.
+            <br />
+            <button onclick="history.back()">Back</button>
+          </div>
+        }
+      </NotAuthorized>
+    </AuthorizeRouteView>
+  </Found>
+
+  @* Routed page component was not found. *@
+  <NotFound>
+    <CascadingAuthenticationState>
+      <LayoutView Layout="@typeof(AppLayout)">
+        <div>
+          The requested page does not exist.
+          <br />
+          <button onclick="history.back()">Back</button>
+        </div>
+      </LayoutView>
+    </CascadingAuthenticationState>
+  </NotFound>
+</Router>
