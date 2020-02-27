@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using PiClimate.Logger.ConfigurationLayout;
 using PiClimate.Logger.Loggers;
+using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Limiters
 {
@@ -13,6 +14,17 @@ namespace PiClimate.Logger.Limiters
   /// </summary>
   class MySqlPeriodLimiter : IMeasurementLimiter
   {
+    /// <summary>
+    ///   A class for storing the query parameters.
+    /// </summary>
+    private class QueryParameters
+    {
+      /// <summary>
+      ///   Gets or sets the last timestamp that limits the oldest data rows to be kept in the database table.
+      /// </summary>
+      public DateTime LastTimestamp { get; set; }
+    }
+
     /// <summary>
     ///   The default time period limiting value in seconds.
     /// </summary>
@@ -41,7 +53,7 @@ namespace PiClimate.Logger.Limiters
     /// </summary>
     private string DeleteSqlTemplate => $@"
       DELETE FROM {_measurementsTableName}
-      WHERE `Timestamp` < @Timestamp;
+      WHERE `{nameof(Measurement.Timestamp)}` < @{nameof(QueryParameters.LastTimestamp)};
     ";
 
     /// <inheritdoc />
@@ -88,7 +100,7 @@ namespace PiClimate.Logger.Limiters
 
       using var connection = new MySqlConnection(_connectionString);
       connection.Execute(DeleteSqlTemplate,
-        new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
+        new QueryParameters {LastTimestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
     /// <inheritdoc />
@@ -99,7 +111,7 @@ namespace PiClimate.Logger.Limiters
 
       await using var connection = new MySqlConnection(_connectionString);
       await connection.ExecuteAsync(DeleteSqlTemplate,
-        new {Timestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
+        new QueryParameters {LastTimestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
     }
 
     /// <inheritdoc />

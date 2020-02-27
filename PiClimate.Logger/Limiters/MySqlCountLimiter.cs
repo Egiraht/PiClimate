@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using PiClimate.Logger.ConfigurationLayout;
 using PiClimate.Logger.Loggers;
+using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Limiters
 {
@@ -13,6 +14,17 @@ namespace PiClimate.Logger.Limiters
   /// </summary>
   class MySqlCountLimiter : IMeasurementLimiter
   {
+    /// <summary>
+    ///   A class for storing the query parameters.
+    /// </summary>
+    private class QueryParameters
+    {
+      /// <summary>
+      ///   Gets or sets the count of data rows to be deleted from the database table.
+      /// </summary>
+      public long CountToDelete { get; set; }
+    }
+
     /// <summary>
     ///   The default total data row count limit.
     /// </summary>
@@ -46,8 +58,8 @@ namespace PiClimate.Logger.Limiters
     /// </summary>
     private string DeleteSqlTemplate => $@"
       DELETE FROM {_measurementsTableName}
-      ORDER BY Timestamp
-      LIMIT @Count;
+      ORDER BY `{nameof(Measurement.Timestamp)}`
+      LIMIT @{nameof(QueryParameters.CountToDelete)};
     ";
 
     /// <inheritdoc />
@@ -95,7 +107,7 @@ namespace PiClimate.Logger.Limiters
       using var connection = new MySqlConnection(_connectionString);
       var count = (long) connection.ExecuteScalar(CountSqlTemplate);
       if (count > _countLimit)
-        connection.Execute(DeleteSqlTemplate, new {Count = count - _countLimit});
+        connection.Execute(DeleteSqlTemplate, new QueryParameters {CountToDelete = count - _countLimit});
     }
 
     /// <inheritdoc />
@@ -107,7 +119,7 @@ namespace PiClimate.Logger.Limiters
       await using var connection = new MySqlConnection(_connectionString);
       var count = (long) await connection.ExecuteScalarAsync(CountSqlTemplate);
       if (count > _countLimit)
-        await connection.ExecuteAsync(DeleteSqlTemplate, new {Count = count - _countLimit});
+        await connection.ExecuteAsync(DeleteSqlTemplate, new QueryParameters {CountToDelete = count - _countLimit});
     }
 
     /// <inheritdoc />

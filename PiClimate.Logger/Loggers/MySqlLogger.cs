@@ -37,10 +37,10 @@ namespace PiClimate.Logger.Loggers
     private string InitializeSqlTemplate => $@"
       CREATE TABLE IF NOT EXISTS `{_measurementsTableName}`
       (
-        `Timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,
-        `Pressure` DOUBLE NULL,
-        `Temperature` DOUBLE NULL,
-        `Humidity` DOUBLE NULL
+        `{nameof(Measurement.Timestamp)}` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,
+        `{nameof(Measurement.Pressure)}` DOUBLE NULL,
+        `{nameof(Measurement.Temperature)}` DOUBLE NULL,
+        `{nameof(Measurement.Humidity)}` DOUBLE NULL
       );
     ";
 
@@ -50,17 +50,17 @@ namespace PiClimate.Logger.Loggers
     private string InsertSqlTemplate => $@"
       INSERT INTO `{_measurementsTableName}`
       (
-        `Timestamp`,
-        `Pressure`,
-        `Temperature`,
-        `Humidity`
+        `{nameof(Measurement.Timestamp)}`,
+        `{nameof(Measurement.Pressure)}`,
+        `{nameof(Measurement.Temperature)}`,
+        `{nameof(Measurement.Humidity)}`
       )
       VALUES
       (
-        @Timestamp,
-        @Pressure,
-        @Temperature,
-        @Humidity
+        @{nameof(Measurement.Timestamp)},
+        @{nameof(Measurement.Pressure)},
+        @{nameof(Measurement.Temperature)},
+        @{nameof(Measurement.Humidity)}
       );
     ";
 
