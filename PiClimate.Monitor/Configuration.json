@@ -1,0 +1,16 @@
+{
+  // Defines the named list of connection strings providing the database connection parameters.
+  "ConnectionStrings": {
+    "MySql": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"
+  },
+
+  // The configuration's section related to MySQL options.
+  // Matters only if the corresponding MySQL-related components are used.
+  "MySqlOptions": {
+    // Defines the connection string key from the root "ConnectionStrings" section to be used for MySQL connection.
+    "UseConnectionStringKey": "MySql",
+
+    // Defines the database table name for the measurements.
+    "MeasurementsTableName": "Measurements"
+  }
+}
