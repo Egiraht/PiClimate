@@ -1,18 +1,23 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidebar">
-  <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">PiClimate Monitor</a>
-  </div>
+<div class="container-fluid">
+  <div class="row vh-100">
+    <aside id="navigation" class="navbar navbar-dark bg-dark flex-lg-column col-lg-auto">
+      <ul class="navbar-nav flex-row flex-lg-column">
+        <li class="nav-item px-3">
+          <a class="navbar-brand" href="/">PiClimate Monitor</a>
+        </li>
 
-  <NavMenu />
-</div>
+        <hr class="border-light w-100 d-none d-lg-block" />
 
-<div class="main">
-  <div class="top-row px-4">
-  </div>
+        <li class="nav-item px-3">
+          <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Main</NavLink>
+        </li>
+      </ul>
+    </aside>
 
-  <div class="content px-4">
-    @Body
+    <main id="main" class="bg-light col-lg h-100">
+      @Body
+    </main>
   </div>
 </div>

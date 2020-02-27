@@ -1,0 +1,15 @@
+@import url("bootstrap.min.css");
+
+#blazor-error-ui
+{
+  display: none;
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.7);
+  inset: 0;
+}
+
+#blazor-error-ui > *
+{
+  position: relative;
+  top: 50vh;
+}

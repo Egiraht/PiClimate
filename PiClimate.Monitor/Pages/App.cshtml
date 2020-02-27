@@ -4,29 +4,35 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PiClimate Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>@nameof(PiClimate) @nameof(PiClimate.Monitor)</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
   </head>
 
   <body>
-    <app>
+    @* Application router component. *@
+    <div id="app">
       <component type="typeof(AppRouter)" render-mode="ServerPrerendered" />
-    </app>
-
-    <div id="blazor-error-ui">
-      <environment include="Staging,Production">
-        An error has occurred. This application may no longer respond until reloaded.
-      </environment>
-      <environment include="Development">
-        An unhandled exception has occurred. See browser dev tools for details.
-      </environment>
-      <a href="" class="reload">Reload</a>
-      <a class="dismiss">🗙</a>
     </div>
 
-    <script src="_framework/blazor.server.js"></script>
+    @* Blazor runtime error banner. *@
+    <div id="blazor-error-ui">
+      <div class="alert alert-danger text-center mx-3 my-n4">
+        <div class="pb-3">
+          <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+          </environment>
+          <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+          </environment>
+        </div>
+        <button class="btn btn-danger" onclick="location.reload()">Reload</button>
+      </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/_framework/blazor.server.js"></script>
   </body>
 </html>

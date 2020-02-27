@@ -6,19 +6,21 @@
         @if (authenticationState.User.Identity.IsAuthenticated)
         {
           @* Authenticated user is not allowed to access a routed page component. *@
-          <div>
-            You do not have access to this page.
-            <br />
-            <button onclick="history.back()">Back</button>
+          <div class="alert alert-warning text-center m-3">
+            <div class="pb-3">
+              You do not have access to this page.
+            </div>
+            <button class="btn btn-warning" onclick="history.back()">Back</button>
           </div>
         }
         else
         {
           @* Anonymous user needs authentication to access a routed page component. *@
-          <div>
-            You are not logged in.
-            <br />
-            <button onclick="history.back()">Back</button>
+          <div class="alert alert-warning text-center m-3">
+            <div class="pb-3">
+              You are not logged in.
+            </div>
+            <button class="btn btn-warning" onclick="history.back()">Back</button>
           </div>
         }
       </NotAuthorized>
@@ -29,10 +31,11 @@
   <NotFound>
     <CascadingAuthenticationState>
       <LayoutView Layout="@typeof(AppLayout)">
-        <div>
-          The requested page does not exist.
-          <br />
-          <button onclick="history.back()">Back</button>
+        <div class="alert alert-info text-center m-3">
+          <div class="pb-3">
+            The requested page does not exist.
+          </div>
+          <button class="btn btn-info" onclick="history.back()">Back</button>
         </div>
       </LayoutView>
     </CascadingAuthenticationState>
