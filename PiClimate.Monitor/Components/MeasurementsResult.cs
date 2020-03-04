@@ -13,8 +13,8 @@ namespace PiClimate.Monitor.Components
 
     private static object GetJsonValue(MeasurementFilter filter, IEnumerable<Measurement> measurements) => new
     {
-      FromTime = filter.FromTime,
-      ToTime = filter.ToTime,
+      FromTime = filter.FromTime.ToLocalTime(),
+      ToTime = filter.ToTime.ToLocalTime(),
       Resolution = filter.Resolution,
       Measurements = measurements
     };

@@ -48,7 +48,7 @@ namespace PiClimate.Monitor
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddRazorPages();
-      services.AddServerSideBlazor();
+      services.AddCors();
       services.AddSingleton<IMeasurementSource>(new MySqlSource(_configuration));
     }
 
@@ -69,12 +69,8 @@ namespace PiClimate.Monitor
       app.UseHttpsRedirection();
       app.UseStaticFiles();
       app.UseRouting();
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.MapRazorPages();
-        endpoints.MapBlazorHub();
-        endpoints.MapFallbackToPage("/app");
-      });
+      app.UseCors(builder => builder.AllowAnyOrigin());
+      app.UseEndpoints(endpoints => endpoints.MapRazorPages());
     }
   }
 }

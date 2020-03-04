@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Models;
@@ -10,6 +11,7 @@ namespace PiClimate.Monitor.Pages
   ///   The page that filters the measurement data using the provided measurement filter and returns the result
   ///   in JSON format.
   /// </summary>
+  [IgnoreAntiforgeryToken]
   public class Data : PageModel
   {
     /// <summary>
@@ -31,7 +33,7 @@ namespace PiClimate.Monitor.Pages
 
     /// <summary>
     ///   Filters the measurement data using the provided measurement filter and returns the data
-    ///   in JSON format using the GET HTTP request.
+    ///   in JSON format.
     /// </summary>
     /// <param name="filter">
     ///   The measurement filter used for measurement data filtering.
@@ -40,7 +42,7 @@ namespace PiClimate.Monitor.Pages
     /// <returns>
     ///   The JSON-encoded HTTP response containing the filtered measurement data.
     /// </returns>
-    public async Task<MeasurementsResult> OnGetAsync(MeasurementFilter? filter)
+    public async Task<MeasurementsResult> OnGetAsync(MeasurementFilter filter)
     {
       if (filter == null)
         filter = new MeasurementFilter();
@@ -48,5 +50,9 @@ namespace PiClimate.Monitor.Pages
       var measurements = await _source.GetMeasurementsAsync(filter);
       return new MeasurementsResult(filter, measurements);
     }
+
+    /// <inheritdoc cref="OnGetAsync" />
+    public async Task<MeasurementsResult> OnPostAsync([FromBody] MeasurementFilter filter) =>
+      await OnGetAsync(filter);
   }
 }

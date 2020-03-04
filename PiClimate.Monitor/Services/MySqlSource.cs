@@ -89,8 +89,8 @@ namespace PiClimate.Monitor.Services
       using var connection = new MySqlConnection(_connectionString);
       return connection.Query<Measurement>(SelectSqlTemplate, new QueryParameters
       {
-        FromTime = fromTime,
-        ToTime = toTime,
+        FromTime = fromTime.ToLocalTime(),
+        ToTime = toTime.ToLocalTime(),
         TimeStep = Math.Max((int) ((toTime - fromTime).TotalSeconds / filter.Resolution), 1)
       });
     }
@@ -104,8 +104,8 @@ namespace PiClimate.Monitor.Services
       await using var connection = new MySqlConnection(_connectionString);
       return await connection.QueryAsync<Measurement>(SelectSqlTemplate, new QueryParameters
       {
-        FromTime = fromTime,
-        ToTime = toTime,
+        FromTime = fromTime.ToLocalTime(),
+        ToTime = toTime.ToLocalTime(),
         TimeStep = Math.Max((int) ((toTime - fromTime).TotalSeconds / filter.Resolution), 1)
       });
     }
