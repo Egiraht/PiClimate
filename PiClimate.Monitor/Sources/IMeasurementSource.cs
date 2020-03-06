@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using PiClimate.Monitor.Models;
 
-namespace PiClimate.Monitor.Services
+namespace PiClimate.Monitor.Sources
 {
   /// <summary>
   ///   An interface for the measurement source services.

@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 using PiClimate.Monitor.ConfigurationLayout;
 using PiClimate.Monitor.Models;
 
-namespace PiClimate.Monitor.Services
+namespace PiClimate.Monitor.Sources
 {
   /// <summary>
   ///   The MySQL database measurement data source.

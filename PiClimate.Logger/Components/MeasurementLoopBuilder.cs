@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
@@ -92,6 +93,12 @@ namespace PiClimate.Logger.Components
     ///   The class name of the measurement provider to use.
     ///   The class name suffix (<see cref="MeasurementProviderClassNameSuffix" />) may be omitted.
     /// </param>
+    /// <exception cref="ArgumentException">
+    ///   Cannot find a measurement provider class with the provided name.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   Failed to create a new instance of the provided measurement provider class.
+    /// </exception>
     /// <returns>
     ///   The modified builder instance.
     /// </returns>
@@ -100,9 +107,10 @@ namespace PiClimate.Logger.Components
       if (string.IsNullOrWhiteSpace(measurementProviderClassName))
         return this;
 
-      var measurementProviderType = GetType().Assembly.GetTypes()
-        .FirstOrDefault(type =>
-          type.GetInterfaces().Contains(typeof(IMeasurementProvider)) && (type.Name == measurementProviderClassName ||
+      var measurementProviderType = Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementProvider)) &&
+          (type.Name == measurementProviderClassName ||
             type.Name == $"{measurementProviderClassName}{MeasurementProviderClassNameSuffix}"));
       if (measurementProviderType == null)
         throw new ArgumentException(
@@ -110,7 +118,7 @@ namespace PiClimate.Logger.Components
 
       var measurementProvider = Activator.CreateInstance(measurementProviderType) as IMeasurementProvider;
       if (measurementProvider == null)
-        throw new ArgumentException(
+        throw new InvalidOperationException(
           $"Failed to create an instance of \"{measurementProviderClassName}\" class.");
 
       return UseMeasurementProvider(measurementProvider);
@@ -138,6 +146,12 @@ namespace PiClimate.Logger.Components
     ///   The class name of the measurement logger to use.
     ///   The class name suffix (<see cref="MeasurementLoggerClassNameSuffix" />) may be omitted.
     /// </param>
+    /// <exception cref="ArgumentException">
+    ///   Cannot find a measurement logger class with the provided name.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   Failed to create a new instance of the provided measurement logger class.
+    /// </exception>
     /// <returns>
     ///   The modified builder instance.
     /// </returns>
@@ -146,9 +160,10 @@ namespace PiClimate.Logger.Components
       if (string.IsNullOrWhiteSpace(measurementLoggerClassName))
         return this;
 
-      var measurementLoggerType = GetType().Assembly.GetTypes()
-        .FirstOrDefault(type =>
-          type.GetInterfaces().Contains(typeof(IMeasurementLogger)) && (type.Name == measurementLoggerClassName ||
+      var measurementLoggerType = Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementLogger)) &&
+          (type.Name == measurementLoggerClassName ||
             type.Name == $"{measurementLoggerClassName}{MeasurementLoggerClassNameSuffix}"));
       if (measurementLoggerType == null)
         throw new ArgumentException(
@@ -156,7 +171,7 @@ namespace PiClimate.Logger.Components
 
       var measurementLogger = Activator.CreateInstance(measurementLoggerType) as IMeasurementLogger;
       if (measurementLogger == null)
-        throw new ArgumentException(
+        throw new InvalidOperationException(
           $"Failed to create an instance of \"{measurementLoggerClassName}\" class.");
 
       return AddMeasurementLogger(measurementLogger);
@@ -253,6 +268,12 @@ namespace PiClimate.Logger.Components
     ///   The class name of the measurement limiter to use.
     ///   The class name suffix (<see cref="MeasurementLimiterClassNameSuffix" />) may be omitted.
     /// </param>
+    /// <exception cref="ArgumentException">
+    ///   Cannot find a measurement limiter class with the provided name.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   Failed to create a new instance of the provided measurement limiter class.
+    /// </exception>
     /// <returns>
     ///   The modified builder instance.
     /// </returns>
@@ -261,9 +282,10 @@ namespace PiClimate.Logger.Components
       if (string.IsNullOrWhiteSpace(measurementLimiterClassName))
         return this;
 
-      var measurementLimiterType = GetType().Assembly.GetTypes()
-        .FirstOrDefault(type =>
-          type.GetInterfaces().Contains(typeof(IMeasurementLimiter)) && (type.Name == measurementLimiterClassName ||
+      var measurementLimiterType = Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementLimiter)) &&
+          (type.Name == measurementLimiterClassName ||
             type.Name == $"{measurementLimiterClassName}{MeasurementLimiterClassNameSuffix}"));
       if (measurementLimiterType == null)
         throw new ArgumentException(
@@ -271,7 +293,7 @@ namespace PiClimate.Logger.Components
 
       var measurementLimiter = Activator.CreateInstance(measurementLimiterType) as IMeasurementLimiter;
       if (measurementLimiter == null)
-        throw new ArgumentException(
+        throw new InvalidOperationException(
           $"Failed to create an instance of \"{measurementLimiterClassName}\" class.");
 
       return AddMeasurementLimiter(measurementLimiter);

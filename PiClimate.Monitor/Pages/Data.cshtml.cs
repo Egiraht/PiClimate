@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Models;
-using PiClimate.Monitor.Services;
+using PiClimate.Monitor.Sources;
 
 namespace PiClimate.Monitor.Pages
 {

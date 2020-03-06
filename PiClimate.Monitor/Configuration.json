@@ -1,4 +1,8 @@
 {
+  // Defines the used measurement source.
+  // Available values: MySql (MySqlSource).
+  "UseMeasurementSource": "MySql",
+
   // Defines the named list of connection strings providing the database connection parameters.
   "ConnectionStrings": {
     "MySql": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"

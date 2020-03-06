@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PiClimate.Monitor.Services;
+using PiClimate.Monitor.Components;
+using PiClimate.Monitor.ConfigurationLayout;
 
 namespace PiClimate.Monitor
 {
@@ -49,7 +50,7 @@ namespace PiClimate.Monitor
     {
       services.AddRazorPages();
       services.AddCors();
-      services.AddSingleton<IMeasurementSource>(new MySqlSource(_configuration));
+      services.AddMeasurementSource(_configuration[Root.UseMeasurementSource]);
     }
 
     /// <summary>

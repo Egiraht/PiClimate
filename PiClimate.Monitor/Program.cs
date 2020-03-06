@@ -1,7 +1,11 @@
+using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using PiClimate.Monitor.Sources;
 
 namespace PiClimate.Monitor
 {
@@ -33,10 +37,38 @@ namespace PiClimate.Monitor
     /// <param name="args">
     ///   An array of program's command line arguments.
     /// </param>
-    private static void Main(string[] args)
+    /// <returns>
+    ///   The program's exit code.
+    ///   Returns code <c>0</c> when the program finishes successfully.
+    /// </returns>
+    private static int Main(string[] args)
     {
-      var host = CreateHostBuilder(args).Build();
-      host.Run();
+      try
+      {
+        // Building the web host.
+        var host = CreateHostBuilder(args).Build();
+
+        // Checking the service configuration.
+        using (var scope = host.Services.CreateScope())
+        {
+          var loggerService = scope.ServiceProvider.GetRequiredService<ILogger<Startup>>();
+          if (scope.ServiceProvider.GetService<IMeasurementSource>() == null)
+          {
+            loggerService.LogError("Cannot start a web host as no measurement source is set.");
+            return -1;
+          }
+        }
+
+        // Starting the web host.
+        host.Run();
+
+        return 0;
+      }
+      catch (Exception e)
+      {
+        Console.Error.WriteLine($"The fatal error encountered: {e.Message}");
+        return -1;
+      }
     }
 
     /// <summary>
