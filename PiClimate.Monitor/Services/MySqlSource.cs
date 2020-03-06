@@ -56,10 +56,14 @@ namespace PiClimate.Monitor.Services
     private string SelectSqlTemplate => $@"
       SELECT
         FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(QueryParameters.TimeStep)} *
-          @{nameof(QueryParameters.TimeStep)})) AS `{nameof(Measurement.Timestamp)}`,
-        AVG(`{nameof(Measurement.Pressure)}`) AS `{nameof(Measurement.Pressure)}`,
-        AVG(`{nameof(Measurement.Temperature)}`) AS `{nameof(Measurement.Temperature)}`,
-        AVG(`{nameof(Measurement.Humidity)}`) AS `{nameof(Measurement.Humidity)}`
+          @{nameof(QueryParameters.TimeStep)}))
+          AS `{nameof(Measurement.Timestamp)}`,
+        ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
+          AS `{nameof(Measurement.Pressure)}`,
+        ROUND(AVG(`{nameof(Measurement.Temperature)}`), 3)
+          AS `{nameof(Measurement.Temperature)}`,
+        ROUND(AVG(`{nameof(Measurement.Humidity)}`), 3)
+          AS `{nameof(Measurement.Humidity)}`
       FROM `{_measurementsTableName}`
       WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(QueryParameters.FromTime)} AND
         @{nameof(QueryParameters.ToTime)}

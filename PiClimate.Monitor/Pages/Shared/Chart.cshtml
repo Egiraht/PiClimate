@@ -1,0 +1,9 @@
+@model ChartParameters
+
+<div class="position-relative">
+  <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
+  <script>
+    let filter = @Json.Serialize(Model.Filter);
+    updateChart("@Model.ChartId", filter);
+  </script>
+</div>

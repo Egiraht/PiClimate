@@ -1,4 +1,5 @@
-document.body.onload = async () =>
+// TODO: Implement logic using TypeScript.
+async function updateChart(chartId, filter)
 {
   let data = {};
   try
@@ -9,11 +10,7 @@ document.body.onload = async () =>
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        fromTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        toTime: new Date(Date.now()),
-        resolution: 24 * 60 * 60
-      })
+      body: JSON.stringify(filter)
     });
     let jsonData = await response.json();
     data = jsonData.measurements.map(measurement =>
@@ -28,8 +25,7 @@ document.body.onload = async () =>
   {
   }
 
-  let chartCanvas = document.getElementById("pressure-chart").getContext("2d");
-  let chart = new Chart(chartCanvas,
+  return new Chart(chartId,
     {
       type: "scatter",
       data: {
@@ -39,6 +35,7 @@ document.body.onload = async () =>
             data: data,
             radius: 0,
             showLine: true,
+            backgroundColor: "blue",
             borderColor: "blue",
             borderWidth: 2,
             lineTension: 0,
@@ -52,16 +49,21 @@ document.body.onload = async () =>
             {
               type: "time",
               time: {
-                minUnit: "second"
+                minUnit: "second",
+                displayFormats: {
+                  second: "hh:mm:ss",
+                  minute: "hh:mm",
+                  hour: "hh"
+                }
               }
             }
           ]
         },
         tooltips: {
-          mode: "x",
+          mode: "index",
           intersect: false
         }
       }
     }
   );
-};
+}
