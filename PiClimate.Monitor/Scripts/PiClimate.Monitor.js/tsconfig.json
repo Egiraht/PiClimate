@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "System",
+    "target": "ES2015",
+    "outFile": "../../Static/js/PiClimate.Monitor.js",
+    "strict": true,
+    "removeComments": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "compileOnSave": true
+}

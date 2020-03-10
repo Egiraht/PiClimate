@@ -11,8 +11,26 @@
     <FileVersion>1.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="MySqlConnector" Version="0.61.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts/PiClimate.Monitor.js/**/*.ts" />
+    <TypeScriptCompile Include="Scripts/PiClimate.Monitor.js/**/*.ts" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Remove="Scripts/**/*.json" />
+    <None Include="Scripts/**/*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Static/**/*" />
+    <Content Include="Static/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

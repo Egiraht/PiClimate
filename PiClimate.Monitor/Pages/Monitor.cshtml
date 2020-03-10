@@ -1,0 +1,7 @@
+﻿@page "/Monitor/{handler?}"
+@model Monitor
+@{
+  Layout = "_Layout";
+}
+
+<partial name="Chart" model="@Model.ChartParameters" />

@@ -11,6 +11,7 @@
     <option name="SEND_DEBUG_REQUEST" value="1" />
     <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
     <method v="2">
+      <option name="TypeScript.Before.Run" enabled="true" FAIL_ON_ERROR="true" CONFIG_PATH="$PROJECT_DIR$/PiClimate.Monitor/Scripts/PiClimate.Monitor.js/tsconfig.json" />
       <option name="Build" enabled="true" />
     </method>
   </configuration>

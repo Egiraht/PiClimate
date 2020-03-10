@@ -1,17 +1,2 @@
-﻿@page
-@{
-  Layout = "_Layout";
-
-  var chartParameters = new ChartParameters
-  {
-    ChartId = "pressure-chart",
-    Filter = new MeasurementFilter
-    {
-      FromTime = DateTime.Now - TimeSpan.FromHours(1),
-      ToTime = DateTime.Now,
-      Resolution = 60 * 60
-    }
-  };
-}
-
-<partial name="Chart" model="@chartParameters" />
+@page
+@model Index

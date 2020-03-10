@@ -1,9 +1,9 @@
 @model ChartParameters
 
-<div class="position-relative">
+<div class="chart position-relative">
   <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
   <script>
-    let filter = @Json.Serialize(Model.Filter);
-    updateChart("@Model.ChartId", filter);
+    let chart = new PiClimate.Monitor.ChartControl(@Json.Serialize(Model));
+    chart.updateChart();
   </script>
 </div>
