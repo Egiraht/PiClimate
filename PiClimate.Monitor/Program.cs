@@ -81,10 +81,12 @@ namespace PiClimate.Monitor
     ///   The configured web host builder instance.
     /// </returns>
     private static IHostBuilder CreateHostBuilder(string[] args) => Host
-      .CreateDefaultBuilder(args)
+      .CreateDefaultBuilder()
       .ConfigureWebHostDefaults(builder => builder
         .UseStartup<Startup>()
         .UseWebRoot("Static"))
-      .ConfigureAppConfiguration(builder => builder.AddJsonFile(ConfigurationJsonFileName));
+      .ConfigureAppConfiguration(builder => builder
+        .AddJsonFile(ConfigurationJsonFileName)
+        .AddCommandLine(args));
   }
 }
