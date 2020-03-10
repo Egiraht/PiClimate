@@ -3,7 +3,8 @@
 <div class="chart position-relative">
   <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
   <script>
-    let chart = new PiClimate.Monitor.ChartControl(@Json.Serialize(Model));
+    let chartParameters = @Json.Serialize(Model);
+    let chart = new PiClimate.Monitor.ChartControl(chartParameters);
     chart.updateChart();
   </script>
 </div>

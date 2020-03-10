@@ -6,11 +6,19 @@ namespace PiClimate.Monitor
   {
     public chartId: string = "";
 
-    public chartLabel: string = "";
+    public pressureChartLabel: string = "";
 
-    public measurementParameter: string = "";
+    public temperatureChartLabel: string = "";
 
-    public lineColor: string = "";
+    public humidityChartLabel: string = "";
+
+    public pressureLineColor: string = "";
+
+    public temperatureLineColor: string = "";
+
+    public humidityLineColor: string = "";
+
+    public trimSpaces: boolean = false;
 
     public requestUri: string = "";
 

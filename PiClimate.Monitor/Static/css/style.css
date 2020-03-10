@@ -5,3 +5,8 @@ body
 {
   min-width: var(--breakpoint-sm);
 }
+
+.chart-canvas
+{
+  display: none;
+}

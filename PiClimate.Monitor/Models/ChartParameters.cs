@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using System.Reflection;
-using PiClimate.Monitor.Components;
-
 namespace PiClimate.Monitor.Models
 {
   /// <summary>
@@ -10,47 +5,63 @@ namespace PiClimate.Monitor.Models
   /// </summary>
   public class ChartParameters
   {
-    private string _measurementParameter = MeasurementParameterTypes.Pressure;
+    /// <summary>
+    ///   Defines the default line color value for pressure.
+    /// </summary>
+    public const string DefaultPressureLineColor = "blue";
 
     /// <summary>
-    ///   Defines the default line color value.
+    ///   Defines the default line color value for temperature.
     /// </summary>
-    public const string DefaultLineColor = "blue";
+    public const string DefaultTemperatureLineColor = "green";
+
+    /// <summary>
+    ///   Defines the default line color value for humidity.
+    /// </summary>
+    public const string DefaultHumidityLineColor = "red";
 
     /// <summary>
     ///   Gets or sets the ID string identifying the chart in the HTML markup.
     /// </summary>
-    public string ChartId { get; set; } = $"{nameof(Measurement.Pressure).ToLower()}-chart";
+    public string ChartId { get; set; } = "measurements-chart";
 
     /// <summary>
-    ///   Gets or sets the chart's label string.
+    ///   Gets or sets the chart's label string for pressure.
     /// </summary>
-    public string ChartLabel { get; set; } = nameof(Measurement.Pressure);
+    public string PressureChartLabel { get; set; } = nameof(Measurement.Pressure);
 
     /// <summary>
-    ///   Gets or sets the measurement parameter name used as a data source for the chart.
-    ///   The value must be the one of the constants defined in <see cref="MeasurementParameterTypes" /> class.
+    ///   Gets or sets the chart's label string for temperature.
     /// </summary>
-    public string MeasurementParameter
-    {
-      get => _measurementParameter;
-      set
-      {
-        var properties = typeof(MeasurementParameterTypes)
-          .GetProperties(BindingFlags.Public | BindingFlags.Static)
-          .Where(property => property.PropertyType == typeof(string) && property.GetValue(null) != null)
-          .Select(property => (string) property.GetValue(null)!);
-
-        _measurementParameter = properties.Contains(value, StringComparer.InvariantCultureIgnoreCase)
-          ? value
-          : MeasurementParameterTypes.Pressure;
-      }
-    }
+    public string TemperatureChartLabel { get; set; } = nameof(Measurement.Temperature);
 
     /// <summary>
-    ///   Gets or sets the chart's line color value.
+    ///   Gets or sets the chart's label string for humidity.
     /// </summary>
-    public string LineColor { get; set; } = DefaultLineColor;
+    public string HumidityChartLabel { get; set; } = nameof(Measurement.Humidity);
+
+    /// <summary>
+    ///   Gets or sets the chart's line color value for pressure.
+    /// </summary>
+    public string PressureLineColor { get; set; } = DefaultPressureLineColor;
+
+
+    /// <summary>
+    ///   Gets or sets the chart's line color value for temperature.
+    /// </summary>
+    public string TemperatureLineColor { get; set; } = DefaultTemperatureLineColor;
+
+
+    /// <summary>
+    ///   Gets or sets the chart's line color value for humidity.
+    /// </summary>
+    public string HumidityLineColor { get; set; } = DefaultHumidityLineColor;
+
+    /// <summary>
+    ///   Gets or sets the flag indicating whether empty spaces should be trimmed at the beginning and ending of the
+    ///   selected timespan.
+    /// </summary>
+    public bool TrimSpaces { get; set; } = false;
 
     /// <summary>
     ///   Gets or sets the URI string where the HTTP request should be made.

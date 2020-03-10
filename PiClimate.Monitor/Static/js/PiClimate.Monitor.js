@@ -12,6 +12,42 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
+        class MeasurementFilter {
+            constructor() {
+                this.fromTime = null;
+                this.toTime = null;
+                this.resolution = null;
+            }
+        }
+        Monitor.MeasurementFilter = MeasurementFilter;
+    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
+})(PiClimate || (PiClimate = {}));
+var PiClimate;
+(function (PiClimate) {
+    var Monitor;
+    (function (Monitor) {
+        class ChartParameters {
+            constructor() {
+                this.chartId = "";
+                this.pressureChartLabel = "";
+                this.temperatureChartLabel = "";
+                this.humidityChartLabel = "";
+                this.pressureLineColor = "";
+                this.temperatureLineColor = "";
+                this.humidityLineColor = "";
+                this.trimSpaces = false;
+                this.requestUri = "";
+                this.requestMethod = "POST";
+                this.filter = new Monitor.MeasurementFilter();
+            }
+        }
+        Monitor.ChartParameters = ChartParameters;
+    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
+})(PiClimate || (PiClimate = {}));
+var PiClimate;
+(function (PiClimate) {
+    var Monitor;
+    (function (Monitor) {
         class Measurement {
             constructor() {
                 this.d = null;
@@ -61,38 +97,6 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
-        class MeasurementFilter {
-            constructor() {
-                this.fromTime = null;
-                this.toTime = null;
-                this.resolution = null;
-            }
-        }
-        Monitor.MeasurementFilter = MeasurementFilter;
-    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
-})(PiClimate || (PiClimate = {}));
-var PiClimate;
-(function (PiClimate) {
-    var Monitor;
-    (function (Monitor) {
-        class ChartParameters {
-            constructor() {
-                this.chartId = "";
-                this.chartLabel = "";
-                this.measurementParameter = "";
-                this.lineColor = "";
-                this.requestUri = "";
-                this.requestMethod = "POST";
-                this.filter = new Monitor.MeasurementFilter();
-            }
-        }
-        Monitor.ChartParameters = ChartParameters;
-    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
-})(PiClimate || (PiClimate = {}));
-var PiClimate;
-(function (PiClimate) {
-    var Monitor;
-    (function (Monitor) {
         class ChartControl {
             constructor(chartParameters) {
                 this.chart = null;
@@ -122,25 +126,55 @@ var PiClimate;
                     let response = yield this.fetchFromJson();
                     if (!response || !response.measurements)
                         return false;
+                    let defaults = Chart.defaults.global.elements;
+                    defaults.point.radius = 0;
+                    defaults.point.hitRadius = 0;
+                    defaults.point.hoverRadius = 0;
+                    defaults.line.borderWidth = 2;
+                    defaults.line.tension = 0;
+                    defaults.line.fill = false;
                     this.chart = new Chart(this.chartParameters.chartId, {
                         type: "scatter",
                         data: {
                             datasets: [
                                 {
-                                    label: this.chartParameters.chartLabel,
+                                    label: this.chartParameters.pressureChartLabel,
+                                    yAxisID: this.chartParameters.pressureChartLabel,
+                                    backgroundColor: this.chartParameters.pressureLineColor,
+                                    borderColor: this.chartParameters.pressureLineColor,
+                                    showLine: true,
                                     data: response.measurements.map(measurement => {
                                         return {
                                             x: measurement.d,
-                                            y: measurement[this.chartParameters.measurementParameter]
+                                            y: measurement.p
                                         };
-                                    }),
-                                    radius: 0,
+                                    })
+                                },
+                                {
+                                    label: this.chartParameters.temperatureChartLabel,
+                                    yAxisID: this.chartParameters.temperatureChartLabel,
+                                    backgroundColor: this.chartParameters.temperatureLineColor,
+                                    borderColor: this.chartParameters.temperatureLineColor,
                                     showLine: true,
-                                    backgroundColor: this.chartParameters.lineColor,
-                                    borderColor: this.chartParameters.lineColor,
-                                    borderWidth: 2,
-                                    lineTension: 0,
-                                    fill: false
+                                    data: response.measurements.map(measurement => {
+                                        return {
+                                            x: measurement.d,
+                                            y: measurement.t
+                                        };
+                                    })
+                                },
+                                {
+                                    label: this.chartParameters.humidityChartLabel,
+                                    yAxisID: this.chartParameters.humidityChartLabel,
+                                    backgroundColor: this.chartParameters.humidityLineColor,
+                                    borderColor: this.chartParameters.humidityLineColor,
+                                    showLine: true,
+                                    data: response.measurements.map(measurement => {
+                                        return {
+                                            x: measurement.d,
+                                            y: measurement.h
+                                        };
+                                    })
                                 }
                             ],
                         },
@@ -157,13 +191,65 @@ var PiClimate;
                                                 minute: "HH:mm",
                                                 hour: "HH:00"
                                             }
+                                        },
+                                        ticks: this.chartParameters.trimSpaces ? {} : {
+                                            min: response.fromTime,
+                                            max: response.toTime
+                                        }
+                                    }
+                                ],
+                                yAxes: [
+                                    {
+                                        id: this.chartParameters.pressureChartLabel,
+                                        type: "linear",
+                                        position: "left",
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: this.chartParameters.pressureChartLabel,
+                                            fontColor: this.chartParameters.pressureLineColor
+                                        },
+                                        gridLines: {
+                                            color: this.chartParameters.pressureLineColor,
+                                            lineWidth: 0.33
+                                        }
+                                    },
+                                    {
+                                        id: this.chartParameters.temperatureChartLabel,
+                                        type: "linear",
+                                        position: "left",
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: this.chartParameters.temperatureChartLabel,
+                                            fontColor: this.chartParameters.temperatureLineColor
+                                        },
+                                        gridLines: {
+                                            color: this.chartParameters.temperatureLineColor,
+                                            lineWidth: 0.33
+                                        }
+                                    },
+                                    {
+                                        id: this.chartParameters.humidityChartLabel,
+                                        type: "linear",
+                                        position: "left",
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: this.chartParameters.humidityChartLabel,
+                                            fontColor: this.chartParameters.humidityLineColor
+                                        },
+                                        gridLines: {
+                                            color: this.chartParameters.humidityLineColor,
+                                            lineWidth: 0.33
                                         }
                                     }
                                 ]
                             },
                             tooltips: {
                                 mode: "index",
-                                intersect: false
+                                intersect: false,
+                                position: "nearest"
+                            },
+                            animation: {
+                                duration: 500
                             }
                         }
                     });

@@ -5,6 +5,6 @@ namespace PiClimate.Monitor.Pages
 {
   public class Index : PageModel
   {
-    public IActionResult OnGet() => RedirectToPage(nameof(Monitor), Monitor.DefaultPageHandler);
+    public IActionResult OnGet() => RedirectToPage(nameof(Monitor));
   }
 }
