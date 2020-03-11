@@ -10,6 +10,11 @@ namespace PiClimate.Monitor.Pages
   public class Monitor : PageModel
   {
     /// <summary>
+    ///   Defines the chart ID string.
+    /// </summary>
+    public const string ChartId = "measurements-chart";
+
+    /// <summary>
     ///   Defines the climatic data source URI used for HTTP requests.
     /// </summary>
     public const string DataSourceRequestUri = nameof(Data);
@@ -22,7 +27,11 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   The chart parameters used for the climatic data chart creation.
     /// </summary>
-    public ChartParameters ChartParameters { get; private set; } = new ChartParameters();
+    public readonly ChartParameters ChartParameters = new ChartParameters(ChartId)
+    {
+      RequestUri = DataSourceRequestUri,
+      RequestMethod = DataSourceRequestMethod
+    };
 
     /// <summary>
     ///   The callback handler for GET HTTP requests.
@@ -35,13 +44,7 @@ namespace PiClimate.Monitor.Pages
     /// </returns>
     public IActionResult OnGet(MeasurementFilter filter)
     {
-      ChartParameters = new ChartParameters
-      {
-        RequestUri = DataSourceRequestUri,
-        RequestMethod = DataSourceRequestMethod,
-        Filter = filter
-      };
-
+      ChartParameters.Filter = filter;
       return Page();
     }
   }

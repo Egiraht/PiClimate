@@ -4,7 +4,7 @@ namespace PiClimate.Monitor
 {
   export class ChartParameters
   {
-    public chartId: string = "measurements-chart";
+    public readonly chartId: string;
 
     public pressureChartLabel: string = "Pressure";
 
@@ -29,5 +29,10 @@ namespace PiClimate.Monitor
     public requestMethod: string = "POST";
 
     public filter: MeasurementFilter = new MeasurementFilter();
+
+    public constructor(chartId: string)
+    {
+      this.chartId = chartId;
+    }
   }
 }

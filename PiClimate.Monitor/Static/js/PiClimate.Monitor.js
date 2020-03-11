@@ -28,8 +28,7 @@ var PiClimate;
     var Monitor;
     (function (Monitor) {
         class ChartParameters {
-            constructor() {
-                this.chartId = "measurements-chart";
+            constructor(chartId) {
                 this.pressureChartLabel = "Pressure";
                 this.temperatureChartLabel = "Temperature";
                 this.humidityChartLabel = "Humidity";
@@ -42,6 +41,7 @@ var PiClimate;
                 this.requestUri = "";
                 this.requestMethod = "POST";
                 this.filter = new Monitor.MeasurementFilter();
+                this.chartId = chartId;
             }
         }
         Monitor.ChartParameters = ChartParameters;
@@ -95,8 +95,125 @@ var PiClimate;
     (function (Monitor) {
         class ChartControl {
             constructor(chartParameters) {
-                this.chart = null;
                 this.chartParameters = chartParameters;
+                let defaults = Chart.defaults.global.elements;
+                defaults.point.radius = 0.5;
+                defaults.point.hitRadius = 0;
+                defaults.point.hoverRadius = 0;
+                defaults.line.borderWidth = 2;
+                defaults.line.tension = 0;
+                defaults.line.fill = false;
+                this.chart = new Chart(this.chartParameters.chartId, {
+                    type: "scatter",
+                    data: {
+                        datasets: [
+                            {
+                                label: this.chartParameters.pressureChartLabel,
+                                yAxisID: this.chartParameters.pressureChartLabel,
+                                backgroundColor: this.chartParameters.pressureLineColor,
+                                borderColor: this.chartParameters.pressureLineColor,
+                                showLine: true,
+                                data: []
+                            },
+                            {
+                                label: this.chartParameters.temperatureChartLabel,
+                                yAxisID: this.chartParameters.temperatureChartLabel,
+                                backgroundColor: this.chartParameters.temperatureLineColor,
+                                borderColor: this.chartParameters.temperatureLineColor,
+                                showLine: true,
+                                data: []
+                            },
+                            {
+                                label: this.chartParameters.humidityChartLabel,
+                                yAxisID: this.chartParameters.humidityChartLabel,
+                                backgroundColor: this.chartParameters.humidityLineColor,
+                                borderColor: this.chartParameters.humidityLineColor,
+                                showLine: true,
+                                data: []
+                            }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [
+                                {
+                                    type: "time",
+                                    time: {
+                                        isoWeekday: true,
+                                        minUnit: "second",
+                                        displayFormats: {
+                                            second: "HH:mm:ss",
+                                            minute: "HH:mm",
+                                            hour: "HH:00"
+                                        }
+                                    },
+                                    ticks: {}
+                                }
+                            ],
+                            yAxes: [
+                                {
+                                    id: this.chartParameters.pressureChartLabel,
+                                    type: "linear",
+                                    position: "left",
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: `${this.chartParameters.pressureChartLabel}, ${this.chartParameters.pressureUnits}`,
+                                        fontColor: this.chartParameters.pressureLineColor
+                                    },
+                                    gridLines: {
+                                        color: this.chartParameters.pressureLineColor,
+                                        lineWidth: 0.5
+                                    },
+                                    ticks: {
+                                        fontColor: this.chartParameters.pressureLineColor
+                                    }
+                                },
+                                {
+                                    id: this.chartParameters.temperatureChartLabel,
+                                    type: "linear",
+                                    position: "right",
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: `${this.chartParameters.temperatureChartLabel}, ${this.chartParameters.temperatureUnits}`,
+                                        fontColor: this.chartParameters.temperatureLineColor
+                                    },
+                                    gridLines: {
+                                        color: this.chartParameters.temperatureLineColor,
+                                        lineWidth: 0.5
+                                    },
+                                    ticks: {
+                                        fontColor: this.chartParameters.temperatureLineColor
+                                    }
+                                },
+                                {
+                                    id: this.chartParameters.humidityChartLabel,
+                                    type: "linear",
+                                    position: "right",
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: `${this.chartParameters.humidityChartLabel}, ${this.chartParameters.humidityUnits}`,
+                                        fontColor: this.chartParameters.humidityLineColor
+                                    },
+                                    gridLines: {
+                                        color: this.chartParameters.humidityLineColor,
+                                        lineWidth: 0.5
+                                    },
+                                    ticks: {
+                                        fontColor: this.chartParameters.humidityLineColor
+                                    }
+                                }
+                            ]
+                        },
+                        tooltips: {
+                            mode: "index",
+                            intersect: false,
+                            position: "nearest"
+                        },
+                        animation: {
+                            duration: 500
+                        }
+                    }
+                });
             }
             fetchFromJson() {
                 return __awaiter(this, void 0, void 0, function* () {
@@ -122,146 +239,33 @@ var PiClimate;
                     let response = yield this.fetchFromJson();
                     if (!response || !response.measurements)
                         return false;
-                    let defaults = Chart.defaults.global.elements;
-                    defaults.point.radius = 0.5;
-                    defaults.point.hitRadius = 0;
-                    defaults.point.hoverRadius = 0;
-                    defaults.line.borderWidth = 2;
-                    defaults.line.tension = 0;
-                    defaults.line.fill = false;
-                    this.chart = new Chart(this.chartParameters.chartId, {
-                        type: "scatter",
-                        data: {
-                            datasets: [
-                                {
-                                    label: this.chartParameters.pressureChartLabel,
-                                    yAxisID: this.chartParameters.pressureChartLabel,
-                                    backgroundColor: this.chartParameters.pressureLineColor,
-                                    borderColor: this.chartParameters.pressureLineColor,
-                                    showLine: true,
-                                    data: response.measurements.map(measurement => {
-                                        return {
-                                            x: measurement.d,
-                                            y: measurement.p
-                                        };
-                                    })
-                                },
-                                {
-                                    label: this.chartParameters.temperatureChartLabel,
-                                    yAxisID: this.chartParameters.temperatureChartLabel,
-                                    backgroundColor: this.chartParameters.temperatureLineColor,
-                                    borderColor: this.chartParameters.temperatureLineColor,
-                                    showLine: true,
-                                    data: response.measurements.map(measurement => {
-                                        return {
-                                            x: measurement.d,
-                                            y: measurement.t
-                                        };
-                                    })
-                                },
-                                {
-                                    label: this.chartParameters.humidityChartLabel,
-                                    yAxisID: this.chartParameters.humidityChartLabel,
-                                    backgroundColor: this.chartParameters.humidityLineColor,
-                                    borderColor: this.chartParameters.humidityLineColor,
-                                    showLine: true,
-                                    data: response.measurements.map(measurement => {
-                                        return {
-                                            x: measurement.d,
-                                            y: measurement.h
-                                        };
-                                    })
-                                }
-                            ],
-                        },
-                        options: {
-                            scales: {
-                                xAxes: [
-                                    {
-                                        type: "time",
-                                        time: {
-                                            isoWeekday: true,
-                                            minUnit: "second",
-                                            displayFormats: {
-                                                second: "HH:mm:ss",
-                                                minute: "HH:mm",
-                                                hour: "HH:00"
-                                            }
-                                        },
-                                        ticks: {
-                                            min: response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-                                                ? response.minTime
-                                                : this.chartParameters.filter.fromTime,
-                                            max: response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
-                                                ? response.maxTime
-                                                : this.chartParameters.filter.toTime
-                                        }
-                                    }
-                                ],
-                                yAxes: [
-                                    {
-                                        id: this.chartParameters.pressureChartLabel,
-                                        type: "linear",
-                                        position: "left",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: `${this.chartParameters.pressureChartLabel}, ${this.chartParameters.pressureUnits}`,
-                                            fontColor: this.chartParameters.pressureLineColor
-                                        },
-                                        gridLines: {
-                                            color: this.chartParameters.pressureLineColor,
-                                            lineWidth: 0.5
-                                        },
-                                        ticks: {
-                                            fontColor: this.chartParameters.pressureLineColor
-                                        }
-                                    },
-                                    {
-                                        id: this.chartParameters.temperatureChartLabel,
-                                        type: "linear",
-                                        position: "right",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: `${this.chartParameters.temperatureChartLabel}, ${this.chartParameters.temperatureUnits}`,
-                                            fontColor: this.chartParameters.temperatureLineColor
-                                        },
-                                        gridLines: {
-                                            color: this.chartParameters.temperatureLineColor,
-                                            lineWidth: 0.5
-                                        },
-                                        ticks: {
-                                            fontColor: this.chartParameters.temperatureLineColor
-                                        }
-                                    },
-                                    {
-                                        id: this.chartParameters.humidityChartLabel,
-                                        type: "linear",
-                                        position: "right",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: `${this.chartParameters.humidityChartLabel}, ${this.chartParameters.humidityUnits}`,
-                                            fontColor: this.chartParameters.humidityLineColor
-                                        },
-                                        gridLines: {
-                                            color: this.chartParameters.humidityLineColor,
-                                            lineWidth: 0.5
-                                        },
-                                        ticks: {
-                                            fontColor: this.chartParameters.humidityLineColor
-                                        }
-                                    }
-                                ]
-                            },
-                            tooltips: {
-                                mode: "index",
-                                intersect: false,
-                                position: "nearest"
-                            },
-                            animation: {
-                                duration: 500
-                            }
-                        }
+                    this.chart.data.datasets[0].data = response.measurements.map(measurement => {
+                        return {
+                            x: measurement.d,
+                            y: measurement.p
+                        };
                     });
+                    this.chart.data.datasets[1].data = response.measurements.map(measurement => {
+                        return {
+                            x: measurement.d,
+                            y: measurement.t
+                        };
+                    });
+                    this.chart.data.datasets[2].data = response.measurements.map(measurement => {
+                        return {
+                            x: measurement.d,
+                            y: measurement.h
+                        };
+                    });
+                    this.chart.options.scales.xAxes[0].ticks = {
+                        min: response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+                            ? response.minTime
+                            : this.chartParameters.filter.fromTime,
+                        max: response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
+                            ? response.maxTime
+                            : this.chartParameters.filter.toTime
+                    };
+                    this.chart.update();
                     return true;
                 });
             }

@@ -21,9 +21,9 @@ namespace PiClimate.Monitor.Models
     public const string DefaultHumidityLineColor = "red";
 
     /// <summary>
-    ///   Gets or sets the ID string identifying the chart in the HTML markup.
+    ///   Gets the ID string identifying the chart in the HTML markup.
     /// </summary>
-    public string ChartId { get; set; } = "measurements-chart";
+    public string ChartId { get; }
 
     /// <summary>
     ///   Gets or sets the chart's label string for pressure.
@@ -84,5 +84,16 @@ namespace PiClimate.Monitor.Models
     ///   Gets or sets the measurement filter assigned for the chart.
     /// </summary>
     public MeasurementFilter Filter { get; set; } = new MeasurementFilter();
+
+    /// <summary>
+    ///   Creates a new instance of chart parameters.
+    /// </summary>
+    /// <param name="chartId">
+    ///   The ID string identifying the chart in the HTML markup.
+    /// </param>
+    public ChartParameters(string chartId)
+    {
+      ChartId = chartId;
+    }
   }
 }

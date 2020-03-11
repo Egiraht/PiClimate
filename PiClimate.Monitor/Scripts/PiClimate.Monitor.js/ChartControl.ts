@@ -8,40 +8,11 @@ namespace PiClimate.Monitor
     public readonly chartParameters: ChartParameters;
 
     // @ts-ignore
-    private chart: Chart | null = null;
+    private chart: Chart;
 
     public constructor(chartParameters: ChartParameters)
     {
       this.chartParameters = chartParameters;
-    }
-
-    private async fetchFromJson(): Promise<MeasurementsCollection | null>
-    {
-      try
-      {
-        let response = await fetch(this.chartParameters.requestUri, {
-          method: this.chartParameters.requestMethod,
-          mode: "cors",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(this.chartParameters.filter)
-        });
-
-        return await response.json() as MeasurementsCollection;
-      }
-      catch
-      {
-        return null;
-      }
-    }
-
-    public async updateChart(): Promise<boolean>
-    {
-      let response = await this.fetchFromJson();
-      if (!response || !response.measurements)
-        return false;
 
       // @ts-ignore
       let defaults = Chart.defaults.global.elements;
@@ -63,13 +34,7 @@ namespace PiClimate.Monitor
               backgroundColor: this.chartParameters.pressureLineColor,
               borderColor: this.chartParameters.pressureLineColor,
               showLine: true,
-              data: response.measurements.map(measurement =>
-              {
-                return {
-                  x: measurement.d,
-                  y: measurement.p
-                }
-              })
+              data: []
             },
             {
               label: this.chartParameters.temperatureChartLabel,
@@ -77,13 +42,7 @@ namespace PiClimate.Monitor
               backgroundColor: this.chartParameters.temperatureLineColor,
               borderColor: this.chartParameters.temperatureLineColor,
               showLine: true,
-              data: response.measurements.map(measurement =>
-              {
-                return {
-                  x: measurement.d,
-                  y: measurement.t
-                }
-              })
+              data: []
             },
             {
               label: this.chartParameters.humidityChartLabel,
@@ -91,13 +50,7 @@ namespace PiClimate.Monitor
               backgroundColor: this.chartParameters.humidityLineColor,
               borderColor: this.chartParameters.humidityLineColor,
               showLine: true,
-              data: response.measurements.map(measurement =>
-              {
-                return {
-                  x: measurement.d,
-                  y: measurement.h
-                }
-              })
+              data: []
             }
           ],
         },
@@ -115,16 +68,7 @@ namespace PiClimate.Monitor
                     hour: "HH:00"
                   }
                 },
-                ticks: {
-                  min:
-                    response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-                      ? response.minTime
-                      : this.chartParameters.filter.fromTime,
-                  max:
-                    response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
-                      ? response.maxTime
-                      : this.chartParameters.filter.toTime
-                }
+                ticks: {}
               }
             ],
             yAxes: [
@@ -191,7 +135,72 @@ namespace PiClimate.Monitor
           }
         }
       });
+    }
 
+    private async fetchFromJson(): Promise<MeasurementsCollection | null>
+    {
+      try
+      {
+        let response = await fetch(this.chartParameters.requestUri, {
+          method: this.chartParameters.requestMethod,
+          mode: "cors",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(this.chartParameters.filter)
+        });
+
+        return await response.json() as MeasurementsCollection;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
+    public async updateChart(): Promise<boolean>
+    {
+      let response = await this.fetchFromJson();
+      if (!response || !response.measurements)
+        return false;
+
+      this.chart.data.datasets[0].data = response.measurements.map(measurement =>
+      {
+        return {
+          x: measurement.d,
+          y: measurement.p
+        }
+      });
+
+      this.chart.data.datasets[1].data = response.measurements.map(measurement =>
+      {
+        return {
+          x: measurement.d,
+          y: measurement.t
+        }
+      });
+
+      this.chart.data.datasets[2].data = response.measurements.map(measurement =>
+      {
+        return {
+          x: measurement.d,
+          y: measurement.h
+        }
+      });
+
+      this.chart.options.scales.xAxes[0].ticks = {
+        min:
+          response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+            ? response.minTime
+            : this.chartParameters.filter.fromTime,
+        max:
+          response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
+            ? response.maxTime
+            : this.chartParameters.filter.toTime
+      };
+
+      this.chart.update();
       return true;
     }
   }
