@@ -2,6 +2,69 @@
 
 <div class="chart position-relative">
   <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
+
+  <div class="container-fluid py-2">
+    <div class="row">
+      <div class="time text-right col-3 col-xl-2">
+        First timestamp:
+      </div>
+      <div class="time text-left col-9 col-xl-4">
+        ...
+      </div>
+      <div class="time text-right col-3 col-xl-2">
+        Last timestamp:
+      </div>
+      <div class="time text-left col-9 col-xl-4">
+        ...
+      </div>
+    </div>
+
+    <div class="pressure row">
+      <div class="pressure text-right col-3 col-xl-2">
+        Min pressure:
+      </div>
+      <div class="pressure text-left col-9 col-xl-4">
+        ... @Model.PressureUnits (...)
+      </div>
+      <div class="pressure text-right col-3 col-xl-2">
+        Max pressure:
+      </div>
+      <div class="pressure text-left col-9 col-xl-4">
+        ... @Model.PressureUnits (...)
+      </div>
+    </div>
+
+    <div class="temperature row">
+      <div class="temperature text-right col-3 col-xl-2">
+        Min temperature:
+      </div>
+      <div class="temperature text-left col-9 col-xl-4">
+        ... @Model.TemperatureUnits (...)
+      </div>
+      <div class="temperature text-right col-3 col-xl-2">
+        Max temperature:
+      </div>
+      <div class="temperature text-left col-9 col-xl-4">
+        ... @Model.TemperatureUnits (...)
+      </div>
+    </div>
+
+    <div class="humidity row">
+      <div class="humidity text-right col-3 col-xl-2">
+        Min humidity:
+      </div>
+      <div class="humidity text-left col-9 col-xl-4">
+        ... @Model.HumidityUnits (...)
+      </div>
+      <div class="humidity text-right col-3 col-xl-2">
+        Max humidity:
+      </div>
+      <div class="humidity text-left col-9 col-xl-4">
+        ... @Model.HumidityUnits (...)
+      </div>
+    </div>
+  </div>
+
   <script>
     let chartParameters = @Json.Serialize(Model);
     let chart = new PiClimate.Monitor.ChartControl(chartParameters);

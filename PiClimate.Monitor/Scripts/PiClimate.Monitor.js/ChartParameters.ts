@@ -12,6 +12,12 @@ namespace PiClimate.Monitor
 
     public humidityChartLabel: string = "Humidity";
 
+    public pressureUnits: string = "mmHg";
+
+    public temperatureUnits: string = "°C";
+
+    public humidityUnits: string = "%";
+
     public pressureLineColor: string = "blue";
 
     public temperatureLineColor: string = "green";

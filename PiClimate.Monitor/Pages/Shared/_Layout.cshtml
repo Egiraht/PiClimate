@@ -14,14 +14,14 @@
 
   <body>
     <div class="container-fluid">
-      <div class="row flex-lg-nowrap align-items-start align-items-lg-stretch vh-100">
+      <div class="row flex-column flex-lg-row flex-nowrap vh-100">
         @* Navigation menu. *@
-        <aside id="nav-menu" class="navbar navbar-dark bg-dark overflow-auto flex-lg-column col-lg-3">
+        <aside id="nav-menu" class="navbar navbar-dark bg-dark overflow-auto flex-lg-column flex-grow-0 flex-shrink-0 col-auto">
           <partial name="NavMenu" />
         </aside>
 
         @* Main content. *@
-        <main id="main" class="bg-light overflow-auto col-lg-9 h-100">
+        <main id="main" class="bg-light overflow-auto col">
           @RenderBody()
         </main>
       </div>

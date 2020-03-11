@@ -1,6 +1,14 @@
 @import "bootstrap.min.css";
 @import "Chart.min.css";
 
+:root
+{
+  --time-color: dimgrey;
+  --pressure-color: blue;
+  --temperature-color: green;
+  --humidity-color: red;
+}
+
 body
 {
   min-width: var(--breakpoint-sm);
@@ -9,4 +17,28 @@ body
 .chart-canvas
 {
   display: none;
+}
+
+.time
+{
+  color: var(--time-color) !important;
+  border-color: var(--time-color) !important;
+}
+
+.pressure
+{
+  color: var(--pressure-color) !important;
+  border-color: var(--pressure-color) !important;
+}
+
+.temperature
+{
+  color: var(--temperature-color) !important;
+  border-color: var(--temperature-color) !important;
+}
+
+.humidity
+{
+  color: var(--humidity-color) !important;
+  border-color: var(--humidity-color) !important;
 }

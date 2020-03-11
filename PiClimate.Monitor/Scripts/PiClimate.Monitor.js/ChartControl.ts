@@ -134,7 +134,7 @@ namespace PiClimate.Monitor
                 position: "left",
                 scaleLabel: {
                   display: true,
-                  labelString: this.chartParameters.pressureChartLabel,
+                  labelString: `${this.chartParameters.pressureChartLabel}, ${this.chartParameters.pressureUnits}`,
                   fontColor: this.chartParameters.pressureLineColor
                 },
                 gridLines: {
@@ -148,10 +148,10 @@ namespace PiClimate.Monitor
               {
                 id: this.chartParameters.temperatureChartLabel,
                 type: "linear",
-                position: "left",
+                position: "right",
                 scaleLabel: {
                   display: true,
-                  labelString: this.chartParameters.temperatureChartLabel,
+                  labelString: `${this.chartParameters.temperatureChartLabel}, ${this.chartParameters.temperatureUnits}`,
                   fontColor: this.chartParameters.temperatureLineColor
                 },
                 gridLines: {
@@ -165,10 +165,10 @@ namespace PiClimate.Monitor
               {
                 id: this.chartParameters.humidityChartLabel,
                 type: "linear",
-                position: "left",
+                position: "right",
                 scaleLabel: {
                   display: true,
-                  labelString: this.chartParameters.humidityChartLabel,
+                  labelString: `${this.chartParameters.humidityChartLabel}, ${this.chartParameters.humidityUnits}`,
                   fontColor: this.chartParameters.humidityLineColor
                 },
                 gridLines: {

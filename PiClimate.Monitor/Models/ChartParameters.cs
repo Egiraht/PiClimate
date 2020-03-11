@@ -41,6 +41,21 @@ namespace PiClimate.Monitor.Models
     public string HumidityChartLabel { get; set; } = nameof(Measurement.Humidity);
 
     /// <summary>
+    ///   Gets or sets the string of units the pressure is expressed in.
+    /// </summary>
+    public string PressureUnits { get; set; } = "mmHg";
+
+    /// <summary>
+    ///   Gets or sets the string of units the temperature is expressed in.
+    /// </summary>
+    public string TemperatureUnits { get; set; } = "°C";
+
+    /// <summary>
+    ///   Gets or sets the string of units the humidity is expressed in.
+    /// </summary>
+    public string HumidityUnits { get; set; } = "%";
+
+    /// <summary>
     ///   Gets or sets the chart's line color value for pressure.
     /// </summary>
     public string PressureLineColor { get; set; } = DefaultPressureLineColor;
