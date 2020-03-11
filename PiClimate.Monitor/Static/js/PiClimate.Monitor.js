@@ -68,20 +68,20 @@ var PiClimate;
     (function (Monitor) {
         class MeasurementsCollection {
             constructor() {
-                this.minTime = new Date();
-                this.maxTime = new Date();
+                this.minTimestamp = new Date();
+                this.maxTimestamp = new Date();
                 this.minPressure = 0;
                 this.maxPressure = 0;
-                this.minPressureTime = new Date();
-                this.maxPressureTime = new Date();
+                this.minPressureTimestamp = new Date();
+                this.maxPressureTimestamp = new Date();
                 this.minTemperature = 0;
                 this.maxTemperature = 0;
-                this.minTemperatureTime = new Date();
-                this.maxTemperatureTime = new Date();
+                this.minTemperatureTimestamp = new Date();
+                this.maxTemperatureTimestamp = new Date();
                 this.minHumidity = 0;
                 this.maxHumidity = 0;
-                this.minHumidityTime = new Date();
-                this.maxHumidityTime = new Date();
+                this.minHumidityTimestamp = new Date();
+                this.maxHumidityTimestamp = new Date();
                 this.count = 0;
                 this.measurements = [];
             }
@@ -258,16 +258,48 @@ var PiClimate;
                         };
                     });
                     this.chart.options.scales.xAxes[0].ticks = {
-                        min: response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-                            ? response.minTime
+                        min: response.minTimestamp.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+                            ? response.minTimestamp
                             : this.chartParameters.filter.fromTime,
-                        max: response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
-                            ? response.maxTime
+                        max: response.maxTimestamp.valueOf() > this.chartParameters.filter.toTime.valueOf()
+                            ? response.maxTimestamp
                             : this.chartParameters.filter.toTime
                     };
                     this.chart.update();
+                    this.updateChartSummary(response);
                     return true;
                 });
+            }
+            updateChartSummary(response) {
+                let $ = jQuery;
+                let firstTimestampElement = $(`#${this.chartParameters.chartId}-summary .first-timestamp`);
+                let lastTimestampElement = $(`#${this.chartParameters.chartId}-summary .last-timestamp`);
+                let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
+                let maxPressureElement = $(`#${this.chartParameters.chartId}-summary .max-pressure`);
+                let minPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-pressure-timestamp`);
+                let maxPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-pressure-timestamp`);
+                let minTemperatureElement = $(`#${this.chartParameters.chartId}-summary .min-temperature`);
+                let maxTemperatureElement = $(`#${this.chartParameters.chartId}-summary .max-temperature`);
+                let minTemperatureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-temperature-timestamp`);
+                let maxTemperatureTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-temperature-timestamp`);
+                let minHumidityElement = $(`#${this.chartParameters.chartId}-summary .min-humidity`);
+                let maxHumidityElement = $(`#${this.chartParameters.chartId}-summary .max-humidity`);
+                let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
+                let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
+                firstTimestampElement.text(new Date(response.minTimestamp).toLocaleString());
+                lastTimestampElement.text(new Date(response.maxTimestamp).toLocaleString());
+                minPressureElement.text(response.minPressure);
+                maxPressureElement.text(response.maxPressure);
+                minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
+                maxPressureTimestampElement.text(new Date(response.maxPressureTimestamp).toLocaleString());
+                minTemperatureElement.text(response.minTemperature);
+                maxTemperatureElement.text(response.maxTemperature);
+                minTemperatureTimestampElement.text(new Date(response.minTemperatureTimestamp).toLocaleString());
+                maxTemperatureTimestampElement.text(new Date(response.maxTemperatureTimestamp).toLocaleString());
+                minHumidityElement.text(response.minHumidity);
+                maxHumidityElement.text(response.maxHumidity);
+                minHumidityTimestampElement.text(new Date(response.minHumidityTimestamp).toLocaleString());
+                maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
             }
         }
         Monitor.ChartControl = ChartControl;

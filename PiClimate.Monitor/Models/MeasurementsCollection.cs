@@ -12,12 +12,12 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets the minimal timestamp available in the collection.
     /// </summary>
-    public DateTime MinTime => Count > 0 ? Measurements.Min(m => m.Timestamp) : DateTime.Now;
+    public DateTime MinTimestamp => Count > 0 ? Measurements.Min(m => m.Timestamp) : DateTime.Now;
 
     /// <summary>
     ///   Gets the maximal timestamp available in the collection.
     /// </summary>
-    public DateTime MaxTime => Count > 0 ? Measurements.Max(m => m.Timestamp) : DateTime.Now;
+    public DateTime MaxTimestamp => Count > 0 ? Measurements.Max(m => m.Timestamp) : DateTime.Now;
 
     /// <summary>
     ///   Gets the minimal pressure value available in the collection.
@@ -32,13 +32,13 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MinPressure" /> value.
     /// </summary>
-    public DateTime MinPressureTime =>
+    public DateTime MinPressureTimestamp =>
       Count > 0 ? Measurements.First(m => m.Pressure.Equals(MinPressure)).Timestamp : DateTime.Now;
 
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MaxPressure" /> value.
     /// </summary>
-    public DateTime MaxPressureTime =>
+    public DateTime MaxPressureTimestamp =>
       Count > 0 ? Measurements.First(m => m.Pressure.Equals(MaxPressure)).Timestamp : DateTime.Now;
 
     /// <summary>
@@ -54,13 +54,13 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MinTemperature" /> value.
     /// </summary>
-    public DateTime MinTemperatureTime =>
+    public DateTime MinTemperatureTimestamp =>
       Count > 0 ? Measurements.First(m => m.Temperature.Equals(MinTemperature)).Timestamp : DateTime.Now;
 
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MaxTemperature" /> value.
     /// </summary>
-    public DateTime MaxTemperatureTime =>
+    public DateTime MaxTemperatureTimestamp =>
       Count > 0 ? Measurements.First(m => m.Temperature.Equals(MaxTemperature)).Timestamp : DateTime.Now;
 
     /// <summary>
@@ -76,13 +76,13 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MinHumidity" /> value.
     /// </summary>
-    public DateTime MinHumidityTime =>
+    public DateTime MinHumidityTimestamp =>
       Count > 0 ? Measurements.First(m => m.Humidity.Equals(MinHumidity)).Timestamp : DateTime.Now;
 
     /// <summary>
     ///   Gets the timestamp corresponding to the <see cref="MaxHumidity" /> value.
     /// </summary>
-    public DateTime MaxHumidityTime =>
+    public DateTime MaxHumidityTimestamp =>
       Count > 0 ? Measurements.First(m => m.Humidity.Equals(MaxHumidity)).Timestamp : DateTime.Now;
 
     /// <summary>

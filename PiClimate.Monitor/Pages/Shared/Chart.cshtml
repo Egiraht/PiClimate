@@ -3,19 +3,19 @@
 <div class="chart position-relative">
   <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
 
-  <div class="container-fluid py-2">
+  <div id="@Model.ChartId-summary" class="chart-summary container-fluid py-2">
     <div class="row">
       <div class="time text-right col-3 col-xl-2">
         First timestamp:
       </div>
       <div class="time text-left col-9 col-xl-4">
-        ...
+        <span class="first-timestamp">???</span>
       </div>
       <div class="time text-right col-3 col-xl-2">
         Last timestamp:
       </div>
       <div class="time text-left col-9 col-xl-4">
-        ...
+        <span class="last-timestamp">???</span>
       </div>
     </div>
 
@@ -24,13 +24,13 @@
         Min pressure:
       </div>
       <div class="pressure text-left col-9 col-xl-4">
-        ... @Model.PressureUnits (...)
+        <span class="min-pressure">???</span> @Model.PressureUnits (<span class="min-pressure-timestamp">???</span>)
       </div>
       <div class="pressure text-right col-3 col-xl-2">
         Max pressure:
       </div>
       <div class="pressure text-left col-9 col-xl-4">
-        ... @Model.PressureUnits (...)
+        <span class="max-pressure">???</span> @Model.PressureUnits (<span class="max-pressure-timestamp">???</span>)
       </div>
     </div>
 
@@ -39,13 +39,13 @@
         Min temperature:
       </div>
       <div class="temperature text-left col-9 col-xl-4">
-        ... @Model.TemperatureUnits (...)
+        <span class="min-temperature">???</span> @Model.TemperatureUnits (<span class="min-temperature-timestamp">???</span>)
       </div>
       <div class="temperature text-right col-3 col-xl-2">
         Max temperature:
       </div>
       <div class="temperature text-left col-9 col-xl-4">
-        ... @Model.TemperatureUnits (...)
+        <span class="max-temperature">???</span> @Model.TemperatureUnits (<span class="max-temperature-timestamp">???</span>)
       </div>
     </div>
 
@@ -54,13 +54,13 @@
         Min humidity:
       </div>
       <div class="humidity text-left col-9 col-xl-4">
-        ... @Model.HumidityUnits (...)
+        <span class="min-humidity">???</span> @Model.HumidityUnits (<span class="min-humidity-timestamp">???</span>)
       </div>
       <div class="humidity text-right col-3 col-xl-2">
         Max humidity:
       </div>
       <div class="humidity text-left col-9 col-xl-4">
-        ... @Model.HumidityUnits (...)
+        <span class="max-humidity">???</span> @Model.HumidityUnits (<span class="max-humidity-timestamp">???</span>)
       </div>
     </div>
   </div>

@@ -191,17 +191,54 @@ namespace PiClimate.Monitor
 
       this.chart.options.scales.xAxes[0].ticks = {
         min:
-          response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-            ? response.minTime
+          response.minTimestamp.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+            ? response.minTimestamp
             : this.chartParameters.filter.fromTime,
         max:
-          response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
-            ? response.maxTime
+          response.maxTimestamp.valueOf() > this.chartParameters.filter.toTime.valueOf()
+            ? response.maxTimestamp
             : this.chartParameters.filter.toTime
       };
 
       this.chart.update();
+      this.updateChartSummary(response);
+
       return true;
+    }
+
+    private updateChartSummary(response: MeasurementsCollection)
+    {
+      // @ts-ignore
+      let $ = jQuery;
+      let firstTimestampElement = $(`#${this.chartParameters.chartId}-summary .first-timestamp`);
+      let lastTimestampElement = $(`#${this.chartParameters.chartId}-summary .last-timestamp`);
+      let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
+      let maxPressureElement = $(`#${this.chartParameters.chartId}-summary .max-pressure`);
+      let minPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-pressure-timestamp`);
+      let maxPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-pressure-timestamp`);
+      let minTemperatureElement = $(`#${this.chartParameters.chartId}-summary .min-temperature`);
+      let maxTemperatureElement = $(`#${this.chartParameters.chartId}-summary .max-temperature`);
+      let minTemperatureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-temperature-timestamp`);
+      let maxTemperatureTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-temperature-timestamp`);
+      let minHumidityElement = $(`#${this.chartParameters.chartId}-summary .min-humidity`);
+      let maxHumidityElement = $(`#${this.chartParameters.chartId}-summary .max-humidity`);
+      let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
+      let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
+
+      firstTimestampElement.text(new Date(response.minTimestamp).toLocaleString());
+      lastTimestampElement.text(new Date(response.maxTimestamp).toLocaleString());
+      minPressureElement.text(response.minPressure);
+      maxPressureElement.text(response.maxPressure);
+      minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
+      maxPressureTimestampElement.text(new Date(response.maxPressureTimestamp).toLocaleString());
+      minTemperatureElement.text(response.minTemperature);
+      maxTemperatureElement.text(response.maxTemperature);
+      minTemperatureTimestampElement.text(new Date(response.minTemperatureTimestamp).toLocaleString());
+      maxTemperatureTimestampElement.text(new Date(response.maxTemperatureTimestamp).toLocaleString());
+      minHumidityElement.text(response.minHumidity);
+      maxHumidityElement.text(response.maxHumidity);
+      minHumidityTimestampElement.text(new Date(response.minHumidityTimestamp).toLocaleString());
+      maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
     }
   }
 }

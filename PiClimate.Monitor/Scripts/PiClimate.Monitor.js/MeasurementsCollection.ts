@@ -4,33 +4,33 @@ namespace PiClimate.Monitor
 {
   export class MeasurementsCollection
   {
-    public minTime: Date = new Date();
+    public minTimestamp: Date = new Date();
 
-    public maxTime: Date = new Date();
+    public maxTimestamp: Date = new Date();
 
     public minPressure: number = 0;
 
     public maxPressure: number = 0;
 
-    public minPressureTime: Date = new Date();
+    public minPressureTimestamp: Date = new Date();
 
-    public maxPressureTime: Date = new Date();
+    public maxPressureTimestamp: Date = new Date();
 
     public minTemperature: number = 0;
 
     public maxTemperature: number = 0;
 
-    public minTemperatureTime: Date = new Date();
+    public minTemperatureTimestamp: Date = new Date();
 
-    public maxTemperatureTime: Date = new Date();
+    public maxTemperatureTimestamp: Date = new Date();
 
     public minHumidity: number = 0;
 
     public maxHumidity: number = 0;
 
-    public minHumidityTime: Date = new Date();
+    public minHumidityTimestamp: Date = new Date();
 
-    public maxHumidityTime: Date = new Date();
+    public maxHumidityTimestamp: Date = new Date();
 
     public count: number = 0;
 
