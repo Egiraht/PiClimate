@@ -4,21 +4,19 @@ namespace PiClimate.Monitor
 {
   export class ChartParameters
   {
-    public chartId: string = "";
+    public chartId: string = "measurements-chart";
 
-    public pressureChartLabel: string = "";
+    public pressureChartLabel: string = "Pressure";
 
-    public temperatureChartLabel: string = "";
+    public temperatureChartLabel: string = "Temperature";
 
-    public humidityChartLabel: string = "";
+    public humidityChartLabel: string = "Humidity";
 
-    public pressureLineColor: string = "";
+    public pressureLineColor: string = "blue";
 
-    public temperatureLineColor: string = "";
+    public temperatureLineColor: string = "green";
 
-    public humidityLineColor: string = "";
-
-    public trimSpaces: boolean = false;
+    public humidityLineColor: string = "red";
 
     public requestUri: string = "";
 

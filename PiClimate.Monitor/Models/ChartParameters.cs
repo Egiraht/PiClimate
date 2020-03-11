@@ -45,23 +45,15 @@ namespace PiClimate.Monitor.Models
     /// </summary>
     public string PressureLineColor { get; set; } = DefaultPressureLineColor;
 
-
     /// <summary>
     ///   Gets or sets the chart's line color value for temperature.
     /// </summary>
     public string TemperatureLineColor { get; set; } = DefaultTemperatureLineColor;
 
-
     /// <summary>
     ///   Gets or sets the chart's line color value for humidity.
     /// </summary>
     public string HumidityLineColor { get; set; } = DefaultHumidityLineColor;
-
-    /// <summary>
-    ///   Gets or sets the flag indicating whether empty spaces should be trimmed at the beginning and ending of the
-    ///   selected timespan.
-    /// </summary>
-    public bool TrimSpaces { get; set; } = false;
 
     /// <summary>
     ///   Gets or sets the URI string where the HTTP request should be made.
@@ -76,6 +68,6 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets or sets the measurement filter assigned for the chart.
     /// </summary>
-    public MeasurementFilter? Filter { get; set; }
+    public MeasurementFilter Filter { get; set; } = new MeasurementFilter();
   }
 }

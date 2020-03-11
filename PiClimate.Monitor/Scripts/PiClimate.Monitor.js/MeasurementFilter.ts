@@ -2,10 +2,12 @@ namespace PiClimate.Monitor
 {
   export class MeasurementFilter
   {
-    public fromTime: Date | null = null;
+    public timePeriod: number = 24 * 60 * 60;
 
-    public toTime: Date | null = null;
+    public fromTime: Date = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    public resolution: number | null = null;
+    public toTime: Date = new Date();
+
+    public resolution: number = 1440;
   }
 }

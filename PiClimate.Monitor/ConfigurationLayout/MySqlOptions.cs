@@ -13,7 +13,7 @@ namespace PiClimate.Monitor.ConfigurationLayout
       nameof(MySqlOptions) + ":" + nameof(UseConnectionStringKey);
 
     /// <summary>
-    ///   Defines the database table where the measurements data are stored.
+    ///   Defines the database table where the measurement data are stored.
     /// </summary>
     public const string MeasurementsTableName =
       nameof(MySqlOptions) + ":" + nameof(MeasurementsTableName);

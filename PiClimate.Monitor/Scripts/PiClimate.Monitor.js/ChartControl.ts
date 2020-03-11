@@ -1,5 +1,5 @@
 /// <reference path="ChartParameters.ts" />
-/// <reference path="MeasurementsResult.ts" />
+/// <reference path="MeasurementsCollection.ts" />
 
 namespace PiClimate.Monitor
 {
@@ -15,7 +15,7 @@ namespace PiClimate.Monitor
       this.chartParameters = chartParameters;
     }
 
-    private async fetchFromJson(): Promise<MeasurementsResult | null>
+    private async fetchFromJson(): Promise<MeasurementsCollection | null>
     {
       try
       {
@@ -29,7 +29,7 @@ namespace PiClimate.Monitor
           body: JSON.stringify(this.chartParameters.filter)
         });
 
-        return await response.json() as MeasurementsResult;
+        return await response.json() as MeasurementsCollection;
       }
       catch
       {
@@ -45,7 +45,7 @@ namespace PiClimate.Monitor
 
       // @ts-ignore
       let defaults = Chart.defaults.global.elements;
-      defaults.point.radius = 0;
+      defaults.point.radius = 0.5;
       defaults.point.hitRadius = 0;
       defaults.point.hoverRadius = 0;
       defaults.line.borderWidth = 2;
@@ -115,9 +115,15 @@ namespace PiClimate.Monitor
                     hour: "HH:00"
                   }
                 },
-                ticks: this.chartParameters.trimSpaces ? {} : {
-                  min: response.fromTime,
-                  max: response.toTime
+                ticks: {
+                  min:
+                    response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+                      ? response.minTime
+                      : this.chartParameters.filter.fromTime,
+                  max:
+                    response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
+                      ? response.maxTime
+                      : this.chartParameters.filter.toTime
                 }
               }
             ],
@@ -133,7 +139,10 @@ namespace PiClimate.Monitor
                 },
                 gridLines: {
                   color: this.chartParameters.pressureLineColor,
-                  lineWidth: 0.33
+                  lineWidth: 0.5
+                },
+                ticks: {
+                  fontColor: this.chartParameters.pressureLineColor
                 }
               },
               {
@@ -147,7 +156,10 @@ namespace PiClimate.Monitor
                 },
                 gridLines: {
                   color: this.chartParameters.temperatureLineColor,
-                  lineWidth: 0.33
+                  lineWidth: 0.5
+                },
+                ticks: {
+                  fontColor: this.chartParameters.temperatureLineColor
                 }
               },
               {
@@ -161,7 +173,10 @@ namespace PiClimate.Monitor
                 },
                 gridLines: {
                   color: this.chartParameters.humidityLineColor,
-                  lineWidth: 0.33
+                  lineWidth: 0.5
+                },
+                ticks: {
+                  fontColor: this.chartParameters.humidityLineColor
                 }
               }
             ]

@@ -14,9 +14,10 @@ var PiClimate;
     (function (Monitor) {
         class MeasurementFilter {
             constructor() {
-                this.fromTime = null;
-                this.toTime = null;
-                this.resolution = null;
+                this.timePeriod = 24 * 60 * 60;
+                this.fromTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                this.toTime = new Date();
+                this.resolution = 1440;
             }
         }
         Monitor.MeasurementFilter = MeasurementFilter;
@@ -28,14 +29,13 @@ var PiClimate;
     (function (Monitor) {
         class ChartParameters {
             constructor() {
-                this.chartId = "";
-                this.pressureChartLabel = "";
-                this.temperatureChartLabel = "";
-                this.humidityChartLabel = "";
-                this.pressureLineColor = "";
-                this.temperatureLineColor = "";
-                this.humidityLineColor = "";
-                this.trimSpaces = false;
+                this.chartId = "measurements-chart";
+                this.pressureChartLabel = "Pressure";
+                this.temperatureChartLabel = "Temperature";
+                this.humidityChartLabel = "Humidity";
+                this.pressureLineColor = "blue";
+                this.temperatureLineColor = "green";
+                this.humidityLineColor = "red";
                 this.requestUri = "";
                 this.requestMethod = "POST";
                 this.filter = new Monitor.MeasurementFilter();
@@ -63,34 +63,27 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
-        class MeasurementsResult {
+        class MeasurementsCollection {
             constructor() {
-                this.fromTime = null;
-                this.toTime = null;
-                this.resolution = null;
-                this.measurements = null;
-            }
-            static fetchFromJson(url, method, filter) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    try {
-                        let response = yield fetch(url, {
-                            method: method,
-                            mode: "cors",
-                            headers: {
-                                "Accept": "application/json",
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(filter)
-                        });
-                        return yield response.json();
-                    }
-                    catch (_a) {
-                        return null;
-                    }
-                });
+                this.minTime = new Date();
+                this.maxTime = new Date();
+                this.minPressure = 0;
+                this.maxPressure = 0;
+                this.minPressureTime = new Date();
+                this.maxPressureTime = new Date();
+                this.minTemperature = 0;
+                this.maxTemperature = 0;
+                this.minTemperatureTime = new Date();
+                this.maxTemperatureTime = new Date();
+                this.minHumidity = 0;
+                this.maxHumidity = 0;
+                this.minHumidityTime = new Date();
+                this.maxHumidityTime = new Date();
+                this.count = 0;
+                this.measurements = [];
             }
         }
-        Monitor.MeasurementsResult = MeasurementsResult;
+        Monitor.MeasurementsCollection = MeasurementsCollection;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));
 var PiClimate;
@@ -127,7 +120,7 @@ var PiClimate;
                     if (!response || !response.measurements)
                         return false;
                     let defaults = Chart.defaults.global.elements;
-                    defaults.point.radius = 0;
+                    defaults.point.radius = 0.5;
                     defaults.point.hitRadius = 0;
                     defaults.point.hoverRadius = 0;
                     defaults.line.borderWidth = 2;
@@ -192,9 +185,13 @@ var PiClimate;
                                                 hour: "HH:00"
                                             }
                                         },
-                                        ticks: this.chartParameters.trimSpaces ? {} : {
-                                            min: response.fromTime,
-                                            max: response.toTime
+                                        ticks: {
+                                            min: response.minTime.valueOf() < this.chartParameters.filter.fromTime.valueOf()
+                                                ? response.minTime
+                                                : this.chartParameters.filter.fromTime,
+                                            max: response.maxTime.valueOf() > this.chartParameters.filter.toTime.valueOf()
+                                                ? response.maxTime
+                                                : this.chartParameters.filter.toTime
                                         }
                                     }
                                 ],
@@ -210,7 +207,10 @@ var PiClimate;
                                         },
                                         gridLines: {
                                             color: this.chartParameters.pressureLineColor,
-                                            lineWidth: 0.33
+                                            lineWidth: 0.5
+                                        },
+                                        ticks: {
+                                            fontColor: this.chartParameters.pressureLineColor
                                         }
                                     },
                                     {
@@ -224,7 +224,10 @@ var PiClimate;
                                         },
                                         gridLines: {
                                             color: this.chartParameters.temperatureLineColor,
-                                            lineWidth: 0.33
+                                            lineWidth: 0.5
+                                        },
+                                        ticks: {
+                                            fontColor: this.chartParameters.temperatureLineColor
                                         }
                                     },
                                     {
@@ -238,7 +241,10 @@ var PiClimate;
                                         },
                                         gridLines: {
                                             color: this.chartParameters.humidityLineColor,
-                                            lineWidth: 0.33
+                                            lineWidth: 0.5
+                                        },
+                                        ticks: {
+                                            fontColor: this.chartParameters.humidityLineColor
                                         }
                                     }
                                 ]

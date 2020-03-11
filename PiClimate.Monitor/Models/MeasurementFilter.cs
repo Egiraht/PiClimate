@@ -2,6 +2,9 @@ using System;
 
 namespace PiClimate.Monitor.Models
 {
+  /// <summary>
+  ///   A model class for measurement data filtering.
+  /// </summary>
   public class MeasurementFilter
   {
     private int _resolution = DefaultResolution;
@@ -22,8 +25,27 @@ namespace PiClimate.Monitor.Models
     public static readonly TimeSpan DefaultTimePeriod = TimeSpan.FromDays(1);
 
     /// <summary>
+    ///   Gets or sets the time period in seconds defining the beginning of the selected timespan relatively to
+    ///   the <see cref="ToTime" /> property value.
+    ///   Minimal value is 1.
+    /// </summary>
+    /// <remarks>
+    ///   <see cref="TimePeriod" /> and <see cref="FromTime" /> properties are concurrent so changes to one
+    ///   property affect another one.
+    /// </remarks>
+    public int TimePeriod
+    {
+      get => (int) (ToTime - FromTime).TotalSeconds;
+      set => FromTime = ToTime - TimeSpan.FromSeconds(Math.Max(value, 1));
+    }
+
+    /// <summary>
     ///   Gets or sets the beginning of the selected timespan.
     /// </summary>
+    /// <remarks>
+    ///   <see cref="TimePeriod" /> and <see cref="FromTime" /> properties are concurrent so changes to one
+    ///   property affect another one.
+    /// </remarks>
     public DateTime FromTime { get; set; } = DateTime.Now - DefaultTimePeriod;
 
     /// <summary>
