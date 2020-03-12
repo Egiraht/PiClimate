@@ -14,12 +14,26 @@ var PiClimate;
     (function (Monitor) {
         class MeasurementFilter {
             constructor() {
-                this.timePeriod = 24 * 60 * 60;
-                this.fromTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                this.toTime = new Date();
-                this.resolution = 1440;
+                this._resolution = MeasurementFilter.defaultResolution;
+                this.fromTime = new Date(Date.now() - MeasurementFilter.defaultTimePeriod).toISOString();
+                this.toTime = new Date().toISOString();
+            }
+            get timePeriod() {
+                return Math.round(Math.abs(new Date(this.toTime).valueOf() - new Date(this.fromTime).valueOf()) / 1000);
+            }
+            set timePeriod(value) {
+                this.fromTime = new Date(new Date(this.toTime).valueOf() - value * 1000).toISOString();
+            }
+            get resolution() {
+                return this._resolution;
+            }
+            set resolution(value) {
+                this._resolution = Math.max(value, MeasurementFilter.minimalResolution);
             }
         }
+        MeasurementFilter.minimalResolution = 1;
+        MeasurementFilter.defaultResolution = 1440;
+        MeasurementFilter.defaultTimePeriod = 24 * 60 * 60 * 1000;
         Monitor.MeasurementFilter = MeasurementFilter;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));
@@ -51,37 +65,22 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
-        class Measurement {
-            constructor() {
-                this.d = null;
-                this.p = null;
-                this.t = null;
-                this.h = null;
-            }
-        }
-        Monitor.Measurement = Measurement;
-    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
-})(PiClimate || (PiClimate = {}));
-var PiClimate;
-(function (PiClimate) {
-    var Monitor;
-    (function (Monitor) {
         class MeasurementsCollection {
             constructor() {
-                this.minTimestamp = new Date();
-                this.maxTimestamp = new Date();
+                this.minTimestamp = new Date().toISOString();
+                this.maxTimestamp = new Date().toISOString();
                 this.minPressure = 0;
                 this.maxPressure = 0;
-                this.minPressureTimestamp = new Date();
-                this.maxPressureTimestamp = new Date();
+                this.minPressureTimestamp = new Date().toISOString();
+                this.maxPressureTimestamp = new Date().toISOString();
                 this.minTemperature = 0;
                 this.maxTemperature = 0;
-                this.minTemperatureTimestamp = new Date();
-                this.maxTemperatureTimestamp = new Date();
+                this.minTemperatureTimestamp = new Date().toISOString();
+                this.maxTemperatureTimestamp = new Date().toISOString();
                 this.minHumidity = 0;
                 this.maxHumidity = 0;
-                this.minHumidityTimestamp = new Date();
-                this.maxHumidityTimestamp = new Date();
+                this.minHumidityTimestamp = new Date().toISOString();
+                this.maxHumidityTimestamp = new Date().toISOString();
                 this.count = 0;
                 this.measurements = [];
             }
@@ -225,9 +224,17 @@ var PiClimate;
                                 "Accept": "application/json",
                                 "Content-Type": "application/json"
                             },
-                            body: JSON.stringify(this.chartParameters.filter)
+                            body: JSON.stringify({
+                                resolution: this.chartParameters.filter.resolution,
+                                fromTime: new Date(this.chartParameters.filter.fromTime)
+                                    .toISOString()
+                                    .replace(/Z$/ig, "+00:00"),
+                                toTime: new Date(this.chartParameters.filter.toTime)
+                                    .toISOString()
+                                    .replace(/Z$/ig, "+00:00")
+                            })
                         });
-                        return yield response.json();
+                        return Object.assign(new Monitor.MeasurementsCollection(), yield response.json());
                     }
                     catch (_a) {
                         return null;
@@ -258,12 +265,12 @@ var PiClimate;
                         };
                     });
                     this.chart.options.scales.xAxes[0].ticks = {
-                        min: response.minTimestamp.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-                            ? response.minTimestamp
-                            : this.chartParameters.filter.fromTime,
-                        max: response.maxTimestamp.valueOf() > this.chartParameters.filter.toTime.valueOf()
-                            ? response.maxTimestamp
-                            : this.chartParameters.filter.toTime
+                        min: new Date(response.minTimestamp).valueOf() < new Date(this.chartParameters.filter.fromTime).valueOf()
+                            ? new Date(response.minTimestamp)
+                            : new Date(this.chartParameters.filter.fromTime),
+                        max: new Date(response.maxTimestamp).valueOf() > new Date(this.chartParameters.filter.toTime).valueOf()
+                            ? new Date(response.maxTimestamp)
+                            : new Date(this.chartParameters.filter.toTime)
                     };
                     this.chart.update();
                     this.updateChartSummary(response);
@@ -272,8 +279,8 @@ var PiClimate;
             }
             updateChartSummary(response) {
                 let $ = jQuery;
-                let firstTimestampElement = $(`#${this.chartParameters.chartId}-summary .first-timestamp`);
-                let lastTimestampElement = $(`#${this.chartParameters.chartId}-summary .last-timestamp`);
+                let periodStartElement = $(`#${this.chartParameters.chartId}-summary .period-start`);
+                let periodEndElement = $(`#${this.chartParameters.chartId}-summary .period-end`);
                 let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
                 let maxPressureElement = $(`#${this.chartParameters.chartId}-summary .max-pressure`);
                 let minPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-pressure-timestamp`);
@@ -286,8 +293,8 @@ var PiClimate;
                 let maxHumidityElement = $(`#${this.chartParameters.chartId}-summary .max-humidity`);
                 let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
                 let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
-                firstTimestampElement.text(new Date(response.minTimestamp).toLocaleString());
-                lastTimestampElement.text(new Date(response.maxTimestamp).toLocaleString());
+                periodStartElement.text(this.chart.options.scales.xAxes[0].ticks.min.toLocaleString());
+                periodEndElement.text(this.chart.options.scales.xAxes[0].ticks.max.toLocaleString());
                 minPressureElement.text(response.minPressure);
                 maxPressureElement.text(response.maxPressure);
                 minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
@@ -303,5 +310,20 @@ var PiClimate;
             }
         }
         Monitor.ChartControl = ChartControl;
+    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
+})(PiClimate || (PiClimate = {}));
+var PiClimate;
+(function (PiClimate) {
+    var Monitor;
+    (function (Monitor) {
+        class Measurement {
+            constructor() {
+                this.d = null;
+                this.p = null;
+                this.t = null;
+                this.h = null;
+            }
+        }
+        Monitor.Measurement = Measurement;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));

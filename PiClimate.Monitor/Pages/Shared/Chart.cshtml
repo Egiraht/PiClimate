@@ -6,16 +6,16 @@
   <div id="@Model.ChartId-summary" class="chart-summary container-fluid py-2">
     <div class="row">
       <div class="time text-right col-3 col-xl-2">
-        First timestamp:
+        Period start:
       </div>
       <div class="time text-left col-9 col-xl-4">
-        <span class="first-timestamp">???</span>
+        <span class="period-start">???</span>
       </div>
       <div class="time text-right col-3 col-xl-2">
-        Last timestamp:
+        Period end:
       </div>
       <div class="time text-left col-9 col-xl-4">
-        <span class="last-timestamp">???</span>
+        <span class="period-end">???</span>
       </div>
     </div>
 
@@ -66,8 +66,10 @@
   </div>
 
   <script>
-    let chartParameters = @Json.Serialize(Model);
+    let chartParametersObject = @Json.Serialize(Model);
+    let chartParameters = Object.assign(new PiClimate.Monitor.ChartParameters("@Model.ChartId"), chartParametersObject);
     let chart = new PiClimate.Monitor.ChartControl(chartParameters);
+    chart.chartParameters.filter = Object.assign(new PiClimate.Monitor.MeasurementFilter(), chartParameters.filter);
     chart.updateChart();
   </script>
 </div>

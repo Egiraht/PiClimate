@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace PiClimate.Monitor.Models
 {
@@ -27,12 +28,12 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets or sets the time period in seconds defining the beginning of the selected timespan relatively to
     ///   the <see cref="ToTime" /> property value.
-    ///   Minimal value is 1.
     /// </summary>
     /// <remarks>
-    ///   <see cref="TimePeriod" /> and <see cref="FromTime" /> properties are concurrent so changes to one
-    ///   property affect another one.
+    ///   This property just simplifies the access to the <see cref="FromTime" /> property value relatively to the
+    ///   <see cref="ToTime" /> property value, so it is not serialized into JSON.
     /// </remarks>
+    [JsonIgnore]
     public int TimePeriod
     {
       get => (int) (ToTime - FromTime).TotalSeconds;
@@ -42,10 +43,6 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets or sets the beginning of the selected timespan.
     /// </summary>
-    /// <remarks>
-    ///   <see cref="TimePeriod" /> and <see cref="FromTime" /> properties are concurrent so changes to one
-    ///   property affect another one.
-    /// </remarks>
     public DateTime FromTime { get; set; } = DateTime.Now - DefaultTimePeriod;
 
     /// <summary>

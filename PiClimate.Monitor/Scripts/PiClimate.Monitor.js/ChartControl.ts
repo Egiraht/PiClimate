@@ -3,17 +3,31 @@
 
 namespace PiClimate.Monitor
 {
+  /**
+   * A control class for the measurement data chart.
+   */
   export class ChartControl
   {
+    /**
+     * The chart parameters object used for the chart configuring.
+     */
     public readonly chartParameters: ChartParameters;
 
+    /**
+     * The *Chart.js* chart object assigned to the instance.
+     */
     // @ts-ignore
     private chart: Chart;
 
+    /**
+     * Creates a new chart control instance.
+     * @param chartParameters The chart parameters object used for the chart configuring.
+     */
     public constructor(chartParameters: ChartParameters)
     {
       this.chartParameters = chartParameters;
 
+      // Setting chart default options.
       // @ts-ignore
       let defaults = Chart.defaults.global.elements;
       defaults.point.radius = 0.5;
@@ -23,6 +37,7 @@ namespace PiClimate.Monitor
       defaults.line.tension = 0;
       defaults.line.fill = false;
 
+      // Initializing the new chart instance.
       // @ts-ignore
       this.chart = new Chart(this.chartParameters.chartId, {
         type: "scatter",
@@ -137,6 +152,10 @@ namespace PiClimate.Monitor
       });
     }
 
+    /**
+     * Asynchronously fetches the filtered measurement data from the JSON-encoded HTTP request to the backend.
+     * @returns A collection of measurements acquired from the backend or `null` on failure.
+     */
     private async fetchFromJson(): Promise<MeasurementsCollection | null>
     {
       try
@@ -148,10 +167,23 @@ namespace PiClimate.Monitor
             "Accept": "application/json",
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(this.chartParameters.filter)
+
+          // HACK: Timezone suffix replacement ("Z" -> "+00:00") in the JS-generated ISO timestamps is needed for
+          // correct timezone parsing in the backend.
+          body: JSON.stringify({
+            resolution: this.chartParameters.filter.resolution,
+            fromTime:
+              new Date(this.chartParameters.filter.fromTime)
+                .toISOString()
+                .replace(/Z$/ig, "+00:00"),
+            toTime:
+              new Date(this.chartParameters.filter.toTime)
+                .toISOString()
+                .replace(/Z$/ig, "+00:00")
+          })
         });
 
-        return await response.json() as MeasurementsCollection;
+        return Object.assign(new MeasurementsCollection(), await response.json());
       }
       catch
       {
@@ -159,12 +191,18 @@ namespace PiClimate.Monitor
       }
     }
 
+    /**
+     * Asynchronously updates the chart by fetching the filtered measurement data from the backend.
+     * @returns `true` if chart updating succeeded, otherwise `false`.
+     */
     public async updateChart(): Promise<boolean>
     {
+      // Fetching the data.
       let response = await this.fetchFromJson();
       if (!response || !response.measurements)
         return false;
 
+      // Mapping the pressure data to the chart.
       this.chart.data.datasets[0].data = response.measurements.map(measurement =>
       {
         return {
@@ -173,6 +211,7 @@ namespace PiClimate.Monitor
         }
       });
 
+      // Mapping the temperature data to the chart.
       this.chart.data.datasets[1].data = response.measurements.map(measurement =>
       {
         return {
@@ -181,6 +220,7 @@ namespace PiClimate.Monitor
         }
       });
 
+      // Mapping the humidity data to the chart.
       this.chart.data.datasets[2].data = response.measurements.map(measurement =>
       {
         return {
@@ -189,29 +229,35 @@ namespace PiClimate.Monitor
         }
       });
 
+      // Scaling the chart's Y axis.
       this.chart.options.scales.xAxes[0].ticks = {
         min:
-          response.minTimestamp.valueOf() < this.chartParameters.filter.fromTime.valueOf()
-            ? response.minTimestamp
-            : this.chartParameters.filter.fromTime,
+          new Date(response.minTimestamp).valueOf() < new Date(this.chartParameters.filter.fromTime).valueOf()
+            ? new Date(response.minTimestamp)
+            : new Date(this.chartParameters.filter.fromTime),
         max:
-          response.maxTimestamp.valueOf() > this.chartParameters.filter.toTime.valueOf()
-            ? response.maxTimestamp
-            : this.chartParameters.filter.toTime
+          new Date(response.maxTimestamp).valueOf() > new Date(this.chartParameters.filter.toTime).valueOf()
+            ? new Date(response.maxTimestamp)
+            : new Date(this.chartParameters.filter.toTime)
       };
 
+      // Rendering the chart and updating the summary table.
       this.chart.update();
       this.updateChartSummary(response);
 
       return true;
     }
 
+    /**
+     * Updates the chart's summary table.
+     * @param response The collection of measurements used for summary updating.
+     */
     private updateChartSummary(response: MeasurementsCollection)
     {
       // @ts-ignore
       let $ = jQuery;
-      let firstTimestampElement = $(`#${this.chartParameters.chartId}-summary .first-timestamp`);
-      let lastTimestampElement = $(`#${this.chartParameters.chartId}-summary .last-timestamp`);
+      let periodStartElement = $(`#${this.chartParameters.chartId}-summary .period-start`);
+      let periodEndElement = $(`#${this.chartParameters.chartId}-summary .period-end`);
       let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
       let maxPressureElement = $(`#${this.chartParameters.chartId}-summary .max-pressure`);
       let minPressureTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-pressure-timestamp`);
@@ -225,8 +271,8 @@ namespace PiClimate.Monitor
       let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
       let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
 
-      firstTimestampElement.text(new Date(response.minTimestamp).toLocaleString());
-      lastTimestampElement.text(new Date(response.maxTimestamp).toLocaleString());
+      periodStartElement.text(this.chart.options.scales.xAxes[0].ticks.min.toLocaleString());
+      periodEndElement.text(this.chart.options.scales.xAxes[0].ticks.max.toLocaleString());
       minPressureElement.text(response.minPressure);
       maxPressureElement.text(response.maxPressure);
       minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
