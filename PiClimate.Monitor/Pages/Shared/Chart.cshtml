@@ -66,10 +66,13 @@
   </div>
 
   <script>
-    let chartParametersObject = @Json.Serialize(Model);
-    let chartParameters = Object.assign(new PiClimate.Monitor.ChartParameters("@Model.ChartId"), chartParametersObject);
-    let chart = new PiClimate.Monitor.ChartControl(chartParameters);
-    chart.chartParameters.filter = Object.assign(new PiClimate.Monitor.MeasurementFilter(), chartParameters.filter);
-    chart.updateChart();
+    (() => {
+      let chartParametersObject = @Json.Serialize(Model);
+      let chartParameters = Object.assign(new PiClimate.Monitor.ChartParameters("@Model.ChartId"), chartParametersObject);
+      let chart = new PiClimate.Monitor.ChartControl(chartParameters);
+      chart.chartParameters.filter = Object.assign(new PiClimate.Monitor.MeasurementFilter(), chartParameters.filter);
+      chart.updateChart();
+      window["chart:@Model.ChartId"] = chart;
+    })()
   </script>
 </div>

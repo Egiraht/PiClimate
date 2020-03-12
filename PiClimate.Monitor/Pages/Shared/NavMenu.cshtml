@@ -6,6 +6,77 @@
   <hr class="border-light w-100 d-none d-lg-block" />
 
   <li class="nav-item px-3">
-    <a class="nav-link" asp-page="@nameof(Monitor)">@nameof(Monitor)</a>
+    @Html.RouteLink("Last day", new
+    {
+      Page = $"/{nameof(Monitor)}",
+      TimePeriod = TimePeriods.Day
+    }, new
+    {
+      Class = "nav-link" +
+        (PageRouteMatches(nameof(Monitor), null, (nameof(MeasurementFilter.TimePeriod), TimePeriods.Day))
+          ? " active"
+          : "")
+    })
+  </li>
+
+  <li class="nav-item px-3">
+    @Html.RouteLink("Last week", new
+    {
+      Page = $"/{nameof(Monitor)}",
+      TimePeriod = TimePeriods.Week
+    }, new
+    {
+      Class = "nav-link" +
+        (PageRouteMatches(nameof(Monitor), null, (nameof(MeasurementFilter.TimePeriod), TimePeriods.Week))
+          ? " active"
+          : "")
+    })
+  </li>
+
+  <li class="nav-item px-3">
+    @Html.RouteLink("Last month", new
+    {
+      Page = $"/{nameof(Monitor)}",
+      TimePeriod = TimePeriods.Month
+    }, new
+    {
+      Class = "nav-link" +
+        (PageRouteMatches(nameof(Monitor), null, (nameof(MeasurementFilter.TimePeriod), TimePeriods.Month))
+          ? " active"
+          : "")
+    })
   </li>
 </ul>
+
+@functions
+{
+  /// <summary>
+  ///   Determines whether the current page route matches the provided page parameters.
+  /// </summary>
+  /// <param name="page">
+  ///   The name of the page to match.
+  ///   Can be <c>null</c> if the page name is irrelevant.
+  /// </param>
+  /// <param name="handler">
+  ///   The name of the page handler to match.
+  ///   Can be <c>null</c> if the page handler name is irrelevant.
+  /// </param>
+  /// <param name="queryParameters">
+  ///   The sequence of key-value string tuples representing the query parameters to match.
+  ///   Can be omitted if the query parameter values are irrelevant.
+  /// </param>
+  bool PageRouteMatches(string? page = null, string? handler = null, params (string Key, object Value)[] queryParameters)
+  {
+    if (page != null && Context.Request.RouteValues["page"]?.ToString() != $"/{page.Trim('/')}")
+      return false;
+
+    if (handler != null && Context.Request.RouteValues["handler"]?.ToString() != handler)
+      return false;
+
+    if (queryParameters.Any(pair => !Context.Request.Query.ContainsKey(pair.Key) ||
+      Context.Request.Query[pair.Key] != pair.Value.ToString()))
+      return false;
+
+    return true;
+  }
+}
