@@ -65,6 +65,21 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
+        class Measurement {
+            constructor() {
+                this.d = null;
+                this.p = null;
+                this.t = null;
+                this.h = null;
+            }
+        }
+        Monitor.Measurement = Measurement;
+    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
+})(PiClimate || (PiClimate = {}));
+var PiClimate;
+(function (PiClimate) {
+    var Monitor;
+    (function (Monitor) {
         class MeasurementsCollection {
             constructor() {
                 this.minTimestamp = new Date().toISOString();
@@ -92,13 +107,16 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
-        class ChartControl {
+        class ChartComponent {
             constructor(chartParameters) {
+                this._isUpdating = false;
+                this._isEmpty = true;
+                this._isUpdatingFailed = false;
                 this.chartParameters = chartParameters;
                 let defaults = Chart.defaults.global.elements;
                 defaults.point.radius = 0.5;
-                defaults.point.hitRadius = 0;
-                defaults.point.hoverRadius = 0;
+                defaults.point.hitRadius = 5;
+                defaults.point.hoverRadius = 5;
                 defaults.line.borderWidth = 2;
                 defaults.line.tension = 0;
                 defaults.line.fill = false;
@@ -205,8 +223,19 @@ var PiClimate;
                         },
                         tooltips: {
                             mode: "index",
-                            intersect: false,
-                            position: "nearest"
+                            intersect: true,
+                            position: "nearest",
+                            callbacks: {
+                                title: (tooltipItems) => new Date(tooltipItems[0].xLabel).toLocaleString(),
+                                label: (tooltipItem) => {
+                                    let units = [
+                                        this.chartParameters.pressureUnits,
+                                        this.chartParameters.temperatureUnits,
+                                        this.chartParameters.humidityUnits
+                                    ];
+                                    return `${tooltipItem.yLabel} ${units[tooltipItem.datasetIndex]}`;
+                                }
+                            }
                         },
                         animation: {
                             duration: 500
@@ -214,9 +243,46 @@ var PiClimate;
                     }
                 });
             }
+            get isEmpty() {
+                return this._isEmpty;
+            }
+            set isEmpty(value) {
+                this._isEmpty = value;
+                let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+                if (this._isEmpty)
+                    chartWrapperElement.addClass(ChartComponent.emptyClassName);
+                else
+                    chartWrapperElement.removeClass(ChartComponent.emptyClassName);
+            }
+            get isUpdating() {
+                return this._isUpdating;
+            }
+            set isUpdating(value) {
+                this._isUpdating = value;
+                let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+                if (this._isUpdating)
+                    chartWrapperElement.addClass(ChartComponent.updatingClassName);
+                else
+                    chartWrapperElement.removeClass(ChartComponent.updatingClassName);
+            }
+            get isUpdatingFailed() {
+                return this._isUpdatingFailed;
+            }
+            set isUpdatingFailed(value) {
+                this._isUpdatingFailed = value;
+                let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+                if (this._isUpdatingFailed)
+                    chartWrapperElement.addClass(ChartComponent.updatingFailedClassName);
+                else
+                    chartWrapperElement.removeClass(ChartComponent.updatingFailedClassName);
+            }
             fetchFromJson() {
+                var _a;
                 return __awaiter(this, void 0, void 0, function* () {
                     try {
+                        this.isEmpty = false;
+                        this.isUpdatingFailed = false;
+                        this.isUpdating = true;
                         let response = yield fetch(this.chartParameters.requestUri, {
                             method: this.chartParameters.requestMethod,
                             mode: "cors",
@@ -234,10 +300,19 @@ var PiClimate;
                                     .replace(/Z$/ig, "+00:00")
                             })
                         });
-                        return Object.assign(new Monitor.MeasurementsCollection(), yield response.json());
+                        if (!response.ok) {
+                            throw response;
+                        }
+                        let data = yield response.json();
+                        this.isEmpty = !((_a = data.measurements) === null || _a === void 0 ? void 0 : _a.length);
+                        return Object.assign(new Monitor.MeasurementsCollection(), data);
                     }
-                    catch (_a) {
+                    catch (_b) {
+                        this.isUpdatingFailed = true;
                         return null;
+                    }
+                    finally {
+                        this.isUpdating = false;
                     }
                 });
             }
@@ -309,21 +384,9 @@ var PiClimate;
                 maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
             }
         }
-        Monitor.ChartControl = ChartControl;
-    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
-})(PiClimate || (PiClimate = {}));
-var PiClimate;
-(function (PiClimate) {
-    var Monitor;
-    (function (Monitor) {
-        class Measurement {
-            constructor() {
-                this.d = null;
-                this.p = null;
-                this.t = null;
-                this.h = null;
-            }
-        }
-        Monitor.Measurement = Measurement;
+        ChartComponent.emptyClassName = "empty";
+        ChartComponent.updatingClassName = "updating";
+        ChartComponent.updatingFailedClassName = "failed";
+        Monitor.ChartComponent = ChartComponent;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));

@@ -42,3 +42,44 @@ body
   color: var(--humidity-color) !important;
   border-color: var(--humidity-color) !important;
 }
+
+.empty::before,
+.updating::before,
+.failed::before
+{
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  content: "";
+  z-index: 10000;
+}
+
+.empty::after,
+.updating::after,
+.failed::after
+{
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  content: "";
+  z-index: 10001;
+}
+
+.empty::after
+{
+  color: var(--info);
+  content: attr(data-empty-notice);
+}
+
+.updating::after
+{
+  color: var(--info);
+  content: attr(data-updating-notice);
+}
+
+.failed::after
+{
+  color: var(--danger);
+  content: attr(data-failed-notice) !important;
+}

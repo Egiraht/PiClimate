@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PiClimate.Monitor.Models;
@@ -46,8 +48,15 @@ namespace PiClimate.Monitor.Pages
       if (filter == null)
         filter = new MeasurementFilter();
 
-      var measurements = await _source.GetMeasurementsAsync(filter);
-      return new JsonResult(new MeasurementsCollection(measurements));
+      try
+      {
+        var measurements = await _source.GetMeasurementsAsync(filter);
+        return new JsonResult(new MeasurementsCollection(measurements));
+      }
+      catch (Exception e)
+      {
+        return new JsonResult(new {ErrorMessage = e.Message}) {StatusCode = StatusCodes.Status500InternalServerError};
+      }
     }
 
     /// <inheritdoc cref="OnGetAsync" />

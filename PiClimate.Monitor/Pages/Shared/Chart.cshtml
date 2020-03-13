@@ -1,6 +1,9 @@
 @model ChartParameters
 
-<div class="chart position-relative">
+<div id="@Model.ChartId-wrapper" class="chart-wrapper position-relative"
+     data-empty-notice="No measurements found for the period."
+     data-updating-notice="Updating..."
+     data-failed-notice="Failed to get the measurements.">
   <canvas id="@Model.ChartId" class="chart-canvas"></canvas>
 
   <div id="@Model.ChartId-summary" class="chart-summary container-fluid py-2">
@@ -69,10 +72,10 @@
     (() => {
       let chartParametersObject = @Json.Serialize(Model);
       let chartParameters = Object.assign(new PiClimate.Monitor.ChartParameters("@Model.ChartId"), chartParametersObject);
-      let chart = new PiClimate.Monitor.ChartControl(chartParameters);
-      chart.chartParameters.filter = Object.assign(new PiClimate.Monitor.MeasurementFilter(), chartParameters.filter);
-      chart.updateChart();
-      window["chart:@Model.ChartId"] = chart;
+      let chartComponent = new PiClimate.Monitor.ChartComponent(chartParameters);
+      chartComponent.chartParameters.filter = Object.assign(new PiClimate.Monitor.MeasurementFilter(), chartParameters.filter);
+      chartComponent.updateChart();
+      window["chart:@Model.ChartId"] = chartComponent;
     })()
   </script>
 </div>

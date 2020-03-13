@@ -4,10 +4,18 @@
 namespace PiClimate.Monitor
 {
   /**
-   * A control class for the measurement data chart.
+   * A class representing the measurement data chart component.
    */
-  export class ChartControl
+  export class ChartComponent
   {
+    private _isUpdating: boolean = false;
+    private _isEmpty: boolean = true;
+    private _isUpdatingFailed: boolean = false;
+
+    public static readonly emptyClassName: string = "empty";
+    public static readonly updatingClassName: string = "updating";
+    public static readonly updatingFailedClassName: string = "failed";
+
     /**
      * The chart parameters object used for the chart configuring.
      */
@@ -16,8 +24,68 @@ namespace PiClimate.Monitor
     /**
      * The *Chart.js* chart object assigned to the instance.
      */
-    // @ts-ignore
-    private chart: Chart;
+      // @ts-ignore
+    public chart: Chart;
+
+    /**
+     * Gets or sets the flag indicating the emptiness of the measurement data.
+     */
+    get isEmpty(): boolean
+    {
+      return this._isEmpty;
+    }
+
+    set isEmpty(value: boolean)
+    {
+      this._isEmpty = value;
+
+      // @ts-ignore
+      let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+      if (this._isEmpty)
+        chartWrapperElement.addClass(ChartComponent.emptyClassName);
+      else
+        chartWrapperElement.removeClass(ChartComponent.emptyClassName);
+    }
+
+    /**
+     * Gets or sets the flag indicating the measurement data updating state.
+     */
+    get isUpdating(): boolean
+    {
+      return this._isUpdating;
+    }
+
+    set isUpdating(value: boolean)
+    {
+      this._isUpdating = value;
+
+      // @ts-ignore
+      let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+      if (this._isUpdating)
+        chartWrapperElement.addClass(ChartComponent.updatingClassName);
+      else
+        chartWrapperElement.removeClass(ChartComponent.updatingClassName);
+    }
+
+    /**
+     * Gets or sets the flag indicating the chart updating failure.
+     */
+    get isUpdatingFailed(): boolean
+    {
+      return this._isUpdatingFailed;
+    }
+
+    set isUpdatingFailed(value: boolean)
+    {
+      this._isUpdatingFailed = value;
+
+      // @ts-ignore
+      let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
+      if (this._isUpdatingFailed)
+        chartWrapperElement.addClass(ChartComponent.updatingFailedClassName);
+      else
+        chartWrapperElement.removeClass(ChartComponent.updatingFailedClassName);
+    }
 
     /**
      * Creates a new chart control instance.
@@ -31,8 +99,8 @@ namespace PiClimate.Monitor
       // @ts-ignore
       let defaults = Chart.defaults.global.elements;
       defaults.point.radius = 0.5;
-      defaults.point.hitRadius = 0;
-      defaults.point.hoverRadius = 0;
+      defaults.point.hitRadius = 5;
+      defaults.point.hoverRadius = 5;
       defaults.line.borderWidth = 2;
       defaults.line.tension = 0;
       defaults.line.fill = false;
@@ -142,8 +210,20 @@ namespace PiClimate.Monitor
           },
           tooltips: {
             mode: "index",
-            intersect: false,
-            position: "nearest"
+            intersect: true,
+            position: "nearest",
+            callbacks: {
+              title: (tooltipItems: any[]) => new Date(tooltipItems[0].xLabel).toLocaleString(),
+              label: (tooltipItem: any) =>
+              {
+                let units = [
+                  this.chartParameters.pressureUnits,
+                  this.chartParameters.temperatureUnits,
+                  this.chartParameters.humidityUnits
+                ];
+                return `${tooltipItem.yLabel} ${units[tooltipItem.datasetIndex]}`
+              }
+            }
           },
           animation: {
             duration: 500
@@ -160,6 +240,10 @@ namespace PiClimate.Monitor
     {
       try
       {
+        this.isEmpty = false;
+        this.isUpdatingFailed = false;
+        this.isUpdating = true;
+
         let response = await fetch(this.chartParameters.requestUri, {
           method: this.chartParameters.requestMethod,
           mode: "cors",
@@ -183,11 +267,24 @@ namespace PiClimate.Monitor
           })
         });
 
-        return Object.assign(new MeasurementsCollection(), await response.json());
+        if (!response.ok)
+        {
+          // noinspection ExceptionCaughtLocallyJS
+          throw response;
+        }
+
+        let data = await response.json();
+        this.isEmpty = !data.measurements?.length;
+        return Object.assign(new MeasurementsCollection(), data);
       }
       catch
       {
+        this.isUpdatingFailed = true;
         return null;
+      }
+      finally
+      {
+        this.isUpdating = false;
       }
     }
 
