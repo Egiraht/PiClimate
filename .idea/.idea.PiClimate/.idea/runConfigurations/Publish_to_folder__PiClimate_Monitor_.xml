@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish to folder (PiClimate.Monitor)" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish runtime="Portable" target_folder="bin/Publish" target_framework="netcoreapp3.1" uuid_high="7021976828199716728" uuid_low="-5906736651134291828" />
+    <method v="2" />
+  </configuration>
+</component>

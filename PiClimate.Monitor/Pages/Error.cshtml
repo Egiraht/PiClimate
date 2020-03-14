@@ -1,0 +1,15 @@
+@page
+@model PiClimate.Monitor.Pages.Error
+@{
+  Layout = "_Layout";
+}
+
+<div class="alert alert-danger text-center my-3">
+  <div class="pb-3">
+    The server-side error has occured.
+  </div>
+
+  <button class="btn btn-danger" onclick="history.back()">
+    Back
+  </button>
+</div>

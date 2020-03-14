@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.ConfigurationLayout;
+using PiClimate.Monitor.Pages;
 
 namespace PiClimate.Monitor
 {
@@ -64,7 +65,7 @@ namespace PiClimate.Monitor
       if (_environment.IsDevelopment())
         app.UseDeveloperExceptionPage();
       else
-        app.UseExceptionHandler();
+        app.UseExceptionHandler($"/{nameof(Error)}");
 
       app.UseStatusCodePages();
       app.UseHttpsRedirection();
