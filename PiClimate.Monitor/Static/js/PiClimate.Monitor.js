@@ -65,21 +65,6 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
-        class Measurement {
-            constructor() {
-                this.d = null;
-                this.p = null;
-                this.t = null;
-                this.h = null;
-            }
-        }
-        Monitor.Measurement = Measurement;
-    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
-})(PiClimate || (PiClimate = {}));
-var PiClimate;
-(function (PiClimate) {
-    var Monitor;
-    (function (Monitor) {
         class MeasurementsCollection {
             constructor() {
                 this.minTimestamp = new Date().toISOString();
@@ -125,36 +110,41 @@ var PiClimate;
                     data: {
                         datasets: [
                             {
+                                xAxisID: ChartComponent.dateAxisId,
+                                yAxisID: ChartComponent.pressureAxisId,
                                 label: this.chartParameters.pressureChartLabel,
-                                yAxisID: this.chartParameters.pressureChartLabel,
                                 backgroundColor: this.chartParameters.pressureLineColor,
                                 borderColor: this.chartParameters.pressureLineColor,
                                 showLine: true,
                                 data: []
                             },
                             {
+                                xAxisID: ChartComponent.dateAxisId,
+                                yAxisID: ChartComponent.temperatureAxisId,
                                 label: this.chartParameters.temperatureChartLabel,
-                                yAxisID: this.chartParameters.temperatureChartLabel,
                                 backgroundColor: this.chartParameters.temperatureLineColor,
                                 borderColor: this.chartParameters.temperatureLineColor,
                                 showLine: true,
                                 data: []
                             },
                             {
+                                xAxisID: ChartComponent.dateAxisId,
+                                yAxisID: ChartComponent.humidityAxisId,
                                 label: this.chartParameters.humidityChartLabel,
-                                yAxisID: this.chartParameters.humidityChartLabel,
                                 backgroundColor: this.chartParameters.humidityLineColor,
                                 borderColor: this.chartParameters.humidityLineColor,
                                 showLine: true,
                                 data: []
                             }
-                        ],
+                        ]
                     },
                     options: {
                         scales: {
                             xAxes: [
                                 {
+                                    id: ChartComponent.dateAxisId,
                                     type: "time",
+                                    display: true,
                                     time: {
                                         isoWeekday: true,
                                         minUnit: "second",
@@ -169,8 +159,9 @@ var PiClimate;
                             ],
                             yAxes: [
                                 {
-                                    id: this.chartParameters.pressureChartLabel,
+                                    id: ChartComponent.pressureAxisId,
                                     type: "linear",
+                                    display: "auto",
                                     position: "left",
                                     scaleLabel: {
                                         display: true,
@@ -186,8 +177,9 @@ var PiClimate;
                                     }
                                 },
                                 {
-                                    id: this.chartParameters.temperatureChartLabel,
+                                    id: ChartComponent.temperatureAxisId,
                                     type: "linear",
+                                    display: "auto",
                                     position: "right",
                                     scaleLabel: {
                                         display: true,
@@ -203,8 +195,9 @@ var PiClimate;
                                     }
                                 },
                                 {
-                                    id: this.chartParameters.humidityChartLabel,
+                                    id: ChartComponent.humidityAxisId,
                                     type: "linear",
+                                    display: "auto",
                                     position: "right",
                                     scaleLabel: {
                                         display: true,
@@ -387,6 +380,25 @@ var PiClimate;
         ChartComponent.emptyClassName = "empty";
         ChartComponent.updatingClassName = "updating";
         ChartComponent.updatingFailedClassName = "failed";
+        ChartComponent.dateAxisId = "date";
+        ChartComponent.pressureAxisId = "pressure";
+        ChartComponent.temperatureAxisId = "temperature";
+        ChartComponent.humidityAxisId = "humidity";
         Monitor.ChartComponent = ChartComponent;
+    })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
+})(PiClimate || (PiClimate = {}));
+var PiClimate;
+(function (PiClimate) {
+    var Monitor;
+    (function (Monitor) {
+        class Measurement {
+            constructor() {
+                this.d = null;
+                this.p = null;
+                this.t = null;
+                this.h = null;
+            }
+        }
+        Monitor.Measurement = Measurement;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));

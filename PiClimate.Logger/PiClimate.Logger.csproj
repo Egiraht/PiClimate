@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Common configuration. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,11 +15,14 @@
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
-  
+
+  <!-- Release build configuration. -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+  <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
@@ -29,6 +33,7 @@
     <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
   </ItemGroup>
 
+  <!-- Copy the "Configuration.json" file to the output directory. -->
   <ItemGroup>
     <None Remove="Configuration.json" />
     <Content Include="Configuration.json">

@@ -16,6 +16,11 @@ namespace PiClimate.Monitor
     public static readonly updatingClassName: string = "updating";
     public static readonly updatingFailedClassName: string = "failed";
 
+    public static readonly dateAxisId: string = "date";
+    public static readonly pressureAxisId: string = "pressure";
+    public static readonly temperatureAxisId: string = "temperature";
+    public static readonly humidityAxisId: string = "humidity";
+
     /**
      * The chart parameters object used for the chart configuring.
      */
@@ -112,36 +117,41 @@ namespace PiClimate.Monitor
         data: {
           datasets: [
             {
+              xAxisID: ChartComponent.dateAxisId,
+              yAxisID: ChartComponent.pressureAxisId,
               label: this.chartParameters.pressureChartLabel,
-              yAxisID: this.chartParameters.pressureChartLabel,
               backgroundColor: this.chartParameters.pressureLineColor,
               borderColor: this.chartParameters.pressureLineColor,
               showLine: true,
               data: []
             },
             {
+              xAxisID: ChartComponent.dateAxisId,
+              yAxisID: ChartComponent.temperatureAxisId,
               label: this.chartParameters.temperatureChartLabel,
-              yAxisID: this.chartParameters.temperatureChartLabel,
               backgroundColor: this.chartParameters.temperatureLineColor,
               borderColor: this.chartParameters.temperatureLineColor,
               showLine: true,
               data: []
             },
             {
+              xAxisID: ChartComponent.dateAxisId,
+              yAxisID: ChartComponent.humidityAxisId,
               label: this.chartParameters.humidityChartLabel,
-              yAxisID: this.chartParameters.humidityChartLabel,
               backgroundColor: this.chartParameters.humidityLineColor,
               borderColor: this.chartParameters.humidityLineColor,
               showLine: true,
               data: []
             }
-          ],
+          ]
         },
         options: {
           scales: {
             xAxes: [
               {
+                id: ChartComponent.dateAxisId,
                 type: "time",
+                display: true,
                 time: {
                   isoWeekday: true,
                   minUnit: "second",
@@ -156,8 +166,9 @@ namespace PiClimate.Monitor
             ],
             yAxes: [
               {
-                id: this.chartParameters.pressureChartLabel,
+                id: ChartComponent.pressureAxisId,
                 type: "linear",
+                display: "auto",
                 position: "left",
                 scaleLabel: {
                   display: true,
@@ -173,8 +184,9 @@ namespace PiClimate.Monitor
                 }
               },
               {
-                id: this.chartParameters.temperatureChartLabel,
+                id: ChartComponent.temperatureAxisId,
                 type: "linear",
+                display: "auto",
                 position: "right",
                 scaleLabel: {
                   display: true,
@@ -190,8 +202,9 @@ namespace PiClimate.Monitor
                 }
               },
               {
-                id: this.chartParameters.humidityChartLabel,
+                id: ChartComponent.humidityAxisId,
                 type: "linear",
+                display: "auto",
                 position: "right",
                 scaleLabel: {
                   display: true,

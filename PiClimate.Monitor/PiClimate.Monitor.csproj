@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- Common configuration. -->
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
@@ -10,23 +11,34 @@
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <!-- Release build configuration. -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="MySqlConnector" Version="0.62.0" />
   </ItemGroup>
 
+  <!-- Compile the TypeScript files from the "Scripts" directory. -->
   <ItemGroup>
-    <None Remove="Scripts/PiClimate.Monitor.js/**/*.ts" />
-    <TypeScriptCompile Include="Scripts/PiClimate.Monitor.js/**/*.ts" />
+    <None Remove="Scripts/**/*.ts" />
+    <TypeScriptCompile Include="Scripts/**/*.ts" />
   </ItemGroup>
-  
+
+  <!-- Do not copy JSON files from the "Scripts" directory to the output directory. -->
   <ItemGroup>
     <Content Remove="Scripts/**/*.json" />
     <None Include="Scripts/**/*.json" />
   </ItemGroup>
 
+  <!-- Copy all files from the "Static" directory to the output directory. -->
   <ItemGroup>
     <None Remove="Static/**/*" />
     <Content Include="Static/**/*">
