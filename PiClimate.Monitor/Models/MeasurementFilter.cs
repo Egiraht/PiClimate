@@ -16,9 +16,14 @@ namespace PiClimate.Monitor.Models
     public const int MinimalResolution = 1;
 
     /// <summary>
+    ///   Defines the maximal data resolution within the selected timespan.
+    /// </summary>
+    public const int MaximalResolution = 3000;
+
+    /// <summary>
     ///   Defines the default data resolution within the selected timespan.
     /// </summary>
-    public const int DefaultResolution = 1440;
+    public const int DefaultResolution = 1500;
 
     /// <summary>
     ///   Defines the default time period to be used for the timespan.
@@ -57,7 +62,7 @@ namespace PiClimate.Monitor.Models
     public int Resolution
     {
       get => _resolution;
-      set => _resolution = Math.Max(value, MinimalResolution);
+      set => _resolution = Math.Clamp(value, MinimalResolution, MaximalResolution);
     }
   }
 }

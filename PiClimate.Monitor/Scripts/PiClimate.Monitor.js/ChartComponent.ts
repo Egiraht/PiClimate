@@ -380,6 +380,7 @@ namespace PiClimate.Monitor
       let maxHumidityElement = $(`#${this.chartParameters.chartId}-summary .max-humidity`);
       let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
       let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
+      let entriesCountElement = $(`#${this.chartParameters.chartId}-summary .entries-count`);
 
       periodStartElement.text(this.chart.options.scales.xAxes[0].ticks.min.toLocaleString());
       periodEndElement.text(this.chart.options.scales.xAxes[0].ticks.max.toLocaleString());
@@ -395,6 +396,7 @@ namespace PiClimate.Monitor
       maxHumidityElement.text(response.maxHumidity);
       minHumidityTimestampElement.text(new Date(response.minHumidityTimestamp).toLocaleString());
       maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
+      entriesCountElement.text(response.measurements.length);
     }
   }
 }

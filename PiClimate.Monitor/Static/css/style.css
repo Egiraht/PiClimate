@@ -19,7 +19,7 @@ body
   display: none;
 }
 
-.time
+.date
 {
   color: var(--time-color) !important;
   border-color: var(--time-color) !important;
