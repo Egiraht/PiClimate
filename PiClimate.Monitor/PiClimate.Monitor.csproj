@@ -1,16 +1,29 @@
+<!--
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+-->
+
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <!-- Common configuration. -->
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <Title>PiClimate Monitor</Title>
-    <Authors>Egiraht</Authors>
+    <Authors>Maxim Yudin</Authors>
     <Description>Climatic data monitor</Description>
-    <Copyright>Egiraht (c) 2020</Copyright>
-    <Company>Egiraht</Company>
+    <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
+    <Company>Maxim Yudin</Company>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Measurements, pressure, temperature, humidity, monitor</PackageTags>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
@@ -23,7 +36,7 @@
   <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="MySqlConnector" Version="0.62.0" />
+    <PackageReference Include="MySqlConnector" Version="0.63.0" />
   </ItemGroup>
 
   <!-- Compile the TypeScript files from the "Scripts" directory. -->
