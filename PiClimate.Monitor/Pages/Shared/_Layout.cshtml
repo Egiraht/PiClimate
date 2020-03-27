@@ -24,14 +24,24 @@
     <div class="container-fluid">
       <div class="row flex-column flex-lg-row flex-nowrap vh-100">
         @* Navigation menu. *@
-        <aside id="nav-menu" class="navbar navbar-dark bg-dark overflow-auto flex-lg-column flex-grow-0 flex-shrink-0 col-auto">
+        <aside id="nav-menu" class="navbar navbar-dark bg-dark overflow-auto flex-lg-column flex-nowrap col-auto">
           <partial name="NavMenu" />
+
+          @* Footer for narrow viewports. *@
+          <div class="d-none d-lg-block mt-3">
+            <partial name="Footer" />
+          </div>
         </aside>
 
         @* Main content. *@
         <main id="main" class="bg-light overflow-auto col">
           @RenderBody()
         </main>
+
+        @* Footer for wide viewports. *@
+        <div class="d-block d-lg-none flex-grow-0 flex-shrink-0 bg-dark py-2">
+          <partial name="Footer" />
+        </div>
       </div>
     </div>
   </body>

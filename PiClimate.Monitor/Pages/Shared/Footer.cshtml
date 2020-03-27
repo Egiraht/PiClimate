@@ -1,0 +1,16 @@
+@using System.Reflection
+
+@{
+  var company = Assembly.GetExecutingAssembly()
+    .GetCustomAttribute<AssemblyCompanyAttribute>()
+    ?.Company ?? "";
+
+  var creationYear = 2020;
+  var repositoryUrl = "https://github.com/Egiraht/PiClimate";
+}
+
+<div id="footer" class="text-center small text-secondary">
+  Copyright © @creationYear@(DateTime.Now.Year > creationYear ? $"-{DateTime.Now.Year}" : "")
+  @company
+  <a href="@repositoryUrl" class="nav-link d-inline">GitHub</a>
+</div>
