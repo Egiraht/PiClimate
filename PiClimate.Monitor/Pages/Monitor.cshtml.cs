@@ -4,6 +4,7 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PiClimate.Monitor.Models;
@@ -13,6 +14,7 @@ namespace PiClimate.Monitor.Pages
   /// <summary>
   ///   The data monitor page code-behind class.
   /// </summary>
+  [Authorize]
   public class Monitor : PageModel
   {
     /// <summary>

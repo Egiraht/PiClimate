@@ -6,6 +6,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,6 +19,7 @@ namespace PiClimate.Monitor.Pages
   ///   The page that filters the measurement data using the provided measurement filter and returns the result
   ///   in JSON format.
   /// </summary>
+  [Authorize]
   [IgnoreAntiforgeryToken]
   public class Data : PageModel
   {

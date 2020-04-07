@@ -21,6 +21,11 @@ namespace PiClimate.Monitor
   public class Startup
   {
     /// <summary>
+    ///   Defines the name for anti-forgery token parameters.
+    /// </summary>
+    private const string AntiForgeryTokenParameterName = "AntiForgeryToken";
+
+    /// <summary>
     ///   The web host configuration.
     /// </summary>
     private readonly IConfiguration _configuration;
@@ -56,6 +61,20 @@ namespace PiClimate.Monitor
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddRazorPages();
+      services.AddAuthentication(Auth.SchemeName)
+        .AddCookie(Auth.SchemeName, options =>
+        {
+          options.LoginPath = Auth.LoginPath;
+          options.LogoutPath = Auth.LogoutPath;
+          options.ReturnUrlParameter = Auth.ReturnQueryParameterName;
+          options.Cookie.Name = Auth.CookieName;
+        });
+      services.AddAuthorization();
+      services.AddAntiforgery(options =>
+      {
+        options.FormFieldName = AntiForgeryTokenParameterName;
+        options.Cookie.Name = AntiForgeryTokenParameterName;
+      });
       services.AddCors();
       services.AddMeasurementSource(_configuration[Root.UseMeasurementSource]);
     }
@@ -77,6 +96,8 @@ namespace PiClimate.Monitor
       app.UseHttpsRedirection();
       app.UseStaticFiles();
       app.UseRouting();
+      app.UseAuthentication();
+      app.UseAuthorization();
       app.UseCors(builder => builder.AllowAnyOrigin());
       app.UseEndpoints(endpoints => endpoints.MapRazorPages());
     }

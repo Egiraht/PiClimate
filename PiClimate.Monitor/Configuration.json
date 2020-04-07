@@ -16,5 +16,19 @@
 
     // Defines the database table name for the measurements.
     "MeasurementsTableName": "Measurements"
+  },
+
+  // The configuration's section for authentication options.
+  "Authentication": {
+    // Defines the authentication cookie expiration period in days used when the "Remember me" option is active.
+    // Can be a floating point numeric value.
+    "CookieExpirationPeriod": 7,
+
+    // Defines the list of key-value pairs representing user names and corresponding passwords used for signing in.
+    // Both user names and passwords are case-sensitive.
+    // It is highly recommended to change the default values for better security.
+    "LoginPairs": {
+      "PiClimate": "Monitor"
+    }
   }
 }

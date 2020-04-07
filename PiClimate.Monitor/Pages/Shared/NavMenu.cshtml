@@ -6,28 +6,42 @@
   Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 *@
 
-@{
-  var lastDayQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Day}};
-  var lastWeekQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Week}};
-  var lastMonthQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Month}};
-}
-
-<ul class="navbar-nav flex-row flex-lg-column w-100">
+<ul class="navbar-nav flex-row flex-lg-column flex-fill flex-wrap w-100">
   <li class="nav-item px-3">
     <a class="navbar-brand" href="/">PiClimate Monitor</a>
   </li>
 
   <hr class="border-light w-100 d-none d-lg-block" />
 
-  <li class="nav-item px-3">
-    <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastDayQuery">Last day</page-link>
-  </li>
+  <li class="flex-fill d-lg-none"></li>
 
-  <li class="nav-item px-3">
-    <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastWeekQuery">Last week</page-link>
-  </li>
+  @if (User.Identity.IsAuthenticated)
+  {
+    var returnPath = new Dictionary<string, string> {{nameof(Auth.Return), Context.Request.GetEncodedPathAndQuery()}};
+    var lastDayQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Day}};
+    var lastWeekQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Week}};
+    var lastMonthQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Month}};
 
-  <li class="nav-item px-3">
-    <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastMonthQuery">Last month</page-link>
-  </li>
+    <li class="nav-item px-3">
+      <form method="POST" asp-page="@nameof(Auth)" asp-page-handler="@Auth.LogoutHandler" asp-all-route-data="@returnPath">
+        <input type="submit" class="btn btn-link nav-link" value="Sign out" />
+      </form>
+    </li>
+
+    <hr class="border-light w-100" />
+
+    <li class="w-100 d-lg-none"></li>
+
+    <li class="nav-item px-3">
+      <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastDayQuery">Last day</page-link>
+    </li>
+
+    <li class="nav-item px-3">
+      <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastWeekQuery">Last week</page-link>
+    </li>
+
+    <li class="nav-item px-3">
+      <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastMonthQuery">Last month</page-link>
+    </li>
+  }
 </ul>
