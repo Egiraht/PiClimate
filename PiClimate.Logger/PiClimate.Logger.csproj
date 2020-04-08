@@ -27,6 +27,7 @@
     <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Measurements, pressure, temperature, humidity, logger</PackageTags>
+    <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!-- Release build configuration. -->
@@ -53,7 +54,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  
+
   <!-- Copy all files from the "Scripts" directory to the output directory. -->
   <ItemGroup>
     <None Remove="Scripts/**/*" />

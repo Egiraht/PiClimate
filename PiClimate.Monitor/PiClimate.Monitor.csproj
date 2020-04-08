@@ -25,6 +25,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Measurements, pressure, temperature, humidity, monitor</PackageTags>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!-- Release build configuration. -->
@@ -55,6 +56,14 @@
   <ItemGroup>
     <None Remove="Static/**/*" />
     <Content Include="Static/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <!-- Add a link to the common icon file as "Static/favicon.ico" and copy it to the output directory. -->
+  <ItemGroup>
+    <Content Include="../Icon/PiClimate.ico">
+      <Link>Static/favicon.ico</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
