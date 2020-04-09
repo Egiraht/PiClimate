@@ -3,6 +3,10 @@
   // Available values: MySql (MySqlSource).
   "UseMeasurementSource": "MySql",
 
+  // Defines the path to the directory where the data protection keys will be stored.
+  // The directory must be accessible for file reading and writing.
+  "ProtectionKeysDirectoryPath": "./Keys",
+
   // Defines the named list of connection strings providing the database connection parameters.
   "ConnectionStrings": {
     "MySql": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"

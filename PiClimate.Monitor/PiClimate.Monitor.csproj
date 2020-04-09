@@ -59,4 +59,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  
+  <!-- Ignore the files from the "Keys" directory. -->
+  <ItemGroup>
+    <None Remove="Keys/**/*" />
+  </ItemGroup>
 </Project>

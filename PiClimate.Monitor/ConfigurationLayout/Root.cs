@@ -17,6 +17,11 @@ namespace PiClimate.Monitor.ConfigurationLayout
     public const string UseMeasurementSource = nameof(UseMeasurementSource);
 
     /// <summary>
+    ///   Defines the path to the directory where the data protection keys will be stored.
+    /// </summary>
+    public const string ProtectionKeysDirectoryPath = nameof(ProtectionKeysDirectoryPath);
+
+    /// <summary>
     ///   Defines the named list of connection strings providing the database connection parameters.
     /// </summary>
     public const string ConnectionStrings = nameof(ConnectionStrings);

@@ -4,7 +4,9 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+using System.IO;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,11 @@ namespace PiClimate.Monitor
   /// </summary>
   public class Startup
   {
+    /// <summary>
+    ///   Defines the default path to the protection keys directory.
+    /// </summary>
+    private const string DefaultProtectionKeysDirectoryPath = "./Keys";
+
     /// <summary>
     ///   Defines the name for anti-forgery token parameters.
     /// </summary>
@@ -60,7 +67,10 @@ namespace PiClimate.Monitor
     /// </param>
     public void ConfigureServices(IServiceCollection services)
     {
+      // Add services related to the Razor Pages.
       services.AddRazorPages();
+
+      // Add cookie-based user authentication services.
       services.AddAuthentication(Auth.SchemeName)
         .AddCookie(Auth.SchemeName, options =>
         {
@@ -69,14 +79,31 @@ namespace PiClimate.Monitor
           options.ReturnUrlParameter = Auth.ReturnQueryParameterName;
           options.Cookie.Name = Auth.CookieName;
         });
+
+      // Add authorization services.
       services.AddAuthorization();
+
+      // Configure the anti-forgery protection services.
       services.AddAntiforgery(options =>
       {
         options.FormFieldName = AntiForgeryTokenParameterName;
         options.Cookie.Name = AntiForgeryTokenParameterName;
       });
+
+      // Add cross-origin request sharing services.
       services.AddCors();
+
+      // Add the selected measurement source as a service.
       services.AddMeasurementSource(_configuration[Root.UseMeasurementSource]);
+
+      // Configure the data protection services to put the persistent protection keys to the dedicated directory.
+      var protectionKeysDirectoryPath = _configuration[Root.ProtectionKeysDirectoryPath];
+      if (string.IsNullOrWhiteSpace(protectionKeysDirectoryPath))
+        protectionKeysDirectoryPath = DefaultProtectionKeysDirectoryPath;
+      if (!Directory.Exists(protectionKeysDirectoryPath))
+        Directory.CreateDirectory(protectionKeysDirectoryPath);
+      services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(protectionKeysDirectoryPath));
     }
 
     /// <summary>
