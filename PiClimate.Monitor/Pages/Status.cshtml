@@ -6,18 +6,22 @@
   Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 *@
 
-@page
-@model PiClimate.Monitor.Pages.Error
+@page "/Status/{Code:int}"
+@model PiClimate.Monitor.Pages.Status
 @{
   Layout = "_Layout";
 }
 
-<div class="alert alert-danger text-center">
-  <div class="h4 mb-4">
-    The server-side error has occured.
+<div class="alert alert-warning text-center">
+  <div class="h1">
+    @Model.Code
+  </div>
+
+  <div class="h4 my-4">
+    @ReasonPhrases.GetReasonPhrase(Model.Code)
   </div>
 
   <div>
-    <button class="btn btn-danger" onclick="history.back()">Back</button>
+    <button class="btn btn-warning" onclick="history.back()">Back</button>
   </div>
 </div>

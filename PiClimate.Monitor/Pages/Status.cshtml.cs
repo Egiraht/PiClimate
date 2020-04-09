@@ -9,11 +9,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PiClimate.Monitor.Pages
 {
-  /// <summary>
-  ///   The error page code-behind class.
-  /// </summary>
   [IgnoreAntiforgeryToken]
-  public class Error : PageModel
+  public class Status : PageModel
   {
+    [BindProperty(SupportsGet = true)]
+    public int Code { get; set; }
   }
 }

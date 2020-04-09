@@ -50,6 +50,10 @@
   <ItemGroup>
     <Content Remove="Scripts/**/*.json" />
     <None Include="Scripts/**/*.json" />
+    <Content Update="Pages\Status.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <!-- Copy all files from the "Static" directory to the output directory. -->

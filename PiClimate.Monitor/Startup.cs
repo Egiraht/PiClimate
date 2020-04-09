@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -76,6 +77,7 @@ namespace PiClimate.Monitor
         {
           options.LoginPath = Auth.LoginPath;
           options.LogoutPath = Auth.LogoutPath;
+          options.AccessDeniedPath = $"/{nameof(Status)}/{StatusCodes.Status403Forbidden}";
           options.ReturnUrlParameter = Auth.ReturnQueryParameterName;
           options.Cookie.Name = Auth.CookieName;
         });
@@ -119,7 +121,7 @@ namespace PiClimate.Monitor
       else
         app.UseExceptionHandler($"/{nameof(Error)}");
 
-      app.UseStatusCodePages();
+      app.UseStatusCodePagesWithReExecute($"/{nameof(Status)}/{{0}}");
       app.UseHttpsRedirection();
       app.UseStaticFiles();
       app.UseRouting();
