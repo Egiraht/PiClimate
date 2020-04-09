@@ -59,12 +59,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  
-  <!-- Add a link to the common icon file as "Static/favicon.ico" and copy it to the output directory. -->
-  <ItemGroup>
-    <Content Include="../Icon/PiClimate.ico">
-      <Link>Static/favicon.ico</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 </Project>
