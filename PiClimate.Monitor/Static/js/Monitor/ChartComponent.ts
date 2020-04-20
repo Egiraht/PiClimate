@@ -270,20 +270,7 @@ namespace PiClimate.Monitor
             "Accept": "application/json",
             "Content-Type": "application/json"
           },
-
-          // HACK: Timezone suffix replacement ("Z" -> "+00:00") in the JS-generated ISO timestamps is needed for
-          // correct timezone parsing in the backend.
-          body: JSON.stringify({
-            resolution: this.chartParameters.filter.resolution,
-            fromTime:
-              new Date(this.chartParameters.filter.fromTime)
-                .toISOString()
-                .replace(/Z$/ig, "+00:00"),
-            toTime:
-              new Date(this.chartParameters.filter.toTime)
-                .toISOString()
-                .replace(/Z$/ig, "+00:00")
-          })
+          body: JSON.stringify(this.chartParameters.filter)
         });
 
         if (!response.ok)
@@ -348,13 +335,13 @@ namespace PiClimate.Monitor
       // Scaling the chart's Y axis.
       this.chart.options.scales.xAxes[0].ticks = {
         min:
-          new Date(response.minTimestamp).valueOf() < new Date(this.chartParameters.filter.fromTime).valueOf()
+          new Date(response.minTimestamp).valueOf() < this.chartParameters.filter.getFromTimeDate().valueOf()
             ? new Date(response.minTimestamp)
-            : new Date(this.chartParameters.filter.fromTime),
+            : this.chartParameters.filter.getFromTimeDate(),
         max:
-          new Date(response.maxTimestamp).valueOf() > new Date(this.chartParameters.filter.toTime).valueOf()
+          new Date(response.maxTimestamp).valueOf() > this.chartParameters.filter.getToTimeDate().valueOf()
             ? new Date(response.maxTimestamp)
-            : new Date(this.chartParameters.filter.toTime)
+            : this.chartParameters.filter.getToTimeDate()
       };
 
       // Rendering the chart and updating the summary table.

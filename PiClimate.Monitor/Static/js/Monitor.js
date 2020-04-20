@@ -14,25 +14,21 @@ var PiClimate;
     (function (Monitor) {
         class MeasurementFilter {
             constructor() {
-                this._resolution = MeasurementFilter.defaultResolution;
-                this.fromTime = new Date(Date.now() - MeasurementFilter.defaultTimePeriod).toISOString();
+                this.timePeriod = MeasurementFilter.defaultTimePeriod;
+                this.fromTime = null;
                 this.toTime = new Date().toISOString();
+                this.resolution = MeasurementFilter.defaultResolution;
             }
-            get timePeriod() {
-                return Math.round(Math.abs(new Date(this.toTime).valueOf() - new Date(this.fromTime).valueOf()) / 1000);
+            getFromTimeDate() {
+                if (this.fromTime != null)
+                    return new Date(this.fromTime);
+                return new Date(new Date(this.toTime).valueOf() - this.timePeriod * 1000);
             }
-            set timePeriod(value) {
-                this.fromTime = new Date(new Date(this.toTime).valueOf() - value * 1000).toISOString();
-            }
-            get resolution() {
-                return this._resolution;
-            }
-            set resolution(value) {
-                this._resolution = Math.max(value, MeasurementFilter.minimalResolution);
+            getToTimeDate() {
+                return new Date(this.toTime);
             }
         }
-        MeasurementFilter.minimalResolution = 1;
-        MeasurementFilter.defaultResolution = 1440;
+        MeasurementFilter.defaultResolution = 1500;
         MeasurementFilter.defaultTimePeriod = 24 * 60 * 60 * 1000;
         Monitor.MeasurementFilter = MeasurementFilter;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
@@ -283,15 +279,7 @@ var PiClimate;
                                 "Accept": "application/json",
                                 "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({
-                                resolution: this.chartParameters.filter.resolution,
-                                fromTime: new Date(this.chartParameters.filter.fromTime)
-                                    .toISOString()
-                                    .replace(/Z$/ig, "+00:00"),
-                                toTime: new Date(this.chartParameters.filter.toTime)
-                                    .toISOString()
-                                    .replace(/Z$/ig, "+00:00")
-                            })
+                            body: JSON.stringify(this.chartParameters.filter)
                         });
                         if (!response.ok) {
                             throw response;
@@ -333,12 +321,12 @@ var PiClimate;
                         };
                     });
                     this.chart.options.scales.xAxes[0].ticks = {
-                        min: new Date(response.minTimestamp).valueOf() < new Date(this.chartParameters.filter.fromTime).valueOf()
+                        min: new Date(response.minTimestamp).valueOf() < this.chartParameters.filter.getFromTimeDate().valueOf()
                             ? new Date(response.minTimestamp)
-                            : new Date(this.chartParameters.filter.fromTime),
-                        max: new Date(response.maxTimestamp).valueOf() > new Date(this.chartParameters.filter.toTime).valueOf()
+                            : this.chartParameters.filter.getFromTimeDate(),
+                        max: new Date(response.maxTimestamp).valueOf() > this.chartParameters.filter.getToTimeDate().valueOf()
                             ? new Date(response.maxTimestamp)
-                            : new Date(this.chartParameters.filter.toTime)
+                            : this.chartParameters.filter.getToTimeDate()
                     };
                     this.chart.update();
                     this.updateChartSummary(response);
@@ -404,3 +392,4 @@ var PiClimate;
         Monitor.Measurement = Measurement;
     })(Monitor = PiClimate.Monitor || (PiClimate.Monitor = {}));
 })(PiClimate || (PiClimate = {}));
+//# sourceMappingURL=Monitor.js.map

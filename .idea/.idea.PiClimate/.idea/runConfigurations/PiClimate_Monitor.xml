@@ -18,7 +18,7 @@
     <option name="PROJECT_TFM" value=".NETCoreApp,Version=v3.1" />
     <browser url="https://localhost:5001" start="true" />
     <method v="2">
-      <option name="TypeScript.Before.Run" enabled="true" FAIL_ON_ERROR="true" CONFIG_PATH="$PROJECT_DIR$/PiClimate.Monitor/Scripts/PiClimate.Monitor.js/tsconfig.json" />
+      <option name="TypeScript.Before.Run" enabled="true" FAIL_ON_ERROR="true" CONFIG_PATH="$PROJECT_DIR$/PiClimate.Monitor/Static/js/Monitor/tsconfig.json" />
       <option name="Build" />
     </method>
   </configuration>

@@ -8,9 +8,10 @@
   "compilerOptions": {
     "module": "System",
     "target": "ES2015",
-    "outFile": "../../Static/js/PiClimate.Monitor.js",
+    "outFile": "../Monitor.js",
     "strict": true,
-    "removeComments": true
+    "removeComments": true,
+    "sourceMap": true
   },
   "exclude": [
     "node_modules"

@@ -11,17 +11,10 @@ namespace PiClimate.Monitor
    */
   export class MeasurementFilter
   {
-    private _resolution = MeasurementFilter.defaultResolution;
-
-    /**
-     * Defines the minimal data resolution within the selected timespan.
-     */
-    public static readonly minimalResolution: number = 1;
-
     /**
      * Defines the default data resolution within the selected timespan.
      */
-    public static readonly defaultResolution: number = 1440;
+    public static readonly defaultResolution: number = 1500;
 
     /**
      * Defines the default time period in milliseconds to be used for the timespan.
@@ -31,20 +24,17 @@ namespace PiClimate.Monitor
     /**
      * Gets or sets the time period in seconds defining the beginning of the selected timespan relatively to
      * the `toTime` property value.
+     * This value is used only if the `fromTime` value is `null`.
+     * The minimal value must be 1 second.
      */
-    public get timePeriod(): number
-    {
-      return Math.round(Math.abs(new Date(this.toTime).valueOf() - new Date(this.fromTime).valueOf()) / 1000);
-    }
-    public set timePeriod(value: number)
-    {
-      this.fromTime = new Date(new Date(this.toTime).valueOf() - value * 1000).toISOString();
-    }
+    public timePeriod: number = MeasurementFilter.defaultTimePeriod;
 
     /**
      * The beginning of the selected timespan.
+     * If the value is `null` the actual timespan beginning will be calculated using the value of the `timePeriod`
+     * property.
      */
-    public fromTime: string = new Date(Date.now() - MeasurementFilter.defaultTimePeriod).toISOString();
+    public fromTime: string | null = null;
 
     /**
      * The ending of the selected timespan.
@@ -55,13 +45,26 @@ namespace PiClimate.Monitor
      * Gets or sets the data resolution to be used within the selected timespan.
      * The actual number of filtered data entries may not be equal to the provided value.
      */
-    public get resolution(): number
+    public resolution: number = MeasurementFilter.defaultResolution;
+
+    /**
+     * Gets the `Date` object for the current timespan beginning value depending on the values of the `fromTime` and
+     * `timePeriod` properties.
+     */
+    public getFromTimeDate(): Date
     {
-      return this._resolution
+      if (this.fromTime != null)
+        return new Date(this.fromTime);
+
+      return new Date(new Date(this.toTime).valueOf() - this.timePeriod * 1000)
     }
-    public set resolution(value: number)
+
+    /**
+     * Gets the `Date` object for the current timespan ending value.
+     */
+    public getToTimeDate(): Date
     {
-      this._resolution = Math.max(value, MeasurementFilter.minimalResolution)
+      return new Date(this.toTime);
     }
   }
 }

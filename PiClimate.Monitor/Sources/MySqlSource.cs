@@ -93,8 +93,8 @@ namespace PiClimate.Monitor.Sources
     /// <inheritdoc />
     public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
     {
-      var fromTime = filter.FromTime <= filter.ToTime ? filter.FromTime : filter.ToTime;
-      var toTime = filter.FromTime <= filter.ToTime ? filter.ToTime : filter.FromTime;
+      var fromTime = filter.FromTime!.Value <= filter.ToTime ? filter.FromTime!.Value : filter.ToTime;
+      var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
 
       using var connection = new MySqlConnection(_connectionString);
       return connection.Query<Measurement>(SelectSqlTemplate, new QueryParameters
@@ -108,8 +108,8 @@ namespace PiClimate.Monitor.Sources
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter)
     {
-      var fromTime = filter.FromTime <= filter.ToTime ? filter.FromTime : filter.ToTime;
-      var toTime = filter.FromTime <= filter.ToTime ? filter.ToTime : filter.FromTime;
+      var fromTime = filter.FromTime!.Value <= filter.ToTime ? filter.FromTime!.Value : filter.ToTime;
+      var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
 
       await using var connection = new MySqlConnection(_connectionString);
       return await connection.QueryAsync<Measurement>(SelectSqlTemplate, new QueryParameters
