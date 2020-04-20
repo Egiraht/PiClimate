@@ -40,12 +40,6 @@
     <PackageReference Include="MySqlConnector" Version="0.64.0" />
   </ItemGroup>
 
-  <!-- Compile the TypeScript files from the "Scripts" directory. -->
-  <ItemGroup>
-    <None Remove="Scripts/**/*.ts" />
-    <TypeScriptCompile Include="Scripts/**/*.ts" />
-  </ItemGroup>
-
   <!-- Copy all files from the "Static" directory to the output directory. -->
   <ItemGroup>
     <None Remove="Static/**/*" />
@@ -54,7 +48,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  
+
   <!-- Ignore the files from the "Keys" directory. -->
   <ItemGroup>
     <None Remove="Keys/**/*" />

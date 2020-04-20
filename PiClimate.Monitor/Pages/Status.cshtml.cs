@@ -9,9 +9,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PiClimate.Monitor.Pages
 {
+  /// <summary>
+  ///   The status page code-behind class.
+  /// </summary>
   [IgnoreAntiforgeryToken]
   public class Status : PageModel
   {
+    /// <summary>
+    ///   Gets the HTTP status code value extracted from the HTTP request.
+    /// </summary>
     [BindProperty(SupportsGet = true)]
     public int Code { get; set; }
   }

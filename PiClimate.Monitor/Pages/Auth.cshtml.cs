@@ -20,36 +20,85 @@ using PiClimate.Monitor.Models;
 
 namespace PiClimate.Monitor.Pages
 {
+  /// <summary>
+  ///   The user authentication page code-behind class.
+  /// </summary>
   public class Auth : PageModel
   {
+    /// <summary>
+    ///   Defines the default authentication scheme name.
+    /// </summary>
     public const string SchemeName = CookieAuthenticationDefaults.AuthenticationScheme;
 
+    /// <summary>
+    ///   Defines the query parameter name that contains the redirection path for returning.
+    /// </summary>
     public const string ReturnQueryParameterName = nameof(Return);
 
+    /// <summary>
+    ///   Defines the authentication cookie name.
+    /// </summary>
     public const string CookieName = "AuthToken";
 
+    /// <summary>
+    ///   Defines the default return redirection path.
+    /// </summary>
     public const string DefaultReturnPath = "/";
 
+    /// <summary>
+    ///   Defines the default authentication cookie expiration period.
+    /// </summary>
     private static readonly TimeSpan DefaultCookieExpirationPeriod = TimeSpan.FromDays(7);
 
+    /// <summary>
+    ///   Gets the name of the page's login handler.
+    /// </summary>
     public static string LoginHandler => ExtractHandlerName(nameof(OnPostLogin));
 
+    /// <summary>
+    ///   Gets the name of the page's logout handler.
+    /// </summary>
     public static string LogoutHandler => ExtractHandlerName(nameof(OnPostLogout));
 
+    /// <summary>
+    ///   Gets the path to the page's login handler.
+    /// </summary>
     public static string LoginPath => $"/{nameof(Auth)}/{LoginHandler}";
 
+    /// <summary>
+    ///   Gets the path to the page's logout handler.
+    /// </summary>
     public static string LogoutPath => $"/{nameof(Auth)}/{LogoutHandler}";
 
+    /// <summary>
+    ///   The authentication cookie expiration period taken from the configuration.
+    /// </summary>
     private readonly TimeSpan _cookieExpirationPeriod;
 
+    /// <summary>
+    ///   The collection of login name-password pairs taken from the configuration.
+    /// </summary>
     private readonly IDictionary<string, string> _loginPairs;
 
+    /// <summary>
+    ///   Gets the login form bound from the HTTP request.
+    /// </summary>
     [BindProperty]
     public LoginForm LoginForm { get; set; } = new LoginForm();
 
+    /// <summary>
+    ///   Gets the return redirection path bound from the HTTP request.
+    /// </summary>
     [BindProperty]
     public string? Return { get; set; }
 
+    /// <summary>
+    ///   Initializes the new instance of the page.
+    /// </summary>
+    /// <param name="configuration">
+    ///   The configuration of the web host.
+    ///   Provided via dependency injection.
+    /// </param>
     public Auth(IConfiguration configuration)
     {
       _cookieExpirationPeriod = double.TryParse(configuration[Authentication.CookieExpirationPeriod], NumberStyles.Any,
@@ -62,8 +111,21 @@ namespace PiClimate.Monitor.Pages
         .ToDictionary(element => element.Key, element => element.Value);
     }
 
+    /// <summary>
+    ///   The login callback handler for GET HTTP requests.
+    /// </summary>
+    /// <returns>
+    ///   The processed page view result.
+    /// </returns>
     public IActionResult OnGetLogin() => Page();
 
+    /// <summary>
+    ///   The login callback handler for POST HTTP requests.
+    /// </summary>
+    /// <returns>
+    ///   The return redirection result on successful user authentication or the processed page view result with
+    ///   the form validation errors otherwise.
+    /// </returns>
     public IActionResult OnPostLogin()
     {
       if (!ModelState.IsValid)
@@ -87,12 +149,28 @@ namespace PiClimate.Monitor.Pages
       return SignIn(user, properties, SchemeName);
     }
 
+    /// <summary>
+    ///   The login callback handler for POST HTTP requests.
+    /// </summary>
+    /// <returns>
+    ///   The return redirection result after user's logout.
+    /// </returns>
     public IActionResult OnPostLogout()
     {
       var properties = new AuthenticationProperties {RedirectUri = Return ?? DefaultReturnPath};
       return SignOut(properties, SchemeName);
     }
 
+    /// <summary>
+    ///   Finds the user in the collection of available login name-password pairs.
+    /// </summary>
+    /// <param name="loginForm">
+    ///   The login form containing the login name-password pair to find.
+    /// </param>
+    /// <returns>
+    ///   The <see cref="ClaimsPrincipal" /> object representing the authenticated user if the user was found in
+    ///   the collection, otherwise returns <c>null</c>.
+    /// </returns>
     private ClaimsPrincipal? FindUser(LoginForm loginForm)
     {
       if (!_loginPairs.ContainsKey(loginForm.Name) || _loginPairs[loginForm.Name] != loginForm.Password)
@@ -107,6 +185,15 @@ namespace PiClimate.Monitor.Pages
       return new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName, ClaimTypes.Name, ClaimTypes.Role));
     }
 
+    /// <summary>
+    ///   Extracts the handler name from the provided name of the Razor Page handler method.
+    /// </summary>
+    /// <param name="methodName">
+    ///   The name of the Razor Page handler method.
+    /// </param>
+    /// <returns>
+    ///   The extracted handler name on success, otherwise returns an empty string.
+    /// </returns>
     private static string ExtractHandlerName(string methodName)
     {
       const string pageHandlerRegExp = @"^On(?:Get|Post|Patch|Put|Delete)(\w*)(?:Async)?$";
