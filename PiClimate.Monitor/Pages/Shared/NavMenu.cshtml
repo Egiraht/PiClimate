@@ -24,6 +24,10 @@
     var filter = ViewData[nameof(MeasurementFilter)] as MeasurementFilter ?? new MeasurementFilter();
     var isCustomTimespan = Context.Request.Query.ContainsKey(nameof(MeasurementFilter.FromTime));
 
+    // Date-time truncation to minutes is needed for ease of use and better browser compatibility.
+    filter.FromTime = filter.FromTime!.Value.Truncate(TruncationLimit.Minutes);
+    filter.ToTime = filter.ToTime.Truncate(TruncationLimit.Minutes);
+
     <li class="nav-item px-3">
       <form method="POST" asp-page="@nameof(Auth)" asp-page-handler="@Auth.LogoutHandler" asp-all-route-data="@returnPath">
         <input type="submit" class="btn btn-link nav-link" value="Sign out" />
@@ -59,19 +63,19 @@
       <form class="form-row flex-lg-column align-items-end mx-3 mt-3 mb-1 my-lg-3" method="GET" asp-page="@nameof(Monitor)">
         <div class="form-group col-6 col-md-3 col-lg">
           <label for="from-time-input">From:</label>
-          <input id="from-time-input" class="form-control form-control-sm"
-                 asp-for="@filter.FromTime" name="@nameof(MeasurementFilter.FromTime)" />
+          <input type="datetime-local" id="from-time-input" class="form-control form-control-sm"
+                 step="any" asp-for="@filter.FromTime" name="@nameof(MeasurementFilter.FromTime)" />
         </div>
 
         <div class="form-group col-6 col-md-3 col-lg">
           <label for="to-time-input">To:</label>
-          <input id="to-time-input" class="form-control form-control-sm"
-                 asp-for="@filter.ToTime" name="@nameof(MeasurementFilter.ToTime)" />
+          <input type="datetime-local" id="to-time-input" class="form-control form-control-sm"
+                 step="any" asp-for="@filter.ToTime" name="@nameof(MeasurementFilter.ToTime)" />
         </div>
 
         <div class="form-group col-6 col-md-3 col-lg">
           <label for="resolution-input">Resolution:</label>
-          <input id="resolution-input" class="form-control form-control-sm"
+          <input type="number" id="resolution-input" class="form-control form-control-sm"
                  min="@MeasurementFilter.MinimalResolution" max="@MeasurementFilter.MaximalResolution"
                  asp-for="@filter.Resolution" name="@nameof(MeasurementFilter.Resolution)" />
         </div>
