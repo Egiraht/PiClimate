@@ -53,6 +53,7 @@ namespace PiClimate.Monitor.Pages
     public IActionResult OnGet(MeasurementFilter filter)
     {
       ChartParameters.Filter = filter;
+      ViewData[nameof(MeasurementFilter)] = filter;
       return Page();
     }
   }
