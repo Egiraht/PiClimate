@@ -8,17 +8,39 @@
 
 @using System.Reflection
 
-@{
-  var company = Assembly.GetExecutingAssembly()
+@functions
+{
+  /// <summary>
+  ///   Defines the program creation year.
+  /// </summary>
+  const int CreationYear = 2020;
+
+  /// <summary>
+  ///   Defines the main repository URL.
+  /// </summary>
+  const string RepositoryUrl = @"https://github.com/Egiraht/PiClimate";
+
+  /// <summary>
+  ///   Defines the main repository name.
+  /// </summary>
+  const string RepositoryName = "GitHub";
+
+  /// <summary>
+  ///   Gets the company name (author) from the assembly info.
+  /// </summary>
+  string Company => Assembly.GetExecutingAssembly()
     .GetCustomAttribute<AssemblyCompanyAttribute>()
     ?.Company ?? "";
 
-  var creationYear = 2020;
-  var repositoryUrl = "https://github.com/Egiraht/PiClimate";
+  /// <summary>
+  ///   Gets the copyright years string.
+  /// </summary>
+  string CopyrightYears =>
+    DateTime.Now.Year > CreationYear ? $"{CreationYear}-{DateTime.Now.Year}" : CreationYear.ToString();
 }
 
 <div id="footer" class="text-center small text-secondary">
-  Copyright © @creationYear@(DateTime.Now.Year > creationYear ? $"-{DateTime.Now.Year}" : "")
-  @company
-  <a href="@repositoryUrl" class="nav-link d-inline">GitHub</a>
+  Copyright © @CopyrightYears
+  @Company
+  <a href="@RepositoryUrl" class="nav-link d-inline" target="_blank">@RepositoryName</a>
 </div>
