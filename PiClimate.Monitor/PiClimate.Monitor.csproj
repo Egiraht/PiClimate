@@ -24,7 +24,6 @@
     <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Measurements, pressure, temperature, humidity, monitor</PackageTags>
-    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
   </PropertyGroup>
 
