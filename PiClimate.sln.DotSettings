@@ -1,0 +1,344 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&#xD;
+&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns" /&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=000F9328D163EF499108D49218DF0568/Field/=model/Expression/@EntryValue">guessExpectedType("")</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=000F9328D163EF499108D49218DF0568/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@model $model$
+
+@{
+  Layout = null;
+}
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;$title$&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div&gt;
+    $END$
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0A438713A013D04EB45E7E152CABF417/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@using $NAMESPACE$</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=13941D0239FA44408839839201D48B75/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@{
+   Layout = "$_Layout$";
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CAB0A567F30704CA99AA3EC249E3153/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CAB0A567F30704CA99AA3EC249E3153/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CAB0A567F30704CA99AA3EC249E3153/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CAB0A567F30704CA99AA3EC249E3153/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+namespace $NAMESPACE$
+{
+  public class $CLASS$ {$END$}
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using System.ComponentModel;
+namespace $NAMESPACE$
+{
+    public partial class $CLASS$ : Component
+    {
+        public $CLASS$()
+        {
+            InitializeComponent();
+        }
+
+        public $CLASS$(IContainer container)
+        {
+            container.Add(this);
+
+            InitializeComponent();
+        }
+    }
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using NUnit.Framework;
+namespace $NAMESPACE$
+{
+  [TestFixture]
+  public class $CLASS$ {$END$}
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=567DCF4B487C244A9F6BB46E4E9F3B84/Text/@EntryValue">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!--
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+--&gt;
+&lt;root&gt;
+	&lt;xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"&gt;
+		&lt;xsd:element name="root" msdata:IsDataSet="true"&gt;
+		    $END$
+		&lt;/xsd:element&gt;
+	&lt;/xsd:schema&gt;
+	&lt;resheader name="resmimetype"&gt;
+		&lt;value&gt;text/microsoft-resx&lt;/value&gt;
+	&lt;/resheader&gt;
+	&lt;resheader name="version"&gt;
+		&lt;value&gt;1.3&lt;/value&gt;
+	&lt;/resheader&gt;
+	&lt;resheader name="reader"&gt;
+		&lt;value&gt;System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&lt;/value&gt;
+	&lt;/resheader&gt;
+	&lt;resheader name="writer"&gt;
+		&lt;value&gt;System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&lt;/value&gt;
+	&lt;/resheader&gt;
+&lt;/root&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6C7E59EBC599B446ADC9EEF651393098/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;@ViewData["Title"]&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+@RenderBody()
+
+&lt;/body&gt;
+&lt;/html&gt;</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6FAA6736247D464489DF536819A6D103/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6FAA6736247D464489DF536819A6D103/Field/=INTERFACE/Order/@EntryValue">0</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6FAA6736247D464489DF536819A6D103/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6FAA6736247D464489DF536819A6D103/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+namespace $NAMESPACE$
+{
+  public interface $INTERFACE$ {$END$}
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B10AC30B0320A4F95A3763001E1DBF6/Field/=ENUM/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B10AC30B0320A4F95A3763001E1DBF6/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B10AC30B0320A4F95A3763001E1DBF6/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B10AC30B0320A4F95A3763001E1DBF6/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+namespace $NAMESPACE$
+{
+  public enum $ENUM$ {$END$}
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using System.Windows.Forms;
+namespace $NAMESPACE$
+{
+    public partial class $CLASS$ : Form
+    {
+        public $CLASS$()
+        {
+            InitializeComponent();
+        }
+    }
+}
+</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8D47A3AE0A67E346A5AF06E4C62D9FDF/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8D47A3AE0A67E346A5AF06E4C62D9FDF/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8D47A3AE0A67E346A5AF06E4C62D9FDF/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8D47A3AE0A67E346A5AF06E4C62D9FDF/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using Microsoft.AspNetCore.Mvc;
+namespace $NAMESPACE$
+{
+  public class $CLASS$: Controller
+  {
+    // GET
+    public IActionResult Index()
+    {
+	  $END$return View();
+    }
+  }
+}</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9BB83ED0FF792E47BAAB217C25589C77/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9BB83ED0FF792E47BAAB217C25589C77/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9BB83ED0FF792E47BAAB217C25589C77/Field/=STRUCT/Order/@EntryValue">0</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9BB83ED0FF792E47BAAB217C25589C77/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+namespace $NAMESPACE$
+{
+  public struct $STRUCT$ {$END$}
+}</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A53B089D0C73F84D86B0861923F5B1AC/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A53B089D0C73F84D86B0861923F5B1AC/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A53B089D0C73F84D86B0861923F5B1AC/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A53B089D0C73F84D86B0861923F5B1AC/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using System.Web.Mvc;
+namespace $NAMESPACE$
+{
+  public class $CLASS$: Controller
+  {
+    // GET
+    public ActionResult Index()
+    {
+	  $END$return View();
+    }
+  }
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=B79E002F8A764400A95062D202834A17/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+&lt;h3&gt;$COMPONENTNAME$&lt;/h3&gt;
+@code {
+  $END$
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BF56153668D6434BAEBFC640173EDE9C/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@page
+@model $NAMESPACE$.$CLASS$
+
+@{
+    Layout = null;
+}
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div&gt;
+        $END$
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C34999250E53FF41B0A86BA5C123B7B6/Field/=model/Expression/@EntryValue">guessExpectedType("")</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C34999250E53FF41B0A86BA5C123B7B6/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@model $model$
+
+@{
+  ViewBag.Title = "$title$";
+  Layout = "$_Layout$";
+}
+
+&lt;h2&gt;$title$&lt;/h2&gt;
+$END$</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/Field/=CLASS/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/Field/=HEADER/@KeyIndexDefined">False</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/Text/@EntryValue">// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+
+using System.Windows.Forms;
+
+namespace $NAMESPACE$
+{
+    public partial class $CLASS$ : UserControl
+    {
+        public $CLASS$()
+        {
+            InitializeComponent();
+        }
+    }
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=DF39AD2BF37BD5448D981614A5FFEF92/Field/=model/Expression/@EntryValue">guessExpectedType("")</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=DF39AD2BF37BD5448D981614A5FFEF92/Text/@EntryValue">@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;
+*@
+
+@model $model$
+
+$END$</s:String>
+</wpf:ResourceDictionary>
