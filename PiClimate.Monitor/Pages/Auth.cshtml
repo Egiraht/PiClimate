@@ -12,24 +12,7 @@
   Layout = "_Layout";
 }
 
-@if (!ModelState.IsValid)
-{
-  <div class="validation-summary alert alert-warning text-center">
-    <span class="font-weight-bold">
-      Failed to sign in:
-    </span>
-
-    <ul class="m-0 pl-3">
-      @foreach (var target in Model.ModelState.Values)
-      {
-        @foreach (var message in target.Errors)
-        {
-          <li>@target.Errors[0].ErrorMessage</li>
-        }
-      }
-    </ul>
-  </div>
-}
+<partial name="ValidationSummary" model="@("Failed to sign in:", ModelState)" />
 
 <form class="alert alert-secondary" method="POST">
   <div class="form-inline my-2">
