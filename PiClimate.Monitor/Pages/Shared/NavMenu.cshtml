@@ -74,7 +74,7 @@
         </div>
 
         <div class="form-group col-6 col-md-3 col-lg">
-          <label for="resolution-input">Resolution:</label>
+          <label for="resolution-input">Resolution (@MeasurementFilter.MinimalResolution-@MeasurementFilter.MaximalResolution):</label>
           <input type="number" id="resolution-input" class="form-control form-control-sm"
                  min="@MeasurementFilter.MinimalResolution" max="@MeasurementFilter.MaximalResolution"
                  asp-for="@filter.Resolution" name="@nameof(MeasurementFilter.Resolution)" />

@@ -88,12 +88,23 @@ var PiClimate;
 (function (PiClimate) {
     var Monitor;
     (function (Monitor) {
+        var $ = window.jQuery;
+        if (!$)
+            console.error("jQuery library is missing!");
+        var Chart = window.Chart;
+        if (!Chart)
+            console.error("Chart.js library is missing!");
+        var moment = window.moment;
+        if (!moment)
+            console.error("Moment.js library is missing!");
         class ChartComponent {
             constructor(chartParameters) {
                 this._isUpdating = false;
                 this._isEmpty = true;
                 this._isUpdatingFailed = false;
                 this.chartParameters = chartParameters;
+                let locale = navigator.languages ? navigator.languages[0] : navigator.language;
+                moment.locale(locale);
                 let defaults = Chart.defaults.global.elements;
                 defaults.point.radius = 0.5;
                 defaults.point.hitRadius = 5;
@@ -145,9 +156,11 @@ var PiClimate;
                                         isoWeekday: true,
                                         minUnit: "second",
                                         displayFormats: {
-                                            second: "HH:mm:ss",
-                                            minute: "HH:mm",
-                                            hour: "HH:00"
+                                            second: "LTS",
+                                            minute: "LT",
+                                            hour: "LT",
+                                            day: "L",
+                                            month: "L"
                                         }
                                     },
                                     ticks: {}
@@ -215,7 +228,7 @@ var PiClimate;
                             intersect: true,
                             position: "nearest",
                             callbacks: {
-                                title: (tooltipItems) => new Date(tooltipItems[0].xLabel).toLocaleString(),
+                                title: (tooltipItems) => moment(tooltipItems[0].xLabel).format(ChartComponent.dateTimeFormat),
                                 label: (tooltipItem) => {
                                     let units = [
                                         this.chartParameters.pressureUnits,
@@ -227,8 +240,12 @@ var PiClimate;
                             }
                         },
                         animation: {
-                            duration: 500
-                        }
+                            duration: 0
+                        },
+                        hover: {
+                            animationDuration: 100
+                        },
+                        responsiveAnimationDuration: 0
                     }
                 });
             }
@@ -334,7 +351,6 @@ var PiClimate;
                 });
             }
             updateChartSummary(response) {
-                let $ = jQuery;
                 let periodStartElement = $(`#${this.chartParameters.chartId}-summary .period-start`);
                 let periodEndElement = $(`#${this.chartParameters.chartId}-summary .period-end`);
                 let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
@@ -350,23 +366,24 @@ var PiClimate;
                 let minHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .min-humidity-timestamp`);
                 let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
                 let entriesCountElement = $(`#${this.chartParameters.chartId}-summary .entries-count`);
-                periodStartElement.text(this.chart.options.scales.xAxes[0].ticks.min.toLocaleString());
-                periodEndElement.text(this.chart.options.scales.xAxes[0].ticks.max.toLocaleString());
+                periodStartElement.text(moment(this.chart.options.scales.xAxes[0].ticks.min).format(ChartComponent.dateTimeFormat));
+                periodEndElement.text(moment(this.chart.options.scales.xAxes[0].ticks.max).format(ChartComponent.dateTimeFormat));
                 minPressureElement.text(response.minPressure);
                 maxPressureElement.text(response.maxPressure);
-                minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
-                maxPressureTimestampElement.text(new Date(response.maxPressureTimestamp).toLocaleString());
+                minPressureTimestampElement.text(moment(response.minPressureTimestamp).format(ChartComponent.dateTimeFormat));
+                maxPressureTimestampElement.text(moment(response.maxPressureTimestamp).format(ChartComponent.dateTimeFormat));
                 minTemperatureElement.text(response.minTemperature);
                 maxTemperatureElement.text(response.maxTemperature);
-                minTemperatureTimestampElement.text(new Date(response.minTemperatureTimestamp).toLocaleString());
-                maxTemperatureTimestampElement.text(new Date(response.maxTemperatureTimestamp).toLocaleString());
+                minTemperatureTimestampElement.text(moment(response.minTemperatureTimestamp).format(ChartComponent.dateTimeFormat));
+                maxTemperatureTimestampElement.text(moment(response.maxTemperatureTimestamp).format(ChartComponent.dateTimeFormat));
                 minHumidityElement.text(response.minHumidity);
                 maxHumidityElement.text(response.maxHumidity);
-                minHumidityTimestampElement.text(new Date(response.minHumidityTimestamp).toLocaleString());
-                maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
+                minHumidityTimestampElement.text(moment(response.minHumidityTimestamp).format(ChartComponent.dateTimeFormat));
+                maxHumidityTimestampElement.text(moment(response.maxHumidityTimestamp).format(ChartComponent.dateTimeFormat));
                 entriesCountElement.text(response.measurements.length);
             }
         }
+        ChartComponent.dateTimeFormat = "L LTS";
         ChartComponent.emptyClassName = "empty";
         ChartComponent.updatingClassName = "updating";
         ChartComponent.updatingFailedClassName = "failed";

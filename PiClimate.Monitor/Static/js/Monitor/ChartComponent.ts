@@ -10,6 +10,30 @@
 namespace PiClimate.Monitor
 {
   /**
+   * Importing jQuery library.
+   */
+  // @ts-ignore
+  import $ = window.jQuery;
+  if (!$)
+    console.error("jQuery library is missing!");
+
+  /**
+   * Importing Chart.js library.
+   */
+  // @ts-ignore
+  import Chart = window.Chart;
+  if (!Chart)
+    console.error("Chart.js library is missing!");
+
+  /**
+   * Importing Moment.js library.
+   */
+  // @ts-ignore
+  import moment = window.moment;
+  if (!moment)
+    console.error("Moment.js library is missing!");
+
+  /**
    * A class representing the measurement data chart component.
    */
   export class ChartComponent
@@ -18,10 +42,10 @@ namespace PiClimate.Monitor
     private _isEmpty: boolean = true;
     private _isUpdatingFailed: boolean = false;
 
+    public static readonly dateTimeFormat: string = "L LTS";
     public static readonly emptyClassName: string = "empty";
     public static readonly updatingClassName: string = "updating";
     public static readonly updatingFailedClassName: string = "failed";
-
     public static readonly dateAxisId: string = "date";
     public static readonly pressureAxisId: string = "pressure";
     public static readonly temperatureAxisId: string = "temperature";
@@ -35,7 +59,6 @@ namespace PiClimate.Monitor
     /**
      * The *Chart.js* chart object assigned to the instance.
      */
-      // @ts-ignore
     public chart: Chart;
 
     /**
@@ -50,7 +73,6 @@ namespace PiClimate.Monitor
     {
       this._isEmpty = value;
 
-      // @ts-ignore
       let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
       if (this._isEmpty)
         chartWrapperElement.addClass(ChartComponent.emptyClassName);
@@ -70,7 +92,6 @@ namespace PiClimate.Monitor
     {
       this._isUpdating = value;
 
-      // @ts-ignore
       let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
       if (this._isUpdating)
         chartWrapperElement.addClass(ChartComponent.updatingClassName);
@@ -90,7 +111,6 @@ namespace PiClimate.Monitor
     {
       this._isUpdatingFailed = value;
 
-      // @ts-ignore
       let chartWrapperElement = $(`#${this.chartParameters.chartId}-wrapper`);
       if (this._isUpdatingFailed)
         chartWrapperElement.addClass(ChartComponent.updatingFailedClassName);
@@ -106,8 +126,11 @@ namespace PiClimate.Monitor
     {
       this.chartParameters = chartParameters;
 
+      // Setting the date-time locale.
+      let locale = navigator.languages ? navigator.languages[0] : navigator.language;
+      moment.locale(locale);
+
       // Setting chart default options.
-      // @ts-ignore
       let defaults = Chart.defaults.global.elements;
       defaults.point.radius = 0.5;
       defaults.point.hitRadius = 5;
@@ -117,7 +140,6 @@ namespace PiClimate.Monitor
       defaults.line.fill = false;
 
       // Initializing the new chart instance.
-      // @ts-ignore
       this.chart = new Chart(this.chartParameters.chartId, {
         type: "scatter",
         data: {
@@ -162,9 +184,11 @@ namespace PiClimate.Monitor
                   isoWeekday: true,
                   minUnit: "second",
                   displayFormats: {
-                    second: "HH:mm:ss",
-                    minute: "HH:mm",
-                    hour: "HH:00"
+                    second: "LTS",
+                    minute: "LT",
+                    hour: "LT",
+                    day: "L",
+                    month: "L"
                   }
                 },
                 ticks: {}
@@ -232,7 +256,7 @@ namespace PiClimate.Monitor
             intersect: true,
             position: "nearest",
             callbacks: {
-              title: (tooltipItems: any[]) => new Date(tooltipItems[0].xLabel).toLocaleString(),
+              title: (tooltipItems: any[]) => moment(tooltipItems[0].xLabel).format(ChartComponent.dateTimeFormat),
               label: (tooltipItem: any) =>
               {
                 let units = [
@@ -245,8 +269,12 @@ namespace PiClimate.Monitor
             }
           },
           animation: {
-            duration: 500
-          }
+            duration: 0
+          },
+          hover: {
+            animationDuration: 100
+          },
+          responsiveAnimationDuration: 0
         }
       });
     }
@@ -357,8 +385,6 @@ namespace PiClimate.Monitor
      */
     private updateChartSummary(response: MeasurementsCollection)
     {
-      // @ts-ignore
-      let $ = jQuery;
       let periodStartElement = $(`#${this.chartParameters.chartId}-summary .period-start`);
       let periodEndElement = $(`#${this.chartParameters.chartId}-summary .period-end`);
       let minPressureElement = $(`#${this.chartParameters.chartId}-summary .min-pressure`);
@@ -375,20 +401,20 @@ namespace PiClimate.Monitor
       let maxHumidityTimestampElement = $(`#${this.chartParameters.chartId}-summary .max-humidity-timestamp`);
       let entriesCountElement = $(`#${this.chartParameters.chartId}-summary .entries-count`);
 
-      periodStartElement.text(this.chart.options.scales.xAxes[0].ticks.min.toLocaleString());
-      periodEndElement.text(this.chart.options.scales.xAxes[0].ticks.max.toLocaleString());
+      periodStartElement.text(moment(this.chart.options.scales.xAxes[0].ticks.min).format(ChartComponent.dateTimeFormat));
+      periodEndElement.text(moment(this.chart.options.scales.xAxes[0].ticks.max).format(ChartComponent.dateTimeFormat));
       minPressureElement.text(response.minPressure);
       maxPressureElement.text(response.maxPressure);
-      minPressureTimestampElement.text(new Date(response.minPressureTimestamp).toLocaleString());
-      maxPressureTimestampElement.text(new Date(response.maxPressureTimestamp).toLocaleString());
+      minPressureTimestampElement.text(moment(response.minPressureTimestamp).format(ChartComponent.dateTimeFormat));
+      maxPressureTimestampElement.text(moment(response.maxPressureTimestamp).format(ChartComponent.dateTimeFormat));
       minTemperatureElement.text(response.minTemperature);
       maxTemperatureElement.text(response.maxTemperature);
-      minTemperatureTimestampElement.text(new Date(response.minTemperatureTimestamp).toLocaleString());
-      maxTemperatureTimestampElement.text(new Date(response.maxTemperatureTimestamp).toLocaleString());
+      minTemperatureTimestampElement.text(moment(response.minTemperatureTimestamp).format(ChartComponent.dateTimeFormat));
+      maxTemperatureTimestampElement.text(moment(response.maxTemperatureTimestamp).format(ChartComponent.dateTimeFormat));
       minHumidityElement.text(response.minHumidity);
       maxHumidityElement.text(response.maxHumidity);
-      minHumidityTimestampElement.text(new Date(response.minHumidityTimestamp).toLocaleString());
-      maxHumidityTimestampElement.text(new Date(response.maxHumidityTimestamp).toLocaleString());
+      minHumidityTimestampElement.text(moment(response.minHumidityTimestamp).format(ChartComponent.dateTimeFormat));
+      maxHumidityTimestampElement.text(moment(response.maxHumidityTimestamp).format(ChartComponent.dateTimeFormat));
       entriesCountElement.text(response.measurements.length);
     }
   }
