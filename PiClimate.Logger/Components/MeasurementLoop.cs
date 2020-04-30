@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
@@ -21,9 +21,9 @@ namespace PiClimate.Logger.Components
   public class MeasurementLoop : IDisposable
   {
     /// <summary>
-    ///   The configuration used for configuring the measurement loop.
+    ///   The global settings used for configuring the measurement loop.
     /// </summary>
-    private readonly IConfiguration _configuration;
+    private readonly GlobalSettings _settings;
 
     /// <summary>
     ///   The measurement provider associated with the current measurement loop.
@@ -80,8 +80,8 @@ namespace PiClimate.Logger.Components
     /// <summary>
     ///   Creates a new measurement loop object.
     /// </summary>
-    /// <param name="configuration">
-    ///   The configuration used for configuring the measurement loop.
+    /// <param name="settings">
+    ///   The global settings used for configuring the measurement loop.
     /// </param>
     /// <param name="measurementProvider">
     ///   The measurement provider associated with the current measurement loop.
@@ -99,11 +99,11 @@ namespace PiClimate.Logger.Components
     ///   It is not recommended to use this constructor explicitly.
     ///   Use the <see cref="MeasurementLoopBuilder" /> class instead.
     /// </remarks>
-    public MeasurementLoop(IConfiguration configuration, IMeasurementProvider measurementProvider,
+    public MeasurementLoop(GlobalSettings settings, IMeasurementProvider measurementProvider,
       IEnumerable<IMeasurementLogger> measurementLoggers, IEnumerable<IMeasurementLimiter> measurementLimiters,
       MeasurementLoopOptions options)
     {
-      _configuration = configuration;
+      _settings = settings;
       _measurementProvider = measurementProvider;
       _measurementLoggers.AddRange(measurementLoggers);
       _measurementLimiters.AddRange(measurementLimiters);
@@ -125,11 +125,11 @@ namespace PiClimate.Logger.Components
       if (_disposed)
         throw new ObjectDisposedException(nameof(MeasurementLoop));
 
-      _measurementProvider.Configure(_configuration);
+      _measurementProvider.Configure(_settings);
       foreach (var logger in _measurementLoggers)
-        logger.Configure(_configuration);
+        logger.Configure(_settings);
       foreach (var limiter in _measurementLimiters)
-        limiter.Configure(_configuration);
+        limiter.Configure(_settings);
       _periodicLoop.StartLoop();
     }
 
@@ -139,11 +139,11 @@ namespace PiClimate.Logger.Components
       if (_disposed)
         throw new ObjectDisposedException(nameof(MeasurementLoop));
 
-      await _measurementProvider.ConfigureAsync(_configuration);
+      await _measurementProvider.ConfigureAsync(_settings);
       foreach (var logger in _measurementLoggers)
-        await logger.ConfigureAsync(_configuration);
+        await logger.ConfigureAsync(_settings);
       foreach (var limiter in _measurementLimiters)
-        await limiter.ConfigureAsync(_configuration);
+        await limiter.ConfigureAsync(_settings);
       _periodicLoop.StartLoop();
     }
 

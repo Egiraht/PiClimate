@@ -8,9 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using PiClimate.Monitor.ConfigurationLayout;
+using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Models;
 
 namespace PiClimate.Monitor.Sources
@@ -40,11 +39,6 @@ namespace PiClimate.Monitor.Sources
       /// </summary>
       public int TimeStep { get; set; }
     }
-
-    /// <summary>
-    ///   The default database table name where the measurement data are stored.
-    /// </summary>
-    public const string DefaultMeasurementsTableName = "Measurements";
 
     /// <summary>
     ///   The connection string used for MySQL database connection.
@@ -80,14 +74,17 @@ namespace PiClimate.Monitor.Sources
     /// <summary>
     ///   Creates a new MySQL measurement data source instance.
     /// </summary>
-    /// <param name="configuration">
-    ///   The configuration service containing the MySQL database connection parameters.
+    /// <param name="settings">
+    ///   The global settings used for configuring the MySQL connection.
+    ///   Provided via dependency injection.
     /// </param>
-    public MySqlSource(IConfiguration configuration)
+    public MySqlSource(GlobalSettings settings)
     {
       _connectionString =
-        configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
-      _measurementsTableName = configuration[MySqlOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
+        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
+          ? connectionString
+          : GlobalSettings.DefaultConnectionStringValue;
+      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
     }
 
     /// <inheritdoc />

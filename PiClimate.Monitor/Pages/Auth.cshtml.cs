@@ -6,16 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
-using PiClimate.Monitor.ConfigurationLayout;
+using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Models;
 
 namespace PiClimate.Monitor.Pages
@@ -44,11 +41,6 @@ namespace PiClimate.Monitor.Pages
     ///   Defines the default return redirection path.
     /// </summary>
     public const string DefaultReturnPath = "/";
-
-    /// <summary>
-    ///   Defines the default authentication cookie expiration period.
-    /// </summary>
-    private static readonly TimeSpan DefaultCookieExpirationPeriod = TimeSpan.FromDays(7);
 
     /// <summary>
     ///   Gets the name of the page's login handler.
@@ -95,20 +87,14 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   Initializes the new instance of the page.
     /// </summary>
-    /// <param name="configuration">
-    ///   The configuration of the web host.
+    /// <param name="settings">
+    ///   The global settings used for configuring the MySQL connection.
     ///   Provided via dependency injection.
     /// </param>
-    public Auth(IConfiguration configuration)
+    public Auth(GlobalSettings settings)
     {
-      _cookieExpirationPeriod = double.TryParse(configuration[Authentication.CookieExpirationPeriod], NumberStyles.Any,
-        NumberFormatInfo.InvariantInfo, out var value)
-        ? TimeSpan.FromDays(value)
-        : DefaultCookieExpirationPeriod;
-
-      _loginPairs = configuration.GetSection(Authentication.LoginPairs)
-        .GetChildren()
-        .ToDictionary(element => element.Key, element => element.Value);
+      _cookieExpirationPeriod = TimeSpan.FromDays(settings.AuthenticationOptions.CookieExpirationPeriod);
+      _loginPairs = settings.AuthenticationOptions.LoginPairs;
     }
 
     /// <summary>
@@ -176,7 +162,7 @@ namespace PiClimate.Monitor.Pages
       if (!_loginPairs.ContainsKey(loginForm.Name) || _loginPairs[loginForm.Name] != loginForm.Password)
         return null;
 
-      var claims = new Claim[]
+      var claims = new[]
       {
         new Claim(ClaimTypes.Name, "PiClimate"),
         new Claim(ClaimTypes.Role, "User")

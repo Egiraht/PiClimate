@@ -12,8 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
-using Microsoft.Extensions.Configuration;
-using PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
 
 // ReSharper disable InconsistentNaming
@@ -24,11 +23,6 @@ namespace PiClimate.Logger.Providers
   /// </summary>
   public class Bme280Provider : IMeasurementProvider
   {
-    /// <summary>
-    ///   The default I2C bus ID.
-    /// </summary>
-    public const int DefaultI2cBusId = 1;
-
     /// <summary>
     ///   The object's disposal flag.
     /// </summary>
@@ -127,13 +121,13 @@ namespace PiClimate.Logger.Providers
     }
 
     /// <inheritdoc />
-    public void Configure(IConfiguration configuration)
+    public void Configure(GlobalSettings settings)
     {
       if (_disposed)
         throw new ObjectDisposedException(nameof(Bme280Provider));
 
       // Reading I2C bus ID from configuration.
-      var i2cBusId = ConvertToInt(configuration[Bme280Options.I2cBusId]) ?? DefaultI2cBusId;
+      var i2cBusId = settings.Bme280Options.I2cBusId;
 
       // Building a list of I2C addresses to check.
       var i2cAddresses = new List<int>
@@ -141,7 +135,7 @@ namespace PiClimate.Logger.Providers
         Bmx280Base.DefaultI2cAddress,
         Bmx280Base.SecondaryI2cAddress
       };
-      var customI2cAddress = ConvertToInt(configuration[Bme280Options.CustomI2cAddress]);
+      var customI2cAddress = settings.Bme280Options.CustomI2cAddress;
       if (customI2cAddress != null)
         i2cAddresses.Insert(0, customI2cAddress.Value);
 
@@ -168,7 +162,7 @@ namespace PiClimate.Logger.Providers
     }
 
     /// <inheritdoc />
-    public Task ConfigureAsync(IConfiguration configuration) => Task.Run(() => Configure(configuration));
+    public Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
 
     /// <summary>
     ///   Converts the pressure in Pa to mmHg.

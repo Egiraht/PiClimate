@@ -7,9 +7,8 @@
 using System;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Loggers
@@ -20,11 +19,6 @@ namespace PiClimate.Logger.Loggers
   class MySqlLogger : IMeasurementLogger
   {
     /// <summary>
-    ///   The default database table name for data logging.
-    /// </summary>
-    public const string DefaultMeasurementsTableName = "Measurements";
-
-    /// <summary>
     ///   The connection string used for MySQL database connection.
     /// </summary>
     private string? _connectionString;
@@ -32,7 +26,7 @@ namespace PiClimate.Logger.Loggers
     /// <summary>
     ///   The database table name for data logging.
     /// </summary>
-    private string _measurementsTableName = DefaultMeasurementsTableName;
+    private string _measurementsTableName = MySqlOptions.DefaultMeasurementsTableName;
 
     /// <inheritdoc />
     public bool IsConfigured { get; private set; }
@@ -71,11 +65,13 @@ namespace PiClimate.Logger.Loggers
     ";
 
     /// <inheritdoc />
-    public void Configure(IConfiguration configuration)
+    public void Configure(GlobalSettings settings)
     {
       _connectionString =
-        configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
-      _measurementsTableName = configuration[MySqlOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
+        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
+          ? connectionString
+          : GlobalSettings.DefaultConnectionStringValue;
+      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
 
       using (var connection = new MySqlConnection(_connectionString))
         connection.Execute(InitializeSqlTemplate);
@@ -84,11 +80,13 @@ namespace PiClimate.Logger.Loggers
     }
 
     /// <inheritdoc />
-    public async Task ConfigureAsync(IConfiguration configuration)
+    public async Task ConfigureAsync(GlobalSettings settings)
     {
       _connectionString =
-        configuration.GetSection(Root.ConnectionStrings)[configuration[MySqlOptions.UseConnectionStringKey]] ?? "";
-      _measurementsTableName = configuration[MySqlOptions.MeasurementsTableName] ?? DefaultMeasurementsTableName;
+        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
+          ? connectionString
+          : GlobalSettings.DefaultConnectionStringValue;
+      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
 
       await using (var connection = new MySqlConnection(_connectionString))
         await connection.ExecuteAsync(InitializeSqlTemplate);

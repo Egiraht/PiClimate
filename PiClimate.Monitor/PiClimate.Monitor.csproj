@@ -25,6 +25,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Measurements, pressure, temperature, humidity, monitor</PackageTags>
     <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <!-- Release build configuration. -->
@@ -36,7 +37,7 @@
   <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
-    <PackageReference Include="MySqlConnector" Version="0.64.0" />
+    <PackageReference Include="MySqlConnector" Version="0.64.2" />
   </ItemGroup>
 
   <!-- Copy all files from the "Static" directory to the output directory. -->

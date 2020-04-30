@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using PiClimate.Logger.Components;
-using PiClimate.Logger.ConfigurationLayout;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
 
@@ -87,9 +87,10 @@ namespace PiClimate.Logger
 
         // Collecting the program's configuration.
         var configuration = ConfigureConfigurationBuilder(args).Build();
+        var settings = configuration.Get<GlobalSettings>();
 
         // Building and starting the measurement loop.
-        using (var measurementLoop = ConfigureMeasurementLoopBuilder(configuration).Build())
+        using (var measurementLoop = ConfigureMeasurementLoopBuilder(settings).Build())
         {
           measurementLoop.MeasurementException += OnMeasurementException;
           measurementLoop.LoggerException += OnLoggerException;
@@ -141,26 +142,26 @@ namespace PiClimate.Logger
     /// <summary>
     ///   Configures the program's <see cref="MeasurementLoopBuilder" /> instance.
     /// </summary>
-    /// <param name="configuration">
-    ///   The program's configuration.
+    /// <param name="settings">
+    ///   The program's global settings.
     /// </param>
     /// <returns>
     ///   The configured program's <see cref="MeasurementLoopBuilder" /> instance.
     /// </returns>
-    private static MeasurementLoopBuilder ConfigureMeasurementLoopBuilder(IConfiguration configuration)
+    private static MeasurementLoopBuilder ConfigureMeasurementLoopBuilder(GlobalSettings settings)
     {
-      var measurementProvider = configuration[Root.UseMeasurementProvider];
+      var measurementProvider = settings.UseMeasurementProvider;
       if (string.IsNullOrEmpty(measurementProvider))
         measurementProvider = DefaultMeasurementProviderClassName;
 
-      var measurementLoggers = (configuration[Root.UseMeasurementLoggers] ?? "")
+      var measurementLoggers = settings.UseMeasurementLoggers
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
         .Select(className => className.Trim())
         .ToList();
       if (!measurementLoggers.Any())
         measurementLoggers = DefaultMeasurementLoggerClassNames;
 
-      var measurementLimiters = (configuration[Root.UseMeasurementLimiters] ?? "")
+      var measurementLimiters = settings.UseMeasurementLimiters
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
         .Select(className => className.Trim())
         .ToList();
@@ -168,13 +169,11 @@ namespace PiClimate.Logger
         measurementLimiters = DefaultMeasurementLimiterClassNames;
 
       var measurementLoopBuilder = new MeasurementLoopBuilder()
-        .UseConfiguration(configuration)
+        .UseGlobalSettings(settings)
         .UseMeasurementProvider(measurementProvider)
         .AddMeasurementLoggers(measurementLoggers)
         .AddMeasurementLimiters(measurementLimiters)
-        .SetMeasurementLoopDelay(int.TryParse(configuration[Root.MeasurementLoopDelay], out var value)
-          ? value
-          : DefaultMeasurementLoopDelay);
+        .SetMeasurementLoopDelay(settings.MeasurementLoopDelay);
 
       return measurementLoopBuilder;
     }

@@ -24,11 +24,11 @@
   // Matters only if the BME280 measurement provider is used.
   "Bme280Options": {
     // Defines the I2C bus ID.
-    // Can be a decimal or hexadecimal numeric value.
+    // Can be a decimal numeric or hexadecimal string value.
     "I2cBusId": 1,
 
-    // Defines the I2C bus ID.
-    // Can be a decimal or hexadecimal numeric value, or "null" if not used.
+    // Defines the custom I2C bus address.
+    // Can be a decimal numeric or hexadecimal string value, or "null" if not used.
     "CustomI2cAddress": null
   },
 

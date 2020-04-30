@@ -1,4 +1,4 @@
-<!--
+﻿<!--
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -28,6 +28,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Measurements, pressure, temperature, humidity, logger</PackageTags>
     <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <!-- Release build configuration. -->
@@ -41,9 +42,10 @@
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.3" />
-    <PackageReference Include="MySqlConnector" Version="0.64.0" />
+    <PackageReference Include="MySqlConnector" Version="0.64.2" />
     <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
   </ItemGroup>
 

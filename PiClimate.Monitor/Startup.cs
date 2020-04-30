@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PiClimate.Monitor.Components;
-using PiClimate.Monitor.ConfigurationLayout;
+using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Pages;
 
 namespace PiClimate.Monitor
@@ -24,19 +24,14 @@ namespace PiClimate.Monitor
   public class Startup
   {
     /// <summary>
-    ///   Defines the default path to the protection keys directory.
-    /// </summary>
-    private const string DefaultProtectionKeysDirectoryPath = "./Keys";
-
-    /// <summary>
     ///   Defines the name for anti-forgery token parameters.
     /// </summary>
     private const string AntiForgeryTokenParameterName = "AntiForgeryToken";
 
     /// <summary>
-    ///   The web host configuration.
+    ///   The global settings to be used for configuring a host.
     /// </summary>
-    private readonly IConfiguration _configuration;
+    private readonly GlobalSettings _settings;
 
     /// <summary>
     ///   The web host environment.
@@ -56,7 +51,7 @@ namespace PiClimate.Monitor
     /// </param>
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
-      _configuration = configuration;
+      _settings = configuration.Get<GlobalSettings>();
       _environment = environment;
     }
 
@@ -68,6 +63,9 @@ namespace PiClimate.Monitor
     /// </param>
     public void ConfigureServices(IServiceCollection services)
     {
+      // Add the global settings object as a service.
+      services.AddSingleton(_settings);
+
       // Add services related to the Razor Pages.
       services.AddRazorPages();
 
@@ -93,15 +91,15 @@ namespace PiClimate.Monitor
       });
 
       // Add cross-origin request sharing services.
-      services.AddCors();
+      services.AddCors(options => options.AddDefaultPolicy(builder => builder.AllowAnyOrigin()));
 
       // Add the selected measurement source as a service.
-      services.AddMeasurementSource(_configuration[Root.UseMeasurementSource]);
+      services.AddMeasurementSource(_settings.UseMeasurementSource);
 
       // Configure the data protection services to put the persistent protection keys to the dedicated directory.
-      var protectionKeysDirectoryPath = _configuration[Root.ProtectionKeysDirectoryPath];
+      var protectionKeysDirectoryPath = _settings.ProtectionKeysDirectoryPath;
       if (string.IsNullOrWhiteSpace(protectionKeysDirectoryPath))
-        protectionKeysDirectoryPath = DefaultProtectionKeysDirectoryPath;
+        protectionKeysDirectoryPath = GlobalSettings.DefaultProtectionKeysDirectoryPath;
       if (!Directory.Exists(protectionKeysDirectoryPath))
         Directory.CreateDirectory(protectionKeysDirectoryPath);
       services.AddDataProtection()
@@ -127,7 +125,7 @@ namespace PiClimate.Monitor
       app.UseRouting();
       app.UseAuthentication();
       app.UseAuthorization();
-      app.UseCors(builder => builder.AllowAnyOrigin());
+      app.UseCors();
       app.UseEndpoints(endpoints => endpoints.MapRazorPages());
     }
   }

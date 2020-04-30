@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
@@ -37,9 +37,9 @@ namespace PiClimate.Logger.Components
     private const string MeasurementLimiterClassNameSuffix = "Limiter";
 
     /// <summary>
-    ///   The configuration to be used for configuring a new measurement loop.
+    ///   The global settings to be used for configuring a new measurement loop.
     /// </summary>
-    private IConfiguration _configuration = new ConfigurationBuilder().Build();
+    private GlobalSettings _settings = new GlobalSettings();
 
     /// <summary>
     ///   The measurement provider to be associated with a new measurement loop.
@@ -62,17 +62,17 @@ namespace PiClimate.Logger.Components
     private readonly MeasurementLoopOptions _options = new MeasurementLoopOptions();
 
     /// <summary>
-    ///   Instructs the builder to use the provided configuration.
+    ///   Instructs the builder to use the provided global settings.
     /// </summary>
-    /// <param name="configuration">
-    ///   The <see cref="IConfiguration" /> instance to use.
+    /// <param name="settings">
+    ///   The global settings object to use.
     /// </param>
     /// <returns>
     ///   The modified builder instance.
     /// </returns>
-    public MeasurementLoopBuilder UseConfiguration(IConfiguration configuration)
+    public MeasurementLoopBuilder UseGlobalSettings(GlobalSettings settings)
     {
-      _configuration = configuration;
+      _settings = settings;
       return this;
     }
 
@@ -403,7 +403,7 @@ namespace PiClimate.Logger.Components
       if (_measurementProvider == null)
         throw new InvalidOperationException("Cannot build the measurement loop as no measurement provider is set.");
 
-      return new MeasurementLoop(_configuration, _measurementProvider, _measurementLoggers, _measurementLimiters,
+      return new MeasurementLoop(_settings, _measurementProvider, _measurementLoggers, _measurementLimiters,
         _options);
     }
   }

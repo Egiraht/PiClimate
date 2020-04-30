@@ -6,7 +6,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Configuration;
 
 namespace PiClimate.Logger.Limiters
 {
@@ -21,15 +21,15 @@ namespace PiClimate.Logger.Limiters
     bool IsConfigured { get; }
 
     /// <summary>
-    ///   Configures the measurement limiter using the provided configuration.
+    ///   Configures the measurement limiter using the provided settings.
     /// </summary>
-    /// <param name="configuration">
-    ///   The <see cref="IConfiguration" /> object containing the provider's configuration data.
+    /// <param name="settings">
+    ///   The global settings object containing the necessary options.
     /// </param>
-    void Configure(IConfiguration configuration);
+    void Configure(GlobalSettings settings);
 
     /// <inheritdoc cref="Configure" />
-    Task ConfigureAsync(IConfiguration configuration);
+    Task ConfigureAsync(GlobalSettings settings);
 
     /// <summary>
     ///   Applies the limiter.

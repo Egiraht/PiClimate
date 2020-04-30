@@ -6,7 +6,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Loggers
@@ -22,15 +22,15 @@ namespace PiClimate.Logger.Loggers
     bool IsConfigured { get; }
 
     /// <summary>
-    ///   Configures the measurement logger using the provided configuration.
+    ///   Configures the measurement logger using the provided settings.
     /// </summary>
-    /// <param name="configuration">
-    ///   The <see cref="IConfiguration" /> object containing the provider's configuration data.
+    /// <param name="settings">
+    ///   The global settings object containing the necessary options.
     /// </param>
-    void Configure(IConfiguration configuration);
+    void Configure(GlobalSettings settings);
 
     /// <inheritdoc cref="Configure" />
-    Task ConfigureAsync(IConfiguration configuration);
+    Task ConfigureAsync(GlobalSettings settings);
 
     /// <summary>
     ///   Logs the provided measurement data.

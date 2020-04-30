@@ -6,7 +6,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
 
 namespace PiClimate.Logger.Providers
@@ -20,12 +20,12 @@ namespace PiClimate.Logger.Providers
     public bool IsConfigured { get; } = true;
 
     /// <inheritdoc />
-    public void Configure(IConfiguration configuration)
+    public void Configure(GlobalSettings settings)
     {
     }
 
     /// <inheritdoc />
-    public Task ConfigureAsync(IConfiguration configuration) => Task.Run(() => Configure(configuration));
+    public Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
 
     /// <inheritdoc />
     public Measurement Measure()

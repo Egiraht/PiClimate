@@ -23,7 +23,7 @@
   },
 
   // The configuration's section for authentication options.
-  "Authentication": {
+  "AuthenticationOptions": {
     // Defines the authentication cookie expiration period in days used when the "Remember me" option is active.
     // Can be a floating point numeric value.
     "CookieExpirationPeriod": 7,
