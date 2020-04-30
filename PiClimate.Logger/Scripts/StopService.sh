@@ -6,10 +6,10 @@
 #
 # Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-PICLIMATE_ROOT_DIR=/home/pi/PiClimate
+PICLIMATE_LOGGER_ROOT_DIR=/home/pi/PiClimate.Logger
 
 echo "Stopping the PiClimate.Logger service..."
-if [[ -f ${PICLIMATE_ROOT_DIR}/.pid ]]; then
-  kill `cat ${PICLIMATE_ROOT_DIR}/.pid`
-  rm ${PICLIMATE_ROOT_DIR}/.pid
+if [[ -f ${PICLIMATE_LOGGER_ROOT_DIR}/.pid ]]; then
+  kill `cat ${PICLIMATE_LOGGER_ROOT_DIR}/.pid`
+  rm ${PICLIMATE_LOGGER_ROOT_DIR}/.pid
 fi

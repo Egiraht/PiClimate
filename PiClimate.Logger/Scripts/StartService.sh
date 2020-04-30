@@ -6,11 +6,11 @@
 #
 # Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-PICLIMATE_ROOT_DIR=/home/pi/PiClimate
+PICLIMATE_LOGGER_ROOT_DIR=/home/pi/PiClimate.Logger
 DOTNET_BIN_PATH=/home/pi/dotnet/dotnet
 
 echo "Starting the PiClimate.Logger service..."
-if [[ ! -f ${PICLIMATE_ROOT_DIR}/.pid ]]; then
-  ${DOTNET_BIN_PATH} ${PICLIMATE_ROOT_DIR}/PiClimate.Logger.dll > /dev/null 2>> ${PICLIMATE_ROOT_DIR}/Error.log &
-  echo $! > ${PICLIMATE_ROOT_DIR}/.pid
+if [[ ! -f ${PICLIMATE_LOGGER_ROOT_DIR}/.pid ]]; then
+  ${DOTNET_BIN_PATH} ${PICLIMATE_LOGGER_ROOT_DIR}/PiClimate.Logger.dll > /dev/null 2>> ${PICLIMATE_LOGGER_ROOT_DIR}/Error.log &
+  echo $! > ${PICLIMATE_LOGGER_ROOT_DIR}/.pid
 fi

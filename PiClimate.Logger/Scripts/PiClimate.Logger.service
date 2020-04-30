@@ -10,12 +10,12 @@ After=network.target
 
 [Service]
 Type=forking
-PIDFile=/home/pi/PiClimate/.pid
-WorkingDirectory=/home/pi/PiClimate
+PIDFile=/home/pi/PiClimate.Logger/.pid
+WorkingDirectory=/home/pi/PiClimate.Logger
 User=pi
 Group=pi
-ExecStart=/home/pi/PiClimate/Scripts/StartService.sh
-ExecStop=/home/pi/PiClimate/Scripts/StopService.sh
+ExecStart=/home/pi/PiClimate.Logger/Scripts/StartService.sh
+ExecStop=/home/pi/PiClimate.Logger/Scripts/StopService.sh
 RestartSec=60
 Restart=always
 

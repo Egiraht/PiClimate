@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -51,14 +51,6 @@
   <ItemGroup>
     <None Remove="Configuration.json" />
     <Content Include="Configuration.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <!-- Copy all files from the "Scripts" directory to the output directory. -->
-  <ItemGroup>
-    <None Remove="Scripts/**/*" />
-    <Content Include="Scripts/**/*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
