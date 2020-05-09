@@ -4,6 +4,7 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+// ReSharper disable InconsistentNaming
 namespace PiClimate.Logger.Configuration
 {
   /// <summary>

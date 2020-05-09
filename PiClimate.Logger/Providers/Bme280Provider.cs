@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Device.I2c;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
@@ -65,33 +64,6 @@ namespace PiClimate.Logger.Providers
 
     /// <inheritdoc />
     public bool IsConfigured { get; private set; }
-
-    /// <summary>
-    ///   Converts the decimal or hexadecimal string value to integer value.
-    /// </summary>
-    /// <param name="value">
-    ///   The decimal or hexadecimal string value to be converted.
-    /// </param>
-    /// <returns>
-    ///   The converted integer value on success or <c>null</c> otherwise.
-    /// </returns>
-    private int? ConvertToInt(string? value)
-    {
-      if (value == null)
-        return null;
-
-      value = value.Trim();
-
-      if (value.StartsWith("0x"))
-        return int.TryParse(value.Substring(2), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo,
-          out var hexConvertedValue)
-          ? hexConvertedValue as int?
-          : null;
-
-      return int.TryParse(value, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var decConvertedValue)
-        ? decConvertedValue as int?
-        : null;
-    }
 
     /// <summary>
     ///   Tries to connect to a BME280 device using the provided I2C bus ID and I2C device address.

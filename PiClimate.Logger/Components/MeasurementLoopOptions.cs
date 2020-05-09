@@ -5,6 +5,7 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using PiClimate.Logger.Configuration;
 
 namespace PiClimate.Logger.Components
 {
@@ -13,7 +14,7 @@ namespace PiClimate.Logger.Components
   /// </summary>
   public class MeasurementLoopOptions
   {
-    private int _measurementLoopDelay = 60;
+    private int _measurementLoopDelay = GlobalSettings.DefaultMeasurementLoopDelay;
 
     /// <summary>
     ///   Gets or sets the measurement loop delay value in seconds.

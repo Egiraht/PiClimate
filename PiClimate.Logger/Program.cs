@@ -31,11 +31,6 @@ namespace PiClimate.Logger
     private const string ConfigurationJsonFileName = "Configuration.json";
 
     /// <summary>
-    ///   The default measurement loop delay in seconds.
-    /// </summary>
-    private const int DefaultMeasurementLoopDelay = 60;
-
-    /// <summary>
     ///   The default measurement provider class name.
     /// </summary>
     private const string DefaultMeasurementProviderClassName = nameof(RandomDataProvider);
@@ -110,7 +105,8 @@ namespace PiClimate.Logger
       }
       catch (Exception e)
       {
-        ConsoleWriter.WriteError($"The fatal error encountered: {e.Message}");
+        ConsoleWriter.WriteError($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
+          $"[{e.GetType().Name}] The fatal error encountered: {e.Message}");
         return -1;
       }
     }

@@ -26,6 +26,11 @@ namespace PiClimate.Logger.Configuration
     public const string DefaultConnectionStringValue = "";
 
     /// <summary>
+    ///   The default measurement loop delay in seconds.
+    /// </summary>
+    public const int DefaultMeasurementLoopDelay = 60;
+
+    /// <summary>
     ///   Gets or sets the name of the used measurement provider.
     /// </summary>
     public string UseMeasurementProvider { get; set; } = nameof(RandomDataProvider);
@@ -43,7 +48,7 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Gets or sets the measurement loop delay value in seconds.
     /// </summary>
-    public int MeasurementLoopDelay { get; set; } = 60;
+    public int MeasurementLoopDelay { get; set; } = DefaultMeasurementLoopDelay;
 
     /// <summary>
     ///   Gets or sets the named list of connection strings providing the database connection parameters.
