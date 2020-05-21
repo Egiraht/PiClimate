@@ -8,7 +8,7 @@
 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiClimate.Logger", "PiClimate.Logger\PiClimate.Logger.csproj", "{408D4853-607D-4A8D-A40E-F7CC845FC5BA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonFiles", "CommonFiles", "{CFB00F1B-295B-48FC-BBF1-41F5E9D1FCF2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common files", "Common files", "{CFB00F1B-295B-48FC-BBF1-41F5E9D1FCF2}"
 ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 	Readme.md = Readme.md
