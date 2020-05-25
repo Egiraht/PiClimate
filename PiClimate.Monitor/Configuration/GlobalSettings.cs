@@ -30,6 +30,11 @@ namespace PiClimate.Monitor.Configuration
     public const string DefaultProtectionKeysDirectoryPath = "./Keys";
 
     /// <summary>
+    ///   Defines the default time period in minutes beyond which the latest data can be treated obsolete.
+    /// </summary>
+    public const int DefaultObsoleteDataPeriod = 10;
+
+    /// <summary>
     ///   Gets or sets the name of the used measurement source.
     /// </summary>
     public string UseMeasurementSource { get; set; } = nameof(MySqlSource);
@@ -38,6 +43,12 @@ namespace PiClimate.Monitor.Configuration
     ///   Gets or sets the path to the directory where the data protection keys will be stored.
     /// </summary>
     public string ProtectionKeysDirectoryPath { get; set; } = DefaultProtectionKeysDirectoryPath;
+
+    /// <summary>
+    ///   Gets the time period in minutes from the latest logged measurement till the current moment beyond which
+    ///   the data can be treated obsolete, so the corresponding warning will appear.
+    /// </summary>
+    public int ObsoleteDataPeriod { get; set; } = DefaultObsoleteDataPeriod;
 
     /// <summary>
     ///   Gets or sets the named list of connection strings providing the database connection parameters.

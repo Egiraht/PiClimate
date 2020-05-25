@@ -29,14 +29,25 @@
     filter.ToTime = filter.ToTime.Truncate(TruncationLimit.Minutes);
 
     <li class="nav-item px-3">
+      <div class="nav-link text-secondary">
+        Signed in as
+        <span class="font-weight-bold">@User.Identity.Name</span>
+      </div>
+    </li>
+
+    <li class="nav-item px-3">
       <form method="POST" asp-page="@nameof(Auth)" asp-page-handler="@Auth.LogoutHandler" asp-all-route-data="@returnPath">
-        <input type="submit" class="btn btn-link nav-link" value="Sign out" />
+        <input type="submit" class="btn btn-link nav-link border-0" value="Sign out" />
       </form>
     </li>
 
     <hr class="border-light w-100" />
 
     <li class="w-100 d-lg-none"></li>
+
+    <li class="nav-item px-3">
+      <page-link class="nav-link" page="@nameof(Latest)">Latest data</page-link>
+    </li>
 
     <li class="nav-item px-3">
       <page-link class="nav-link" page="@nameof(Monitor)" query-parameters="@lastDayQuery">Last day</page-link>

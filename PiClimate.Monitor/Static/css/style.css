@@ -11,7 +11,7 @@
 
 body
 {
-  min-width: var(--breakpoint-sm);
+  min-width: 750px;
 }
 
 .dropdown-toggle::after

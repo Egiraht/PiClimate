@@ -164,7 +164,7 @@ namespace PiClimate.Monitor.Pages
 
       var claims = new[]
       {
-        new Claim(ClaimTypes.Name, "PiClimate"),
+        new Claim(ClaimTypes.Name, loginForm.Name),
         new Claim(ClaimTypes.Role, "User")
       };
 

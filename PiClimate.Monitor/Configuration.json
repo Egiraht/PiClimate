@@ -7,6 +7,10 @@
   // The directory must be accessible for file reading and writing.
   "ProtectionKeysDirectoryPath": "./Keys",
 
+  // Defines the time period in minutes from the latest logged measurement till the current moment beyond which
+  // the data can be treated obsolete, so the corresponding warning will appear.
+  "ObsoleteDataPeriod": 10,
+
   // Defines the named list of connection strings providing the database connection parameters.
   "ConnectionStrings": {
     "MySql": "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate"

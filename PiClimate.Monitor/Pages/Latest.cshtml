@@ -1,0 +1,71 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@page
+@model Latest
+@{
+  Layout = "_Layout";
+}
+
+<div id="latest-data mx-3">
+  @if (Model.LatestMeasurement != null)
+  {
+    @* Expired data warning. *@
+    if (DateTime.Now - Model.LatestMeasurement.Timestamp > Model.ObsoleteDataPeriod)
+    {
+      <div class="alert alert-warning text-center mb-3">
+        The latest measurement has been logged more than @Model.ObsoleteDataPeriod.TotalMinutes minute(s) ago.
+        The actual data may have changed significantly since then.
+      </div>
+    }
+
+    @* Data panel. *@
+    <div class="row">
+      <script>
+        let timestamp = "@Model.LatestMeasurement.Timestamp.ToString(CultureInfo.InvariantCulture)";
+        let locale = navigator.languages ? navigator.languages[0] : navigator.language;
+        let dateFormat = "L";
+        let timeFormat = "LTS";
+        moment.locale(locale);
+        let date = moment(timestamp).format(dateFormat);
+        let time = moment(timestamp).format(timeFormat);
+      </script>
+
+      <div class="date col-6 col-xl-3 text-center mb-4">
+        <div class="h5">Date</div>
+        <div class="h2"><script>document.write(time)</script></div>
+        <div class="h5"><script>document.write(date)</script></div>
+      </div>
+
+      <div class="pressure col-6 col-xl-3 text-center mb-4">
+        <div class="h5">Pressure</div>
+        <div class="h2">@Model.LatestMeasurement.Pressure</div>
+        <div class="h5">@Model.PressureUnits</div>
+      </div>
+
+      <div class="temperature col-6 col-xl-3 text-center mb-4">
+        <div class="h5">Temperature</div>
+        <div class="h2">@Model.LatestMeasurement.Temperature</div>
+        <div class="h5">@Model.TemperatureUnits</div>
+      </div>
+
+      <div class="humidity col-6 col-xl-3 text-center mb-4">
+        <div class="h5">Humidity</div>
+        <div class="h2">@Model.LatestMeasurement.Humidity</div>
+        <div class="h5">@Model.HumidityUnits</div>
+      </div>
+    </div>
+  }
+  else
+  {
+    @* No data warning. *@
+    <div class="alert alert-warning text-center">
+      There is no latest measurement to display.
+    </div>
+  }
+</div>

@@ -4,6 +4,8 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+using PiClimate.Monitor.Components;
+
 namespace PiClimate.Monitor.Models
 {
   /// <summary>
@@ -49,17 +51,17 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets or sets the string of units the pressure is expressed in.
     /// </summary>
-    public string PressureUnits { get; set; } = "mmHg";
+    public string PressureUnits { get; set; } = MeasurementDefaults.DefaultPressureUnits;
 
     /// <summary>
     ///   Gets or sets the string of units the temperature is expressed in.
     /// </summary>
-    public string TemperatureUnits { get; set; } = "°C";
+    public string TemperatureUnits { get; set; } = MeasurementDefaults.DefaultTemperatureUnits;
 
     /// <summary>
     ///   Gets or sets the string of units the humidity is expressed in.
     /// </summary>
-    public string HumidityUnits { get; set; } = "%";
+    public string HumidityUnits { get; set; } = MeasurementDefaults.DefaultHumidityUnits;
 
     /// <summary>
     ///   Gets or sets the chart's line color value for pressure.

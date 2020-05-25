@@ -51,9 +51,9 @@ namespace PiClimate.Monitor.Sources
     private readonly string _measurementsTableName;
 
     /// <summary>
-    ///   Gets the SQL query for data rows filtering.
+    ///   Gets the SQL query for measurement filtering.
     /// </summary>
-    private string SelectSqlTemplate => $@"
+    private string FilterMeasurementsSqlTemplate => $@"
       SELECT
         FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(QueryParameters.TimeStep)} *
           @{nameof(QueryParameters.TimeStep)}))
@@ -68,7 +68,24 @@ namespace PiClimate.Monitor.Sources
       WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(QueryParameters.FromTime)} AND
         @{nameof(QueryParameters.ToTime)}
       GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(QueryParameters.TimeStep)}
-      ORDER BY `{nameof(Measurement.Timestamp)}`;
+      ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
+    ";
+
+    /// <summary>
+    ///   Gets the SQL query for selecting the latest measurement.
+    /// </summary>
+    private string LatestMeasurementSqlTemplate => $@"
+      SELECT
+        `{nameof(Measurement.Timestamp)}`,
+        ROUND(`{nameof(Measurement.Pressure)}`, 3) 
+          AS `{nameof(Measurement.Pressure)}`,
+        ROUND(`{nameof(Measurement.Temperature)}`, 3)
+          AS `{nameof(Measurement.Temperature)}`,
+        ROUND(`{nameof(Measurement.Humidity)}`, 3)
+          AS `{nameof(Measurement.Humidity)}`
+      FROM `{_measurementsTableName}`
+      ORDER BY `{nameof(Measurement.Timestamp)}` DESC
+      LIMIT 1;
     ";
 
     /// <summary>
@@ -94,7 +111,7 @@ namespace PiClimate.Monitor.Sources
       var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
 
       using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(SelectSqlTemplate, new QueryParameters
+      return connection.Query<Measurement>(FilterMeasurementsSqlTemplate, new QueryParameters
       {
         FromTime = fromTime,
         ToTime = toTime,
@@ -109,12 +126,26 @@ namespace PiClimate.Monitor.Sources
       var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
 
       await using var connection = new MySqlConnection(_connectionString);
-      return await connection.QueryAsync<Measurement>(SelectSqlTemplate, new QueryParameters
+      return await connection.QueryAsync<Measurement>(FilterMeasurementsSqlTemplate, new QueryParameters
       {
         FromTime = fromTime,
         ToTime = toTime,
         TimeStep = Math.Max((int) ((toTime - fromTime).TotalSeconds / filter.Resolution), 1)
       });
+    }
+
+    /// <inheritdoc />
+    public Measurement? GetLatestMeasurement()
+    {
+      using var connection = new MySqlConnection(_connectionString);
+      return connection.QueryFirstOrDefault<Measurement>(LatestMeasurementSqlTemplate);
+    }
+
+    /// <inheritdoc />
+    public async Task<Measurement?> GetLatestMeasurementAsync()
+    {
+      await using var connection = new MySqlConnection(_connectionString);
+      return await connection.QueryFirstOrDefaultAsync<Measurement>(LatestMeasurementSqlTemplate);
     }
 
     /// <inheritdoc />

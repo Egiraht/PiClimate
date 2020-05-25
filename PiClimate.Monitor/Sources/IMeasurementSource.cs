@@ -28,6 +28,23 @@ namespace PiClimate.Monitor.Sources
     IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter);
 
     /// <inheritdoc cref="GetMeasurements" />
+    /// <summary>
+    ///   Asynchronously gets the stored measurement data filtered using the provided measurement filter.
+    /// </summary>
     Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter);
+
+    /// <summary>
+    ///   Gets the latest logged measurement if it is available.
+    /// </summary>
+    /// <returns>
+    ///   The latest measurement if it is available or <c>null</c> otherwise.
+    /// </returns>
+    Measurement? GetLatestMeasurement();
+
+    /// <inheritdoc cref="GetLatestMeasurement" />
+    /// <summary>
+    ///   Asynchronously gets the latest logged measurement if it is available.
+    /// </summary>
+    Task<Measurement?> GetLatestMeasurementAsync();
   }
 }
