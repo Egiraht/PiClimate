@@ -6,6 +6,7 @@
 
 using System;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PiClimate.Monitor.Components;
 
 namespace PiClimate.Monitor.Models
@@ -82,5 +83,11 @@ namespace PiClimate.Monitor.Models
       get => _resolution;
       set => _resolution = Math.Clamp(value, MinimalResolution, MaximalResolution);
     }
+
+    /// <summary>
+    ///   Gets the time step in seconds to be used within the time period.
+    /// </summary>
+    [JsonIgnore, BindNever]
+    public int TimeStep => Math.Max((int) ((ToTime - FromTime!.Value).Duration().TotalSeconds / Resolution), 1);
   }
 }

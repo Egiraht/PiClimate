@@ -70,5 +70,32 @@ namespace PiClimate.Monitor.Pages
     /// <inheritdoc cref="OnGetAsync" />
     public async Task<JsonResult> OnPostAsync([FromBody] MeasurementFilter filter) =>
       await OnGetAsync(filter);
+
+    /// <summary>
+    ///   Gets the latest logged measurements and returns them in JSON format.
+    /// </summary>
+    /// <param name="request">
+    ///   The latest data request object.
+    ///   Provided via the request parameters binding.
+    /// </param>
+    /// <returns>
+    ///   The JSON-encoded HTTP response containing the filtered measurement data.
+    /// </returns>
+    public async Task<JsonResult> OnGetLatestAsync(LatestDataRequest request)
+    {
+      try
+      {
+        var measurements = await _source.GetLatestMeasurementsAsync(request);
+        return new JsonResult(new MeasurementsCollection(measurements));
+      }
+      catch (Exception e)
+      {
+        return new JsonResult(new {ErrorMessage = e.Message}) {StatusCode = StatusCodes.Status500InternalServerError};
+      }
+    }
+
+    /// <inheritdoc cref="OnGetLatestAsync" />
+    public async Task<JsonResult> OnPostLatestAsync([FromBody] LatestDataRequest request) =>
+      await OnGetLatestAsync(request);
   }
 }

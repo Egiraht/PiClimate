@@ -31,28 +31,29 @@ body
   display: none;
 }
 
-.date
+.text-date
 {
   color: var(--time-color) !important;
-  border-color: var(--time-color) !important;
 }
 
-.pressure
+.text-pressure
 {
   color: var(--pressure-color) !important;
-  border-color: var(--pressure-color) !important;
 }
 
-.temperature
+.text-temperature
 {
   color: var(--temperature-color) !important;
-  border-color: var(--temperature-color) !important;
 }
 
-.humidity
+.text-humidity
 {
   color: var(--humidity-color) !important;
-  border-color: var(--humidity-color) !important;
+}
+
+.border-inherit
+{
+  border-color: inherit !important;
 }
 
 .empty::before,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,9 @@ namespace PiClimate.Monitor.Pages
     public TimeSpan ObsoleteDataPeriod { get; }
 
     /// <summary>
-    ///   Gets the latest measurement.
+    ///   Gets the collection of the latest measurements.
     /// </summary>
-    public Measurement? LatestMeasurement { get; private set; }
+    public IEnumerable<Measurement> LatestMeasurements { get; private set; } = new List<Measurement>();
 
     /// <summary>
     ///   Gets the measurement units the pressure is expressed in.
@@ -67,12 +68,16 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   The callback handler for GET HTTP requests.
     /// </summary>
+    /// <param name="request">
+    ///   The latest data request object.
+    ///   Provided via the request parameters binding.
+    /// </param>
     /// <returns>
     ///   An HTTP response with the processed page contents.
     /// </returns>
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(LatestDataRequest request)
     {
-      LatestMeasurement = await _source.GetLatestMeasurementAsync();
+      LatestMeasurements = await _source.GetLatestMeasurementsAsync(request);
       return Page();
     }
   }

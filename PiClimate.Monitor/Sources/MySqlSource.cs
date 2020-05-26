@@ -4,7 +4,6 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
@@ -20,27 +19,6 @@ namespace PiClimate.Monitor.Sources
   class MySqlSource : IMeasurementSource
   {
     /// <summary>
-    ///   A class for storing the query parameters.
-    /// </summary>
-    private class QueryParameters
-    {
-      /// <summary>
-      ///   Gets or sets the beginning timestamp of the time period.
-      /// </summary>
-      public DateTime FromTime { get; set; }
-
-      /// <summary>
-      ///   Gets or sets the ending timestamp of the time period.
-      /// </summary>
-      public DateTime ToTime { get; set; }
-
-      /// <summary>
-      ///   Gets or sets the time step in seconds to be used within the time period.
-      /// </summary>
-      public int TimeStep { get; set; }
-    }
-
-    /// <summary>
     ///   The connection string used for MySQL database connection.
     /// </summary>
     private readonly string _connectionString;
@@ -55,8 +33,8 @@ namespace PiClimate.Monitor.Sources
     /// </summary>
     private string FilterMeasurementsSqlTemplate => $@"
       SELECT
-        FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(QueryParameters.TimeStep)} *
-          @{nameof(QueryParameters.TimeStep)}))
+        FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)} *
+          @{nameof(MeasurementFilter.TimeStep)}))
           AS `{nameof(Measurement.Timestamp)}`,
         ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
           AS `{nameof(Measurement.Pressure)}`,
@@ -65,9 +43,9 @@ namespace PiClimate.Monitor.Sources
         ROUND(AVG(`{nameof(Measurement.Humidity)}`), 3)
           AS `{nameof(Measurement.Humidity)}`
       FROM `{_measurementsTableName}`
-      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(QueryParameters.FromTime)} AND
-        @{nameof(QueryParameters.ToTime)}
-      GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(QueryParameters.TimeStep)}
+      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.FromTime)} AND
+        @{nameof(MeasurementFilter.ToTime)}
+      GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)}
       ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
     ";
 
@@ -85,7 +63,7 @@ namespace PiClimate.Monitor.Sources
           AS `{nameof(Measurement.Humidity)}`
       FROM `{_measurementsTableName}`
       ORDER BY `{nameof(Measurement.Timestamp)}` DESC
-      LIMIT 1;
+      LIMIT @{nameof(LatestDataRequest.MaxRows)};
     ";
 
     /// <summary>
@@ -107,45 +85,29 @@ namespace PiClimate.Monitor.Sources
     /// <inheritdoc />
     public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
     {
-      var fromTime = filter.FromTime!.Value <= filter.ToTime ? filter.FromTime!.Value : filter.ToTime;
-      var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
-
       using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(FilterMeasurementsSqlTemplate, new QueryParameters
-      {
-        FromTime = fromTime,
-        ToTime = toTime,
-        TimeStep = Math.Max((int) ((toTime - fromTime).TotalSeconds / filter.Resolution), 1)
-      });
+      return connection.Query<Measurement>(FilterMeasurementsSqlTemplate, filter);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter)
     {
-      var fromTime = filter.FromTime!.Value <= filter.ToTime ? filter.FromTime!.Value : filter.ToTime;
-      var toTime = filter.FromTime!.Value <= filter.ToTime ? filter.ToTime : filter.FromTime!.Value;
-
       await using var connection = new MySqlConnection(_connectionString);
-      return await connection.QueryAsync<Measurement>(FilterMeasurementsSqlTemplate, new QueryParameters
-      {
-        FromTime = fromTime,
-        ToTime = toTime,
-        TimeStep = Math.Max((int) ((toTime - fromTime).TotalSeconds / filter.Resolution), 1)
-      });
+      return await connection.QueryAsync<Measurement>(FilterMeasurementsSqlTemplate, filter);
     }
 
     /// <inheritdoc />
-    public Measurement? GetLatestMeasurement()
+    public IEnumerable<Measurement> GetLatestMeasurements(LatestDataRequest request)
     {
       using var connection = new MySqlConnection(_connectionString);
-      return connection.QueryFirstOrDefault<Measurement>(LatestMeasurementSqlTemplate);
+      return connection.Query<Measurement>(LatestMeasurementSqlTemplate, request);
     }
 
     /// <inheritdoc />
-    public async Task<Measurement?> GetLatestMeasurementAsync()
+    public async Task<IEnumerable<Measurement>> GetLatestMeasurementsAsync(LatestDataRequest request)
     {
       await using var connection = new MySqlConnection(_connectionString);
-      return await connection.QueryFirstOrDefaultAsync<Measurement>(LatestMeasurementSqlTemplate);
+      return await connection.QueryAsync<Measurement>(LatestMeasurementSqlTemplate, request);
     }
 
     /// <inheritdoc />
