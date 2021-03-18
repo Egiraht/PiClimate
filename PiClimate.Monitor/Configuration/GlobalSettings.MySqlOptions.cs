@@ -33,6 +33,6 @@ namespace PiClimate.Monitor.Configuration
     /// <summary>
     ///   Gets or sets the settings for time period limiters.
     /// </summary>
-    public MySqlOptions MySqlOptions { get; set; } = new MySqlOptions();
+    public MySqlOptions MySqlOptions { get; set; } = new();
   }
 }

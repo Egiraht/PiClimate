@@ -15,7 +15,7 @@
 
   <li class="flex-fill d-lg-none"></li>
 
-  @if (User.Identity.IsAuthenticated)
+  @if (User.Identity?.IsAuthenticated == true)
   {
     var returnPath = new Dictionary<string, string> {{nameof(Auth.Return), Context.Request.GetEncodedPathAndQuery()}};
     var lastDayQuery = new Dictionary<string, object> {{nameof(MeasurementFilter.TimePeriod), TimePeriods.Day}};

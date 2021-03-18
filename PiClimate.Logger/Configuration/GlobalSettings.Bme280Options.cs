@@ -34,6 +34,6 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Gets or sets the settings for BME280 sensor.
     /// </summary>
-    public Bme280Options Bme280Options { get; set; } = new Bme280Options();
+    public Bme280Options Bme280Options { get; set; } = new();
   }
 }

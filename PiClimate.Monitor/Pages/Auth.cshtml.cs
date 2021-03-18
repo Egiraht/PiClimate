@@ -76,7 +76,7 @@ namespace PiClimate.Monitor.Pages
     ///   Gets the login form bound from the HTTP request.
     /// </summary>
     [BindProperty]
-    public LoginForm LoginForm { get; set; } = new LoginForm();
+    public LoginForm LoginForm { get; set; } = new();
 
     /// <summary>
     ///   Gets the return redirection path bound from the HTTP request.

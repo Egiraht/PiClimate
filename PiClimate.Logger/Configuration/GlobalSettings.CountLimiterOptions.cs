@@ -27,6 +27,6 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Gets or sets the settings for data row count limiters.
     /// </summary>
-    public CountLimiterOptions CountLimiterOptions { get; set; } = new CountLimiterOptions();
+    public CountLimiterOptions CountLimiterOptions { get; set; } = new();
   }
 }

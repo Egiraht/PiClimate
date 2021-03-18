@@ -27,6 +27,6 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Gets or sets the settings for time period limiters.
     /// </summary>
-    public PeriodLimiterOptions PeriodLimiterOptions { get; set; } = new PeriodLimiterOptions();
+    public PeriodLimiterOptions PeriodLimiterOptions { get; set; } = new();
   }
 }

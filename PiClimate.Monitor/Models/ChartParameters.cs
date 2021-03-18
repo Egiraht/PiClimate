@@ -91,7 +91,7 @@ namespace PiClimate.Monitor.Models
     /// <summary>
     ///   Gets or sets the measurement filter assigned for the chart.
     /// </summary>
-    public MeasurementFilter Filter { get; set; } = new MeasurementFilter();
+    public MeasurementFilter Filter { get; set; } = new();
 
     /// <summary>
     ///   Creates a new instance of chart parameters.

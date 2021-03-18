@@ -57,6 +57,6 @@ namespace PiClimate.Monitor.Components
     ///   The truncated date-time value.
     /// </returns>
     public static DateTime Truncate(this DateTime dateTime, TruncationLimit limit) =>
-      new DateTime(dateTime.Ticks - dateTime.Ticks % (long) limit, dateTime.Kind);
+      new(dateTime.Ticks - dateTime.Ticks % (long) limit, dateTime.Kind);
   }
 }

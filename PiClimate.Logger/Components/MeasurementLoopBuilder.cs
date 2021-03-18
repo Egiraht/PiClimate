@@ -39,7 +39,7 @@ namespace PiClimate.Logger.Components
     /// <summary>
     ///   The global settings to be used for configuring a new measurement loop.
     /// </summary>
-    private GlobalSettings _settings = new GlobalSettings();
+    private GlobalSettings _settings = new();
 
     /// <summary>
     ///   The measurement provider to be associated with a new measurement loop.
@@ -49,17 +49,17 @@ namespace PiClimate.Logger.Components
     /// <summary>
     ///   The list of measurement loggers to be associated with a new measurement loop.
     /// </summary>
-    private readonly List<IMeasurementLogger> _measurementLoggers = new List<IMeasurementLogger>();
+    private readonly List<IMeasurementLogger> _measurementLoggers = new();
 
     /// <summary>
     ///   The list of measurement limiters to be associated with a new measurement loop.
     /// </summary>
-    private readonly List<IMeasurementLimiter> _measurementLimiters = new List<IMeasurementLimiter>();
+    private readonly List<IMeasurementLimiter> _measurementLimiters = new();
 
     /// <summary>
     ///   The <see cref="MeasurementLoopOptions" /> instance containing the additional measurement loop options.
     /// </summary>
-    private readonly MeasurementLoopOptions _options = new MeasurementLoopOptions();
+    private readonly MeasurementLoopOptions _options = new();
 
     /// <summary>
     ///   Instructs the builder to use the provided global settings.

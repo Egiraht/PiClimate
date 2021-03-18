@@ -7,7 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Dapper;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
 

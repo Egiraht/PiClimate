@@ -53,7 +53,7 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Gets or sets the named list of connection strings providing the database connection parameters.
     /// </summary>
-    public Dictionary<string, string> ConnectionStrings { get; set; } = new Dictionary<string, string>
+    public Dictionary<string, string> ConnectionStrings { get; set; } = new()
     {
       {DefaultConnectionStringKey, DefaultConnectionStringValue}
     };

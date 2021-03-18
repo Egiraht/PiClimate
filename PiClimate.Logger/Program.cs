@@ -38,17 +38,17 @@ namespace PiClimate.Logger
     /// <summary>
     ///   The list of class names of the default measurement loggers.
     /// </summary>
-    private static readonly List<string> DefaultMeasurementLoggerClassNames = new List<string> {nameof(ConsoleLogger)};
+    private static readonly List<string> DefaultMeasurementLoggerClassNames = new() {nameof(ConsoleLogger)};
 
     /// <summary>
     ///   The list of class names of the default measurement limiters.
     /// </summary>
-    private static readonly List<string> DefaultMeasurementLimiterClassNames = new List<string>();
+    private static readonly List<string> DefaultMeasurementLimiterClassNames = new();
 
     /// <summary>
     ///   The console writer instance used for console output message formatting.
     /// </summary>
-    private static readonly ConsoleWriter ConsoleWriter = new ConsoleWriter();
+    private static readonly ConsoleWriter ConsoleWriter = new();
 
     /// <summary>
     ///   Gets the program's name.
@@ -78,7 +78,8 @@ namespace PiClimate.Logger
       {
         // Printing the header.
         ConsoleWriter.WriteNotice($"{ProgramName} v{ProgramVersion}\n");
-        ConsoleWriter.WriteNotice("Starting the measurement loop...");
+        ConsoleWriter.WriteNotice(
+          $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] Starting the measurement loop...");
 
         // Collecting the program's configuration.
         var configuration = ConfigureConfigurationBuilder(args).Build();
@@ -92,14 +93,15 @@ namespace PiClimate.Logger
           measurementLoop.LimiterException += OnLimiterException;
 
           await measurementLoop.StartLoopAsync();
-          ConsoleWriter.WriteNotice("The measurement loop has started.");
+          ConsoleWriter.WriteNotice(
+            $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] The measurement loop has started.");
 
           // Halting the main thread until the shutdown is requested.
           await WaitForShutdownAsync();
         }
 
         // Shutting down the program.
-        ConsoleWriter.WriteNotice("Shutting down...");
+        ConsoleWriter.WriteNotice($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] Shutting down...");
 
         return 0;
       }

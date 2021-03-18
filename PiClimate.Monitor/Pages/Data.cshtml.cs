@@ -53,9 +53,6 @@ namespace PiClimate.Monitor.Pages
     /// </returns>
     public async Task<JsonResult> OnGetAsync(MeasurementFilter filter)
     {
-      if (filter == null)
-        filter = new MeasurementFilter();
-
       try
       {
         var measurements = await _source.GetMeasurementsAsync(filter);
@@ -68,7 +65,7 @@ namespace PiClimate.Monitor.Pages
     }
 
     /// <inheritdoc cref="OnGetAsync" />
-    public async Task<JsonResult> OnPostAsync([FromBody] MeasurementFilter filter) =>
+    public async Task<JsonResult> OnPostAsync(MeasurementFilter filter) =>
       await OnGetAsync(filter);
 
     /// <summary>
@@ -95,7 +92,7 @@ namespace PiClimate.Monitor.Pages
     }
 
     /// <inheritdoc cref="OnGetLatestAsync" />
-    public async Task<JsonResult> OnPostLatestAsync([FromBody] LatestDataRequest request) =>
+    public async Task<JsonResult> OnPostLatestAsync(LatestDataRequest request) =>
       await OnGetLatestAsync(request);
   }
 }

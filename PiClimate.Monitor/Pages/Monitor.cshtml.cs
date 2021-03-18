@@ -35,7 +35,7 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   The chart parameters used for the climatic data chart creation.
     /// </summary>
-    public readonly ChartParameters ChartParameters = new ChartParameters(ChartId)
+    public readonly ChartParameters ChartParameters = new(ChartId)
     {
       RequestUri = DataSourceRequestUri,
       RequestMethod = DataSourceRequestMethod

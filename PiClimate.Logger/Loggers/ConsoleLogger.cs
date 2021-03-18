@@ -19,7 +19,7 @@ namespace PiClimate.Logger.Loggers
     /// <summary>
     ///   The console writer instance used for console output message formatting.
     /// </summary>
-    private readonly ConsoleWriter _consoleWriter = new ConsoleWriter();
+    private readonly ConsoleWriter _consoleWriter = new();
 
     /// <inheritdoc />
     public bool IsConfigured { get; } = true;

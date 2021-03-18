@@ -10,6 +10,7 @@ using System.Device.I2c;
 using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
+using Iot.Device.Bmxx80.FilteringMode;
 using Iot.Device.Bmxx80.PowerMode;
 using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
@@ -40,7 +41,7 @@ namespace PiClimate.Logger.Providers
     /// <summary>
     ///   Gets or sets the BME280 measurement filtering.
     /// </summary>
-    public FilteringMode FilteringMode { get; set; } = FilteringMode.Off;
+    public Bmx280FilteringMode FilteringMode { get; set; } = Bmx280FilteringMode.Off;
 
     /// <summary>
     ///   Gets or sets the BME280 pressure oversampling rate.
@@ -123,11 +124,11 @@ namespace PiClimate.Logger.Providers
       // Configuring the device.
       _device = new Bme280(I2cDevice.Create(new I2cConnectionSettings(i2cBusId, i2cAddress)));
       _device.Reset();
-      _device.SetStandbyTime(StandbyTime);
-      _device.SetFilterMode(FilteringMode);
-      _device.SetPressureSampling(PressureSampling);
-      _device.SetTemperatureSampling(TemperatureSampling);
-      _device.SetHumiditySampling(HumiditySampling);
+      _device.StandbyTime = StandbyTime;
+      _device.FilterMode = FilteringMode;
+      _device.PressureSampling = PressureSampling;
+      _device.TemperatureSampling = TemperatureSampling;
+      _device.HumiditySampling = HumiditySampling;
       _device.SetPowerMode(PowerMode);
       Task.Delay(120).Wait();
       IsConfigured = true;
@@ -135,17 +136,6 @@ namespace PiClimate.Logger.Providers
 
     /// <inheritdoc />
     public Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
-
-    /// <summary>
-    ///   Converts the pressure in Pa to mmHg.
-    /// </summary>
-    /// <param name="pressureInPa">
-    ///   The pressure value in Pa.
-    /// </param>
-    /// <returns>
-    ///   The pressure value in mmHg.
-    /// </returns>
-    private double ConvertPressureToMmHg(double pressureInPa) => pressureInPa * 0.00750062;
 
     /// <inheritdoc />
     public Measurement Measure()
@@ -164,12 +154,13 @@ namespace PiClimate.Logger.Providers
       if (!IsConfigured || _device == null)
         throw new InvalidOperationException($"{nameof(Bme280Provider)} is not configured.");
 
+      var result = await _device.ReadAsync();
       return new Measurement
       {
         Timestamp = DateTime.Now,
-        Pressure = ConvertPressureToMmHg(await _device.ReadPressureAsync()),
-        Temperature = (await _device.ReadTemperatureAsync()).Celsius,
-        Humidity = await _device.ReadHumidityAsync()
+        Pressure = result.Pressure?.MillimetersOfMercury ?? 0.0,
+        Temperature = result.Temperature?.DegreesCelsius ?? 0.0,
+        Humidity = result.Humidity?.Percent ?? 0.0
       };
     }
 

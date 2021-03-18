@@ -26,7 +26,7 @@ namespace PiClimate.Monitor.Configuration
     /// <summary>
     ///   Defines the list of key-value pairs representing user names and corresponding passwords used for signing in.
     /// </summary>
-    public Dictionary<string, string> LoginPairs { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> LoginPairs { get; set; } = new();
   }
 
   public partial class GlobalSettings
@@ -34,6 +34,6 @@ namespace PiClimate.Monitor.Configuration
     /// <summary>
     ///   Gets or sets the settings for time period limiters.
     /// </summary>
-    public AuthenticationOptions AuthenticationOptions { get; set; } = new AuthenticationOptions();
+    public AuthenticationOptions AuthenticationOptions { get; set; } = new();
   }
 }
