@@ -31,17 +31,17 @@ namespace PiClimate.Logger.Configuration
     public const int DefaultMeasurementLoopDelay = 60;
 
     /// <summary>
-    ///   Gets or sets the name of the used measurement provider.
+    ///   Gets or sets the name of the measurement provider to use.
     /// </summary>
     public string UseMeasurementProvider { get; set; } = nameof(RandomDataProvider);
 
     /// <summary>
-    ///   Gets or sets a comma-separated list of names of the used measurement loggers.
+    ///   Gets or sets a comma-separated list of names of the measurement loggers to use.
     /// </summary>
     public string UseMeasurementLoggers { get; set; } = nameof(ConsoleLogger);
 
     /// <summary>
-    ///   Gets or sets a comma-separated list of names of the used measurement limiters.
+    ///   Gets or sets a comma-separated list of names of the measurement limiters to use.
     /// </summary>
     public string UseMeasurementLimiters { get; set; } = "";
 

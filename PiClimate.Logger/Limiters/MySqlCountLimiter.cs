@@ -30,17 +30,17 @@ namespace PiClimate.Logger.Limiters
     }
 
     /// <summary>
-    ///   The connection string used for MySQL database connection.
+    ///   Gets or sets the connection string used for MySQL database connection.
     /// </summary>
     protected string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
-    ///   The database table name for data logging.
+    ///   Gets or sets the database table name for data logging.
     /// </summary>
     protected string MeasurementsTableName { get; set; }  = MySqlOptions.DefaultMeasurementsTableName;
 
     /// <summary>
-    ///   The total data row count limit.
+    ///   Gets or sets the total data row count limit.
     /// </summary>
     protected int CountLimit { get; set; } = CountLimiterOptions.DefaultCountLimit;
 

@@ -1,13 +1,14 @@
 {
-  // Defines the used measurement provider.
+  // Defines the measurement provider to use.
+  // The value cannot be empty.
   // Available values: Bme280 (Bme280Provider), RandomData (RandomDataProvider).
   "UseMeasurementProvider": "Bme280",
 
-  // Defines a comma-separated list of the used measurement loggers.
+  // Defines a comma-separated list of measurement loggers to use.
   // Available values: Console (ConsoleLogger), MySql (MySqlLogger).
   "UseMeasurementLoggers": "Console, MySql",
 
-  // Defines a comma-separated list of the used measurement limiters.
+  // Defines a comma-separated list of measurement limiters to use.
   // The order of the used limiters in the list defines the limiter appliance order, so it may matter.
   // Available values: MySqlCount (MySqlCountLimiter), MySqlPeriod (MySqlPeriodLimiter).
   "UseMeasurementLimiters": "MySqlCount",

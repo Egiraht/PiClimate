@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,7 +85,7 @@ namespace PiClimate.Logger
         var settings = configuration.Get<GlobalSettings>();
 
         // Building and starting the measurement loop.
-        using (var measurementLoop = ConfigureMeasurementLoopBuilder(settings).Build())
+        using (var measurementLoop = new MeasurementLoop(settings))
         {
           measurementLoop.MeasurementException += OnMeasurementException;
           measurementLoop.LoggerException += OnLoggerException;
@@ -135,45 +134,6 @@ namespace PiClimate.Logger
       configurationBuilder.AddCommandLine(commandLineArguments ?? Array.Empty<string>());
 
       return configurationBuilder;
-    }
-
-    /// <summary>
-    ///   Configures the program's <see cref="MeasurementLoopBuilder" /> instance.
-    /// </summary>
-    /// <param name="settings">
-    ///   The program's global settings.
-    /// </param>
-    /// <returns>
-    ///   The configured program's <see cref="MeasurementLoopBuilder" /> instance.
-    /// </returns>
-    private static MeasurementLoopBuilder ConfigureMeasurementLoopBuilder(GlobalSettings settings)
-    {
-      var measurementProvider = settings.UseMeasurementProvider;
-      if (string.IsNullOrEmpty(measurementProvider))
-        measurementProvider = DefaultMeasurementProviderClassName;
-
-      var measurementLoggers = settings.UseMeasurementLoggers
-        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-        .Select(className => className.Trim())
-        .ToList();
-      if (!measurementLoggers.Any())
-        measurementLoggers = DefaultMeasurementLoggerClassNames;
-
-      var measurementLimiters = settings.UseMeasurementLimiters
-        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-        .Select(className => className.Trim())
-        .ToList();
-      if (!measurementLimiters.Any())
-        measurementLimiters = DefaultMeasurementLimiterClassNames;
-
-      var measurementLoopBuilder = new MeasurementLoopBuilder()
-        .UseGlobalSettings(settings)
-        .UseMeasurementProvider(measurementProvider)
-        .AddMeasurementLoggers(measurementLoggers)
-        .AddMeasurementLimiters(measurementLimiters)
-        .SetMeasurementLoopDelay(settings.MeasurementLoopDelay);
-
-      return measurementLoopBuilder;
     }
 
     /// <summary>

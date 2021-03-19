@@ -29,7 +29,7 @@ namespace PiClimate.Logger.Providers
     private bool _disposed = false;
 
     /// <summary>
-    ///   The BME280 device descriptor.
+    ///   Gets or sets the BME280 device descriptor.
     /// </summary>
     protected Bme280? Device { get; set; }
 
