@@ -10,7 +10,6 @@ using System.Device.I2c;
 using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
-using Iot.Device.Bmxx80.FilteringMode;
 using Iot.Device.Bmxx80.PowerMode;
 using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
@@ -31,40 +30,15 @@ namespace PiClimate.Logger.Providers
     /// <summary>
     ///   The BME280 device descriptor.
     /// </summary>
-    private Bme280? _device;
+    protected Bme280? Device { get; set; }
 
     /// <summary>
-    ///   Gets or sets the BME280 standby time.
+    ///   Gets or sets the BME280 options object.
     /// </summary>
-    public StandbyTime StandbyTime { get; set; } = StandbyTime.Ms62_5;
-
-    /// <summary>
-    ///   Gets or sets the BME280 measurement filtering.
-    /// </summary>
-    public Bmx280FilteringMode FilteringMode { get; set; } = Bmx280FilteringMode.Off;
-
-    /// <summary>
-    ///   Gets or sets the BME280 pressure oversampling rate.
-    /// </summary>
-    public Sampling PressureSampling { get; set; } = Sampling.UltraHighResolution;
-
-    /// <summary>
-    ///   Gets or sets the BME280 temperature oversampling rate.
-    /// </summary>
-    public Sampling TemperatureSampling { get; set; } = Sampling.UltraHighResolution;
-
-    /// <summary>
-    ///   Gets or sets the BME280 humidity oversampling rate.
-    /// </summary>
-    public Sampling HumiditySampling { get; set; } = Sampling.UltraHighResolution;
-
-    /// <summary>
-    ///   Gets or sets the BME280 active power mode.
-    /// </summary>
-    public Bmx280PowerMode PowerMode { get; set; } = Bmx280PowerMode.Normal;
+    protected Bme280Options Options { get; set; } = new();
 
     /// <inheritdoc />
-    public bool IsConfigured { get; private set; }
+    public bool IsConfigured { get; protected set; }
 
     /// <summary>
     ///   Tries to connect to a BME280 device using the provided I2C bus ID and I2C device address.
@@ -78,7 +52,7 @@ namespace PiClimate.Logger.Providers
     /// <returns>
     ///   <c>true</c> on successful BME280 device connection, otherwise <c>false</c>.
     /// </returns>
-    public bool TryConnect(int i2cBusId, int i2cDeviceAddress)
+    protected bool TryConnect(int i2cBusId, int i2cDeviceAddress)
     {
       try
       {
@@ -94,13 +68,12 @@ namespace PiClimate.Logger.Providers
     }
 
     /// <inheritdoc />
-    public void Configure(GlobalSettings settings)
+    public virtual void Configure(GlobalSettings settings)
     {
       if (_disposed)
         throw new ObjectDisposedException(nameof(Bme280Provider));
 
-      // Reading I2C bus ID from configuration.
-      var i2cBusId = settings.Bme280Options.I2cBusId;
+      Options = settings.Bme280Options;
 
       // Building a list of I2C addresses to check.
       var i2cAddresses = new List<int>
@@ -108,53 +81,47 @@ namespace PiClimate.Logger.Providers
         Bmx280Base.DefaultI2cAddress,
         Bmx280Base.SecondaryI2cAddress
       };
-      var customI2cAddress = settings.Bme280Options.CustomI2cAddress;
-      if (customI2cAddress != null)
-        i2cAddresses.Insert(0, customI2cAddress.Value);
+      if (Options.CustomI2cAddress != null)
+        i2cAddresses.Insert(0, Options.CustomI2cAddress.Value);
 
       // Checking the I2C addresses for the device.
-      var i2cAddress = i2cAddresses.FirstOrDefault(address => TryConnect(i2cBusId, address));
+      var i2cAddress = i2cAddresses.FirstOrDefault(address => TryConnect(Options.I2cBusId, address));
       if (i2cAddress == default)
       {
         var checkedAddresses = string.Join(", ", i2cAddresses.Select(address => $"0x{address:X2}"));
         throw new Exception(
-          $"No BME280 devices found on the I2C bus 0x{i2cBusId:X2}. Checked I2C addresses: {checkedAddresses}.");
+          $"No BME280 devices found on the I2C bus 0x{Options.I2cBusId:X2}. Checked I2C addresses: {checkedAddresses}.");
       }
 
       // Configuring the device.
-      _device = new Bme280(I2cDevice.Create(new I2cConnectionSettings(i2cBusId, i2cAddress)));
-      _device.Reset();
-      _device.StandbyTime = StandbyTime;
-      _device.FilterMode = FilteringMode;
-      _device.PressureSampling = PressureSampling;
-      _device.TemperatureSampling = TemperatureSampling;
-      _device.HumiditySampling = HumiditySampling;
-      _device.SetPowerMode(PowerMode);
+      Device = new Bme280(I2cDevice.Create(new I2cConnectionSettings(Options.I2cBusId, i2cAddress)));
+      Device.Reset();
+      Device.StandbyTime = Options.StandbyTime;
+      Device.FilterMode = Options.FilteringMode;
+      Device.PressureSampling = Options.PressureSampling;
+      Device.TemperatureSampling = Options.TemperatureSampling;
+      Device.HumiditySampling = Options.HumiditySampling;
+      Device.SetPowerMode(Options.PowerMode);
       Task.Delay(120).Wait();
       IsConfigured = true;
     }
 
     /// <inheritdoc />
-    public Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
+    public virtual Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
 
     /// <inheritdoc />
-    public Measurement Measure()
-    {
-      var measurementTask = MeasureAsync();
-      measurementTask.Wait();
-      return measurementTask.Result;
-    }
+    public virtual Measurement Measure() => MeasureAsync().GetAwaiter().GetResult();
 
     /// <inheritdoc />
-    public async Task<Measurement> MeasureAsync()
+    public virtual async Task<Measurement> MeasureAsync()
     {
       if (_disposed)
         throw new ObjectDisposedException(nameof(Bme280Provider));
 
-      if (!IsConfigured || _device == null)
+      if (!IsConfigured || Device == null)
         throw new InvalidOperationException($"{nameof(Bme280Provider)} is not configured.");
 
-      var result = await _device.ReadAsync();
+      var result = await Device.ReadAsync();
       return new Measurement
       {
         Timestamp = DateTime.Now,
@@ -165,22 +132,19 @@ namespace PiClimate.Logger.Providers
     }
 
     /// <inheritdoc />
-    public void Dispose()
+    public virtual void Dispose()
     {
       if (_disposed)
         return;
 
-      _device?.SetPowerMode(Bmx280PowerMode.Sleep);
-      _device?.Dispose();
+      Device?.SetPowerMode(Bmx280PowerMode.Sleep);
+      Device?.Dispose();
 
       GC.SuppressFinalize(this);
       _disposed = true;
     }
 
     /// <inheritdoc />
-    ~Bme280Provider()
-    {
-      Dispose();
-    }
+    ~Bme280Provider() => Dispose();
   }
 }

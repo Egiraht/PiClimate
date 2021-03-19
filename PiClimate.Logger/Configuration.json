@@ -29,7 +29,35 @@
 
     // Defines the custom I2C bus address.
     // Can be a decimal numeric or hexadecimal string value, or "null" if not used.
-    "CustomI2cAddress": null
+    "CustomI2cAddress": null,
+
+    // Gets or sets the BME280 pressure sampling mode.
+    // Can be one of these values: "Skipped" (no measuring is performed), "UltraLowPower", "LowPower", "Standard", "HighResolution",
+    // "UltraHighResolution".
+    "PressureSampling": "UltraHighResolution",
+
+    // Gets or sets the BME280 temperature sampling mode.
+    // Can be one of these values: "Skipped" (no measuring is performed), "UltraLowPower", "LowPower", "Standard", "HighResolution",
+    // "UltraHighResolution".
+    "TemperatureSampling": "UltraHighResolution",
+
+    // Gets or sets the BME280 humidity sampling mode.
+    // Can be one of these values: "Skipped" (no measuring is performed), "UltraLowPower", "LowPower", "Standard", "HighResolution",
+    // "UltraHighResolution".
+    "HumiditySampling": "UltraHighResolution",
+
+    // Gets or sets the BME280 measurement filtering mode.
+    // Can be one of these values: "Off" (no measurement value filtering), "X2", "X4", "X8", "X16".
+    "FilteringMode": "Off",
+
+    // Gets or sets the BME280 power mode to be used for measuring.
+    // Can be one of these values: "Normal" (continuous measurements), "Forced" (single measurement on request).
+    "PowerMode": "Normal",
+
+    // Gets or sets the BME280 standby time (delay between measurements). Applicable only when the power mode is set to "Normal".
+    // Can be one of these values: "Ms0_5" (0.5 ms), "Ms10" (10 ms), "Ms20" (20 ms), "Ms62_5" (62.5 ms), "Ms125" (125 ms),
+    // "Ms250" (250 ms), "Ms500" (500 ms), "Ms1000" (1 s).
+    "StandbyTime": "Ms62_5"
   },
 
   // The configuration's section related to MySQL options.

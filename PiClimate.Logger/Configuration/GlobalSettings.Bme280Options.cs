@@ -4,6 +4,10 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+using Iot.Device.Bmxx80;
+using Iot.Device.Bmxx80.FilteringMode;
+using Iot.Device.Bmxx80.PowerMode;
+
 // ReSharper disable InconsistentNaming
 namespace PiClimate.Logger.Configuration
 {
@@ -27,6 +31,37 @@ namespace PiClimate.Logger.Configuration
     ///   Can be <c>null</c> if not used.
     /// </summary>
     public int? CustomI2cAddress { get; set; } = null;
+
+    /// <summary>
+    ///   Gets or sets the BME280 pressure sampling mode.
+    /// </summary>
+    public Sampling PressureSampling { get; set; } = Sampling.UltraHighResolution;
+
+    /// <summary>
+    ///   Gets or sets the BME280 temperature sampling mode.
+    /// </summary>
+    public Sampling TemperatureSampling { get; set; } = Sampling.UltraHighResolution;
+
+    /// <summary>
+    ///   Gets or sets the BME280 humidity sampling mode.
+    /// </summary>
+    public Sampling HumiditySampling { get; set; } = Sampling.UltraHighResolution;
+
+    /// <summary>
+    ///   Gets or sets the BME280 measurement filtering mode.
+    /// </summary>
+    public Bmx280FilteringMode FilteringMode { get; set; } = Bmx280FilteringMode.Off;
+
+    /// <summary>
+    ///   Gets or sets the BME280 power mode to be used for measuring: normal (continuous measurements) or forced
+    ///   (single measurement on request).
+    /// </summary>
+    public Bmx280PowerMode PowerMode { get; set; } = Bmx280PowerMode.Normal;
+
+    /// <summary>
+    ///   Gets or sets the BME280 standby time. Applicable only when the power mode is set to normal.
+    /// </summary>
+    public StandbyTime StandbyTime { get; set; } = StandbyTime.Ms62_5;
   }
 
   public partial class GlobalSettings
