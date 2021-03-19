@@ -8,6 +8,8 @@ using System;
 using System.Threading.Tasks;
 using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace PiClimate.Logger.Providers
 {
@@ -35,9 +37,9 @@ namespace PiClimate.Logger.Providers
       return new Measurement
       {
         Timestamp = DateTime.Now,
-        Pressure = 700.0 + 100.0 * random.NextDouble(),
-        Temperature = 40.0 * random.NextDouble(),
-        Humidity = 100.0 * random.NextDouble()
+        Pressure = new Pressure(700.0 + 100.0 * random.NextDouble(), PressureUnit.MillimeterOfMercury),
+        Temperature = new Temperature(40.0 * random.NextDouble(), TemperatureUnit.DegreeCelsius),
+        Humidity = new RelativeHumidity(100.0 * random.NextDouble(), RelativeHumidityUnit.Percent)
       };
     }
 

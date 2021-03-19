@@ -6,42 +6,58 @@
 
 using System;
 using System.Globalization;
+using UnitsNet;
 
 namespace PiClimate.Logger.Models
 {
   /// <summary>
-  ///   The climatic data measurement model.
+  ///   A record containing a single climatic data measurement.
   /// </summary>
-  public class Measurement
+  public record Measurement
   {
     /// <summary>
     ///   The timestamp of the measurement.
     /// </summary>
-    public DateTime Timestamp { get; set; }
+    public DateTime Timestamp { get; init; }
 
     /// <summary>
     ///   The measured pressure value.
     /// </summary>
-    public double Pressure { get; set; }
+    public Pressure Pressure { get; init; }
 
     /// <summary>
     ///   The measured temperature value.
     /// </summary>
-    public double Temperature { get; set; }
+    public Temperature Temperature { get; init; }
 
     /// <summary>
     ///   The measured humidity value.
     /// </summary>
-    public double Humidity { get; set; }
+    public RelativeHumidity Humidity { get; init; }
 
     /// <summary>
-    ///   Gets the string representation of the measurement.
+    ///   Gets the string representation of the measurement using the provided format provider.
+    /// </summary>
+    /// <param name="formatProvider">
+    ///   The format provider object used for formatting the value.
+    /// </param>
+    /// <returns>
+    ///   The formatted measurement's <see cref="Timestamp" />, <see cref="Pressure" />, <see cref="Temperature" />,
+    ///   and <see cref="Humidity" /> values.
+    /// </returns>
+    public string ToString(IFormatProvider formatProvider) =>
+      $"[{Timestamp.ToString(formatProvider)}] " +
+      $"P = {Pressure.ToString(formatProvider)}, " +
+      $"T = {Temperature.ToString(formatProvider)}, " +
+      $"H = {Humidity.ToString(formatProvider)}";
+
+    /// <summary>
+    ///   Gets the string representation of the measurement using the culture-invariant formatting.
     /// </summary>
     /// <returns>
     ///   The formatted measurement's <see cref="Timestamp" />, <see cref="Pressure" />, <see cref="Temperature" />,
     ///   and <see cref="Humidity" /> values.
     /// </returns>
-    public override string ToString() =>
-      $"[{Timestamp.ToString(CultureInfo.InvariantCulture)}] P = {Pressure:F2} mmHg, T = {Temperature:F2} °C, H = {Humidity:F2}%";
+    public override string ToString() => ToString(CultureInfo.InvariantCulture);
   }
 }

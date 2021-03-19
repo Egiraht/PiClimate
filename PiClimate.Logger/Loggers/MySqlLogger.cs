@@ -5,6 +5,7 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
@@ -21,12 +22,12 @@ namespace PiClimate.Logger.Loggers
     /// <summary>
     ///   The connection string used for MySQL database connection.
     /// </summary>
-    private string? _connectionString;
+    protected string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
     ///   The database table name for data logging.
     /// </summary>
-    private string _measurementsTableName = MySqlOptions.DefaultMeasurementsTableName;
+    protected string MeasurementsTableName { get; set; }  = MySqlOptions.DefaultMeasurementsTableName;
 
     /// <inheritdoc />
     public bool IsConfigured { get; private set; }
@@ -35,7 +36,7 @@ namespace PiClimate.Logger.Loggers
     ///   Gets the SQL query for database table initialization.
     /// </summary>
     private string InitializeSqlTemplate => $@"
-      CREATE TABLE IF NOT EXISTS `{_measurementsTableName}`
+      CREATE TABLE IF NOT EXISTS `{MeasurementsTableName}`
       (
         `{nameof(Measurement.Timestamp)}` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY,
         `{nameof(Measurement.Pressure)}` DOUBLE NULL,
@@ -48,7 +49,7 @@ namespace PiClimate.Logger.Loggers
     ///   Gets the SQL query for new data row insertion.
     /// </summary>
     private string InsertSqlTemplate => $@"
-      INSERT INTO `{_measurementsTableName}`
+      INSERT INTO `{MeasurementsTableName}`
       (
         `{nameof(Measurement.Timestamp)}`,
         `{nameof(Measurement.Pressure)}`,
@@ -65,44 +66,25 @@ namespace PiClimate.Logger.Loggers
     ";
 
     /// <inheritdoc />
-    public void Configure(GlobalSettings settings)
-    {
-      _connectionString =
-        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
-          ? connectionString
-          : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
-
-      using (var connection = new MySqlConnection(_connectionString))
-        connection.Execute(InitializeSqlTemplate);
-
-      IsConfigured = true;
-    }
+    public void Configure(GlobalSettings settings) => ConfigureAsync(settings).Wait();
 
     /// <inheritdoc />
     public async Task ConfigureAsync(GlobalSettings settings)
     {
-      _connectionString =
+      ConnectionString =
         settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
           ? connectionString
           : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
+      MeasurementsTableName = settings.MySqlOptions.MeasurementsTableName;
 
-      await using (var connection = new MySqlConnection(_connectionString))
+      await using (var connection = new MySqlConnection(ConnectionString))
         await connection.ExecuteAsync(InitializeSqlTemplate);
 
       IsConfigured = true;
     }
 
     /// <inheritdoc />
-    public void LogMeasurement(Measurement measurement)
-    {
-      if (!IsConfigured)
-        throw new InvalidOperationException($"{nameof(MySqlLogger)} is not configured.");
-
-      using var connection = new MySqlConnection(_connectionString);
-      connection.Execute(InsertSqlTemplate, measurement);
-    }
+    public void LogMeasurement(Measurement measurement) => LogMeasurementAsync(measurement).Wait();
 
     /// <inheritdoc />
     public async Task LogMeasurementAsync(Measurement measurement)
@@ -110,8 +92,14 @@ namespace PiClimate.Logger.Loggers
       if (!IsConfigured)
         throw new InvalidOperationException($"{nameof(MySqlLogger)} is not configured.");
 
-      await using var connection = new MySqlConnection(_connectionString);
-      await connection.ExecuteAsync(InsertSqlTemplate, measurement);
+      await using var connection = new MySqlConnection(ConnectionString);
+      await connection.ExecuteAsync(InsertSqlTemplate, new Dictionary<string, object>
+      {
+        {nameof(Measurement.Timestamp), measurement.Timestamp},
+        {nameof(Measurement.Pressure), measurement.Pressure.MillimetersOfMercury},
+        {nameof(Measurement.Temperature), measurement.Temperature.DegreesCelsius},
+        {nameof(Measurement.Humidity), measurement.Humidity.Percent}
+      });
     }
 
     /// <inheritdoc />

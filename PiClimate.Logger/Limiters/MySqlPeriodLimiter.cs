@@ -32,17 +32,17 @@ namespace PiClimate.Logger.Limiters
     /// <summary>
     ///   The connection string used for MySQL database connection.
     /// </summary>
-    private string? _connectionString;
+    protected string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
-    ///   The database table name for data limiting.
+    ///   The database table name for data logging.
     /// </summary>
-    private string _measurementsTableName = MySqlOptions.DefaultMeasurementsTableName;
+    protected string MeasurementsTableName { get; set; }  = MySqlOptions.DefaultMeasurementsTableName;
 
     /// <summary>
     ///   The time period limiting value in seconds.
     /// </summary>
-    private int _periodLimit = PeriodLimiterOptions.DefaultPeriodLimit;
+    protected int PeriodLimit { get; set; } = PeriodLimiterOptions.DefaultPeriodLimit;
 
     /// <inheritdoc />
     public bool IsConfigured { get; private set; }
@@ -51,38 +51,24 @@ namespace PiClimate.Logger.Limiters
     ///   Gets the SQL query used for data row deletion.
     /// </summary>
     private string DeleteSqlTemplate => $@"
-      DELETE FROM {_measurementsTableName}
+      DELETE FROM {MeasurementsTableName}
       WHERE `{nameof(Measurement.Timestamp)}` < @{nameof(QueryParameters.LastTimestamp)};
     ";
 
     /// <inheritdoc />
-    public void Configure(GlobalSettings settings)
-    {
-      _connectionString =
-        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
-          ? connectionString
-          : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
-      _periodLimit = settings.PeriodLimiterOptions.PeriodLimit;
-
-      using var connection = new MySqlConnection(_connectionString);
-      connection.Open();
-      connection.Close();
-
-      IsConfigured = true;
-    }
+    public void Configure(GlobalSettings settings) => ConfigureAsync(settings).Wait();
 
     /// <inheritdoc />
     public async Task ConfigureAsync(GlobalSettings settings)
     {
-      _connectionString =
+      ConnectionString =
         settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
           ? connectionString
           : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
-      _periodLimit = settings.PeriodLimiterOptions.PeriodLimit;
+      MeasurementsTableName = settings.MySqlOptions.MeasurementsTableName;
+      PeriodLimit = settings.PeriodLimiterOptions.PeriodLimit;
 
-      await using var connection = new MySqlConnection(_connectionString);
+      await using var connection = new MySqlConnection(ConnectionString);
       await connection.OpenAsync();
       await connection.CloseAsync();
 
@@ -90,15 +76,7 @@ namespace PiClimate.Logger.Limiters
     }
 
     /// <inheritdoc />
-    public void Apply()
-    {
-      if (!IsConfigured)
-        throw new InvalidOperationException($"{nameof(MySqlPeriodLimiter)} is not configured.");
-
-      using var connection = new MySqlConnection(_connectionString);
-      connection.Execute(DeleteSqlTemplate,
-        new QueryParameters {LastTimestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
-    }
+    public void Apply() => ApplyAsync().Wait();
 
     /// <inheritdoc />
     public async Task ApplyAsync()
@@ -106,9 +84,9 @@ namespace PiClimate.Logger.Limiters
       if (!IsConfigured)
         throw new InvalidOperationException($"{nameof(MySqlPeriodLimiter)} is not configured.");
 
-      await using var connection = new MySqlConnection(_connectionString);
+      await using var connection = new MySqlConnection(ConnectionString);
       await connection.ExecuteAsync(DeleteSqlTemplate,
-        new QueryParameters {LastTimestamp = DateTime.Now - TimeSpan.FromSeconds(_periodLimit)});
+        new QueryParameters {LastTimestamp = DateTime.Now - TimeSpan.FromSeconds(PeriodLimit)});
     }
 
     /// <inheritdoc />

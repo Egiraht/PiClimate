@@ -33,12 +33,12 @@ namespace PiClimate.Logger.Components
     /// <summary>
     ///   The list of measurement loggers associated with the current measurement loop.
     /// </summary>
-    private readonly List<IMeasurementLogger> _measurementLoggers = new();
+    private readonly List<IMeasurementLogger> _measurementLoggers;
 
     /// <summary>
     ///   The list of measurement limiters associated with the current measurement loop.
     /// </summary>
-    private readonly List<IMeasurementLimiter> _measurementLimiters = new();
+    private readonly List<IMeasurementLimiter> _measurementLimiters;
 
     /// <summary>
     ///   The periodic loop allowing to run the regular measurement cycles asynchronously.
@@ -105,8 +105,8 @@ namespace PiClimate.Logger.Components
     {
       _settings = settings;
       _measurementProvider = measurementProvider;
-      _measurementLoggers.AddRange(measurementLoggers);
-      _measurementLimiters.AddRange(measurementLimiters);
+      _measurementLoggers = new List<IMeasurementLogger>(measurementLoggers);
+      _measurementLimiters = new List<IMeasurementLimiter>(measurementLimiters);
       _periodicLoop = new PeriodicLoop
       {
         LoopDelay = TimeSpan.FromSeconds(options.MeasurementLoopDelay),

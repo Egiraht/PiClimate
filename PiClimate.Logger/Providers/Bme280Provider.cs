@@ -13,6 +13,7 @@ using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
 using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
+using UnitsNet;
 
 // ReSharper disable InconsistentNaming
 namespace PiClimate.Logger.Providers
@@ -125,9 +126,9 @@ namespace PiClimate.Logger.Providers
       return new Measurement
       {
         Timestamp = DateTime.Now,
-        Pressure = result.Pressure?.MillimetersOfMercury ?? 0.0,
-        Temperature = result.Temperature?.DegreesCelsius ?? 0.0,
-        Humidity = result.Humidity?.Percent ?? 0.0
+        Pressure = result.Pressure ?? new Pressure(),
+        Temperature = result.Temperature ?? new Temperature(),
+        Humidity = result.Humidity ?? new RelativeHumidity()
       };
     }
 

@@ -32,17 +32,17 @@ namespace PiClimate.Logger.Limiters
     /// <summary>
     ///   The connection string used for MySQL database connection.
     /// </summary>
-    private string? _connectionString;
+    protected string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
-    ///   The database table name for data limiting.
+    ///   The database table name for data logging.
     /// </summary>
-    private string _measurementsTableName = MySqlOptions.DefaultMeasurementsTableName;
+    protected string MeasurementsTableName { get; set; }  = MySqlOptions.DefaultMeasurementsTableName;
 
     /// <summary>
     ///   The total data row count limit.
     /// </summary>
-    private int _countLimit = CountLimiterOptions.DefaultCountLimit;
+    protected int CountLimit { get; set; } = CountLimiterOptions.DefaultCountLimit;
 
     /// <inheritdoc />
     public bool IsConfigured { get; private set; }
@@ -50,45 +50,31 @@ namespace PiClimate.Logger.Limiters
     /// <summary>
     ///   Gets the SQL query used for data row counting.
     /// </summary>
-    private string CountSqlTemplate => $@"SELECT COUNT(*) FROM {_measurementsTableName}";
+    private string CountSqlTemplate => $@"SELECT COUNT(*) FROM {MeasurementsTableName}";
 
     /// <summary>
     ///   Gets the SQL query used for data row deletion.
     /// </summary>
     private string DeleteSqlTemplate => $@"
-      DELETE FROM {_measurementsTableName}
+      DELETE FROM {MeasurementsTableName}
       ORDER BY `{nameof(Measurement.Timestamp)}`
       LIMIT @{nameof(QueryParameters.CountToDelete)};
     ";
 
     /// <inheritdoc />
-    public void Configure(GlobalSettings settings)
-    {
-      _connectionString =
-        settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
-          ? connectionString
-          : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
-      _countLimit = settings.CountLimiterOptions.CountLimit;
-
-      using var connection = new MySqlConnection(_connectionString);
-      connection.Open();
-      connection.Close();
-
-      IsConfigured = true;
-    }
+    public void Configure(GlobalSettings settings) => ConfigureAsync(settings).Wait();
 
     /// <inheritdoc />
     public async Task ConfigureAsync(GlobalSettings settings)
     {
-      _connectionString =
+      ConnectionString =
         settings.ConnectionStrings.TryGetValue(settings.MySqlOptions.UseConnectionStringKey, out var connectionString)
           ? connectionString
           : GlobalSettings.DefaultConnectionStringValue;
-      _measurementsTableName = settings.MySqlOptions.MeasurementsTableName;
-      _countLimit = settings.CountLimiterOptions.CountLimit;
+      MeasurementsTableName = settings.MySqlOptions.MeasurementsTableName;
+      CountLimit = settings.CountLimiterOptions.CountLimit;
 
-      await using var connection = new MySqlConnection(_connectionString);
+      await using var connection = new MySqlConnection(ConnectionString);
       await connection.OpenAsync();
       await connection.CloseAsync();
 
@@ -96,16 +82,7 @@ namespace PiClimate.Logger.Limiters
     }
 
     /// <inheritdoc />
-    public void Apply()
-    {
-      if (!IsConfigured)
-        throw new InvalidOperationException($"{nameof(MySqlCountLimiter)} is not configured.");
-
-      using var connection = new MySqlConnection(_connectionString);
-      var count = (long) connection.ExecuteScalar(CountSqlTemplate);
-      if (count > _countLimit)
-        connection.Execute(DeleteSqlTemplate, new QueryParameters {CountToDelete = count - _countLimit});
-    }
+    public void Apply() => ApplyAsync().Wait();
 
     /// <inheritdoc />
     public async Task ApplyAsync()
@@ -113,10 +90,10 @@ namespace PiClimate.Logger.Limiters
       if (!IsConfigured)
         throw new InvalidOperationException($"{nameof(MySqlCountLimiter)} is not configured.");
 
-      await using var connection = new MySqlConnection(_connectionString);
+      await using var connection = new MySqlConnection(ConnectionString);
       var count = (long) await connection.ExecuteScalarAsync(CountSqlTemplate);
-      if (count > _countLimit)
-        await connection.ExecuteAsync(DeleteSqlTemplate, new QueryParameters {CountToDelete = count - _countLimit});
+      if (count > CountLimit)
+        await connection.ExecuteAsync(DeleteSqlTemplate, new QueryParameters {CountToDelete = count - CountLimit});
     }
 
     /// <inheritdoc />
