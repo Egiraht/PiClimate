@@ -6,8 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using PiClimate.Logger.Configuration;
@@ -22,21 +20,6 @@ namespace PiClimate.Logger.Components
   /// </summary>
   public class MeasurementLoop : IDisposable
   {
-    /// <summary>
-    ///   The common class name suffix of measurement providers.
-    /// </summary>
-    private const string MeasurementProviderClassNameSuffix = "Provider";
-
-    /// <summary>
-    ///   The common class name suffix of measurement loggers.
-    /// </summary>
-    private const string MeasurementLoggerClassNameSuffix = "Logger";
-
-    /// <summary>
-    ///   The common class name suffix of measurement limiters.
-    /// </summary>
-    private const string MeasurementLimiterClassNameSuffix = "Limiter";
-
     /// <summary>
     ///   The object's disposal flag.
     /// </summary>
@@ -95,123 +78,6 @@ namespace PiClimate.Logger.Components
     public event ThreadExceptionEventHandler? LimiterException;
 
     /// <summary>
-    ///   Creates a measurement provider instance by its name defined in the global settings.
-    /// </summary>
-    /// <param name="settings">
-    ///   The global settings instance.
-    /// </param>
-    /// <returns>
-    ///   The created measurement provider instance.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    ///   Cannot find a measurement provider class with the provided name or the name is empty.
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///   Failed to create a new instance of the provided measurement provider class.
-    /// </exception>
-    private static IMeasurementProvider CreateMeasurementProvider(GlobalSettings settings)
-    {
-      if (string.IsNullOrWhiteSpace(settings.UseMeasurementProvider))
-        throw new ArgumentException("No measurement provider name is provided.");
-
-      var providerName = settings.UseMeasurementProvider.Trim();
-      var providerType = Assembly.GetExecutingAssembly()
-        .GetTypes()
-        .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementProvider)) &&
-          (type.Name == providerName || type.Name == $"{providerName}{MeasurementProviderClassNameSuffix}"));
-      if (providerType == null)
-        throw new ArgumentException($"Cannot find a measurement provider class with the name \"{providerName}\".");
-
-      var provider = Activator.CreateInstance(providerType) as IMeasurementProvider;
-      if (provider == null)
-        throw new InvalidOperationException($"Failed to create an instance of \"{providerType}\" class.");
-
-      return provider;
-    }
-
-    /// <summary>
-    ///   Creates an enumeration of measurement logger instances by their names defined in the global settings.
-    /// </summary>
-    /// <param name="settings">
-    ///   The global settings instance.
-    /// </param>
-    /// <returns>
-    ///   The created enumeration of measurement logger instances.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    ///   Cannot find a measurement logger class with one of the provided names.
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///   Failed to create a new instance for one of the resolved measurement logger classes.
-    /// </exception>
-    private static IEnumerable<IMeasurementLogger> CreateMeasurementLoggers(GlobalSettings settings)
-    {
-      if (!settings.UseMeasurementLoggers.Any())
-        return Array.Empty<IMeasurementLogger>();
-
-      var loggers = new Dictionary<Type, IMeasurementLogger>();
-      foreach (var loggerName in settings.UseMeasurementLoggers.Split(",",
-        StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-      {
-        var loggerType = Assembly.GetExecutingAssembly()
-          .GetTypes()
-          .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementLogger)) &&
-            (type.Name == loggerName || type.Name == $"{loggerName}{MeasurementLoggerClassNameSuffix}"));
-        if (loggerType == null)
-          throw new ArgumentException($"Cannot find a measurement logger class with the name \"{loggerName}\".");
-
-        var logger = Activator.CreateInstance(loggerType) as IMeasurementLogger;
-        if (logger == null)
-          throw new InvalidOperationException($"Failed to create an instance of \"{loggerType}\" class.");
-
-        loggers.TryAdd(loggerType, logger);
-      }
-
-      return loggers.Values;
-    }
-
-    /// <summary>
-    ///   Creates an enumeration of measurement limiter instances by their names defined in the global settings.
-    /// </summary>
-    /// <param name="settings">
-    ///   The global settings instance.
-    /// </param>
-    /// <returns>
-    ///   The created enumeration of measurement limiter instances.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    ///   Cannot find a measurement limiter class with one of the provided names.
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///   Failed to create a new instance for one of the resolved measurement limiter classes.
-    /// </exception>
-    private static IEnumerable<IMeasurementLimiter> CreateMeasurementLimiters(GlobalSettings settings)
-    {
-      if (!settings.UseMeasurementLimiters.Any())
-        return Array.Empty<IMeasurementLimiter>();
-
-      var limiters = new Dictionary<Type, IMeasurementLimiter>();
-      foreach (var limiterName in settings.UseMeasurementLimiters.Split(",",
-        StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-      {
-        var limiterType = Assembly.GetExecutingAssembly()
-          .GetTypes()
-          .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementLimiter)) &&
-            (type.Name == limiterName || type.Name == $"{limiterName}{MeasurementLimiterClassNameSuffix}"));
-        if (limiterType == null)
-          throw new ArgumentException($"Cannot find a measurement limiter class with the name \"{limiterName}\".");
-
-        var limiter = Activator.CreateInstance(limiterType) as IMeasurementLimiter;
-        if (limiter == null)
-          throw new InvalidOperationException($"Failed to create an instance of \"{limiterType}\" class.");
-
-        limiters.TryAdd(limiterType, limiter);
-      }
-
-      return limiters.Values;
-    }
-
-    /// <summary>
     ///   Creates a new measurement loop object.
     /// </summary>
     /// <param name="settings">
@@ -220,9 +86,11 @@ namespace PiClimate.Logger.Components
     public MeasurementLoop(GlobalSettings settings)
     {
       Settings = settings;
-      MeasurementProvider = CreateMeasurementProvider(settings);
-      MeasurementLoggers = new List<IMeasurementLogger>(CreateMeasurementLoggers(settings));
-      MeasurementLimiters = new List<IMeasurementLimiter>(CreateMeasurementLimiters(settings));
+      MeasurementProvider = ClassFactory.CreateMeasurementProvider(settings.UseMeasurementProvider);
+      MeasurementLoggers =
+        new List<IMeasurementLogger>(ClassFactory.CreateMeasurementLoggers(settings.UseMeasurementLoggers));
+      MeasurementLimiters =
+        new List<IMeasurementLimiter>(ClassFactory.CreateMeasurementLimiters(settings.UseMeasurementLimiters));
       Loop = new PeriodicLoop
       {
         LoopDelay = TimeSpan.FromSeconds(settings.MeasurementLoopDelay),

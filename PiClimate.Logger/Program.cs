@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,6 +64,7 @@ namespace PiClimate.Logger
         // Collecting the program's configuration.
         var configuration = ConfigureConfigurationBuilder(args).Build();
         var settings = configuration.Get<GlobalSettings>();
+        PrintSettings(settings);
 
         // Building and starting the measurement loop.
         using (var measurementLoop = new MeasurementLoop(settings))
@@ -73,6 +75,7 @@ namespace PiClimate.Logger
 
           await measurementLoop.StartLoopAsync();
           ConsoleWriter.WriteNotice("The measurement loop has started.");
+          ConsoleWriter.WriteNotice("Press Ctrl+C to shut down the loop.");
 
           // Halting the main thread until the shutdown is requested.
           await WaitForShutdownAsync();
@@ -112,6 +115,25 @@ namespace PiClimate.Logger
       configurationBuilder.AddCommandLine(commandLineArguments ?? Array.Empty<string>());
 
       return configurationBuilder;
+    }
+
+    /// <summary>
+    ///   Prints the essential settings information read from the configuration file.
+    /// </summary>
+    /// <param name="settings">
+    ///   The program's global settings.
+    /// </param>
+    private static void PrintSettings(GlobalSettings settings)
+    {
+      var providerTypeName = ClassFactory.GetMeasurementProviderType(settings.UseMeasurementProvider).Name;
+      var loggerTypeNames = string.Join(", ",
+        ClassFactory.GetMeasurementLoggerTypes(settings.UseMeasurementLoggers).Select(type => type.Name));
+      var limiterTypeNames = string.Join(", ",
+        ClassFactory.GetMeasurementLimiterTypes(settings.UseMeasurementLimiters).Select(type => type.Name));
+      ConsoleWriter.WriteNotice($"Using measurement provider: {providerTypeName}.");
+      ConsoleWriter.WriteNotice($"Using measurement loggers: {(!string.IsNullOrEmpty(loggerTypeNames) ? loggerTypeNames : "none")}.");
+      ConsoleWriter.WriteNotice($"Using measurement limiters: {(!string.IsNullOrEmpty(limiterTypeNames) ? limiterTypeNames : "none")}.");
+      ConsoleWriter.WriteNotice($"Using measurement loop delay: {settings.MeasurementLoopDelay} second(s).");
     }
 
     /// <summary>
