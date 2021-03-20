@@ -1,7 +1,7 @@
 {
   // Defines the measurement provider to use.
   // The value cannot be empty.
-  // Available values: Bme280 (Bme280Provider), RandomData (RandomDataProvider).
+  // Available values: BmeReader (BmeReaderProvider), Bme280 (Bme280Provider), RandomData (RandomDataProvider).
   "UseMeasurementProvider": "Bme280",
 
   // Defines a comma-separated list of measurement loggers to use.

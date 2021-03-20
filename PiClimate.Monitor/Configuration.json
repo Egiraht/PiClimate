@@ -7,8 +7,9 @@
   // The directory must be accessible for file reading and writing.
   "ProtectionKeysDirectoryPath": "./Keys",
 
-  // Defines the time period in minutes from the latest logged measurement till the current moment beyond which
+  // Defines the time period in minutes from the latest logged measurement beyond which
   // the data can be treated obsolete, so the corresponding warning will appear.
+  // This feature helps to detect communication failures between the data logger and the measurement source.
   "ObsoleteDataPeriod": 10,
 
   // Defines the named list of connection strings providing the database connection parameters.
