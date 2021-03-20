@@ -5,8 +5,6 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -14,8 +12,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using PiClimate.Logger.Components;
 using PiClimate.Logger.Configuration;
-using PiClimate.Logger.Loggers;
-using PiClimate.Logger.Providers;
 
 namespace PiClimate.Logger
 {
@@ -28,21 +24,6 @@ namespace PiClimate.Logger
     ///   The configuration JSON file name.
     /// </summary>
     private const string ConfigurationJsonFileName = "Configuration.json";
-
-    /// <summary>
-    ///   The default measurement provider class name.
-    /// </summary>
-    private const string DefaultMeasurementProviderClassName = nameof(RandomDataProvider);
-
-    /// <summary>
-    ///   The list of class names of the default measurement loggers.
-    /// </summary>
-    private static readonly List<string> DefaultMeasurementLoggerClassNames = new() {nameof(ConsoleLogger)};
-
-    /// <summary>
-    ///   The list of class names of the default measurement limiters.
-    /// </summary>
-    private static readonly List<string> DefaultMeasurementLimiterClassNames = new();
 
     /// <summary>
     ///   The console writer instance used for console output message formatting.
@@ -76,9 +57,8 @@ namespace PiClimate.Logger
       try
       {
         // Printing the header.
-        ConsoleWriter.WriteNotice($"{ProgramName} v{ProgramVersion}\n");
-        ConsoleWriter.WriteNotice(
-          $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] Starting the measurement loop...");
+        ConsoleWriter.WriteNotice($"{ProgramName} v{ProgramVersion}\n", false);
+        ConsoleWriter.WriteNotice("Starting the measurement loop...");
 
         // Collecting the program's configuration.
         var configuration = ConfigureConfigurationBuilder(args).Build();
@@ -92,22 +72,20 @@ namespace PiClimate.Logger
           measurementLoop.LimiterException += OnLimiterException;
 
           await measurementLoop.StartLoopAsync();
-          ConsoleWriter.WriteNotice(
-            $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] The measurement loop has started.");
+          ConsoleWriter.WriteNotice("The measurement loop has started.");
 
           // Halting the main thread until the shutdown is requested.
           await WaitForShutdownAsync();
         }
 
         // Shutting down the program.
-        ConsoleWriter.WriteNotice($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] Shutting down...");
+        ConsoleWriter.WriteNotice("Shutting down...");
 
         return 0;
       }
       catch (Exception e)
       {
-        ConsoleWriter.WriteError($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
-          $"[{e.GetType().Name}] The fatal error encountered: {e.Message}");
+        ConsoleWriter.WriteError($"[{e.GetType().Name}] The fatal error encountered: {e.Message}");
         return -1;
       }
     }
@@ -147,8 +125,7 @@ namespace PiClimate.Logger
     /// </param>
     private static void OnMeasurementException(object sender, ThreadExceptionEventArgs eventArgs)
     {
-      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
-        $"[{sender.GetType().Name}] Measuring failed: {eventArgs.Exception.Message}");
+      ConsoleWriter.WriteWarning($"[{sender.GetType().Name}] Measuring failed: {eventArgs.Exception.Message}");
     }
 
     /// <summary>
@@ -162,8 +139,7 @@ namespace PiClimate.Logger
     /// </param>
     private static void OnLoggerException(object sender, ThreadExceptionEventArgs eventArgs)
     {
-      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
-        $"[{sender.GetType().Name}] Logging failed: {eventArgs.Exception.Message}");
+      ConsoleWriter.WriteWarning($"[{sender.GetType().Name}] Logging failed: {eventArgs.Exception.Message}");
     }
 
     /// <summary>
@@ -177,8 +153,7 @@ namespace PiClimate.Logger
     /// </param>
     private static void OnLimiterException(object sender, ThreadExceptionEventArgs eventArgs)
     {
-      ConsoleWriter.WriteWarning($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] " +
-        $"[{sender.GetType().Name}] Limiting failed: {eventArgs.Exception.Message}");
+      ConsoleWriter.WriteWarning($"[{sender.GetType().Name}] Limiting failed: {eventArgs.Exception.Message}");
     }
 
     /// <summary>
@@ -188,7 +163,7 @@ namespace PiClimate.Logger
     {
       var cancellationTokenSource = new CancellationTokenSource();
 
-      Console.CancelKeyPress += (sender, args) =>
+      Console.CancelKeyPress += (_, args) =>
       {
         args.Cancel = true;
         cancellationTokenSource.Cancel();
@@ -198,9 +173,9 @@ namespace PiClimate.Logger
       {
         await Task.Delay(-1, cancellationTokenSource.Token);
       }
-      catch
+      catch (OperationCanceledException)
       {
-        // Ignore the task cancellation exception.
+        // Ignore cancellation exceptions.
       }
     }
   }

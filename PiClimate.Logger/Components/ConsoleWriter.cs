@@ -5,6 +5,7 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using System.Globalization;
 
 namespace PiClimate.Logger.Components
 {
@@ -59,10 +60,15 @@ namespace PiClimate.Logger.Components
     /// <param name="message">
     ///   The message to be written
     /// </param>
-    public void WriteNotice(string message)
+    /// <param name="printTimestamp">
+    ///   Selects if a timestamp should be printed before the message.
+    /// </param>
+    public void WriteNotice(string message, bool printTimestamp = true)
     {
       Console.BackgroundColor = NoticeBackgroundColor;
       Console.ForegroundColor = NoticeTextColor;
+      if (printTimestamp)
+        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Out.WriteLine(message);
       Console.ResetColor();
     }
@@ -73,10 +79,15 @@ namespace PiClimate.Logger.Components
     /// <param name="message">
     ///   The message to be written
     /// </param>
-    public void WriteData(string message)
+    /// <param name="printTimestamp">
+    ///   Selects if a timestamp should be printed before the message.
+    /// </param>
+    public void WriteData(string message, bool printTimestamp = true)
     {
       Console.BackgroundColor = DataBackgroundColor;
       Console.ForegroundColor = DataTextColor;
+      if (printTimestamp)
+        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Out.WriteLine(message);
       Console.ResetColor();
     }
@@ -87,10 +98,15 @@ namespace PiClimate.Logger.Components
     /// <param name="message">
     ///   The message to be written
     /// </param>
-    public void WriteWarning(string message)
+    /// <param name="printTimestamp">
+    ///   Selects if a timestamp should be printed before the message.
+    /// </param>
+    public void WriteWarning(string message, bool printTimestamp = true)
     {
       Console.BackgroundColor = WarningBackgroundColor;
       Console.ForegroundColor = WarningTextColor;
+      if (printTimestamp)
+        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Out.WriteLine(message);
       Console.ResetColor();
     }
@@ -101,10 +117,15 @@ namespace PiClimate.Logger.Components
     /// <param name="message">
     ///   The message to be written
     /// </param>
-    public void WriteError(string message)
+    /// <param name="printTimestamp">
+    ///   Selects if a timestamp should be printed before the message.
+    /// </param>
+    public void WriteError(string message, bool printTimestamp = true)
     {
       Console.BackgroundColor = ErrorBackgroundColor;
       Console.ForegroundColor = ErrorTextColor;
+      if (printTimestamp)
+        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Error.WriteLine(message);
       Console.ResetColor();
     }

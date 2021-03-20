@@ -33,7 +33,7 @@ namespace PiClimate.Logger.Loggers
     public Task ConfigureAsync(GlobalSettings settings) => Task.Run(() => Configure(settings));
 
     /// <inheritdoc />
-    public void LogMeasurement(Measurement measurement) => _consoleWriter.WriteData(measurement.ToString());
+    public void LogMeasurement(Measurement measurement) => _consoleWriter.WriteData(measurement.ToString(), false);
 
     /// <inheritdoc />
     public Task LogMeasurementAsync(Measurement measurement) => Task.Run(() => LogMeasurement(measurement));
