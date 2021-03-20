@@ -78,6 +78,8 @@ namespace PiClimate.Logger.Providers
       try
       {
         serialPort.Open();
+        serialPort.DiscardInBuffer();
+        serialPort.DiscardOutBuffer();
         serialPort.WriteLine(IdCommand);
         return Regex.IsMatch(serialPort.ReadLine(), IdPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
       }
@@ -128,31 +130,34 @@ namespace PiClimate.Logger.Providers
       try
       {
         Port.Open();
+        Port.DiscardInBuffer();
+        Port.DiscardOutBuffer();
         Port.WriteLine(MeasureCommand);
-        var match = Regex.Match(Port.ReadLine(), MeasurementPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var response = Port.ReadLine();
+        var match = Regex.Match(response, MeasurementPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         return new Measurement
         {
           Timestamp = DateTime.Now,
           Pressure = new Pressure(double.TryParse(match.Groups[1].Value, NumberStyles.Any,
               CultureInfo.InvariantCulture, out var pressure)
               ? pressure
-              : 0.0,
+              : throw new FormatException(response),
             PressureUnit.MillimeterOfMercury),
           Temperature = new Temperature(double.TryParse(match.Groups[2].Value, NumberStyles.Any,
               CultureInfo.InvariantCulture, out var temperature)
               ? temperature
-              : 0.0,
+              : throw new FormatException(response),
             TemperatureUnit.DegreeCelsius),
           Humidity = new RelativeHumidity(double.TryParse(match.Groups[3].Value, NumberStyles.Any,
               CultureInfo.InvariantCulture, out var humidity)
               ? humidity
-              : 0.0,
+              : throw new FormatException(response),
             RelativeHumidityUnit.Percent)
         };
       }
-      catch
+      catch (FormatException e)
       {
-        throw new IOException("Failed to read measurement data from the connected BMEReader adapter.");
+        throw new IOException($"Failed to receive the measurement data from the BMEReader adapter: {e.Message}");
       }
       finally
       {
