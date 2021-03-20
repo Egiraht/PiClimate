@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Device.I2c;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
@@ -51,9 +52,9 @@ namespace PiClimate.Logger.Providers
     ///   The I2C device address for connection.
     /// </param>
     /// <returns>
-    ///   <c>true</c> on successful BME280 device connection, otherwise <c>false</c>.
+    ///   <c>true</c> on successful BME280 device connection and identification, otherwise <c>false</c>.
     /// </returns>
-    protected bool TryConnect(int i2cBusId, int i2cDeviceAddress)
+    protected static bool TryConnect(int i2cBusId, int i2cDeviceAddress)
     {
       try
       {
@@ -90,7 +91,7 @@ namespace PiClimate.Logger.Providers
       if (i2cAddress == default)
       {
         var checkedAddresses = string.Join(", ", i2cAddresses.Select(address => $"0x{address:X2}"));
-        throw new Exception(
+        throw new IOException(
           $"No BME280 devices found on the I2C bus 0x{Options.I2cBusId:X2}. Checked I2C addresses: {checkedAddresses}.");
       }
 
