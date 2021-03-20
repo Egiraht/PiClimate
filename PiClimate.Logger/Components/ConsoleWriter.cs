@@ -107,7 +107,7 @@ namespace PiClimate.Logger.Components
       Console.ForegroundColor = WarningTextColor;
       if (printTimestamp)
         Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
-      Console.Out.WriteLine(message);
+      Console.Error.WriteLine(message);
       Console.ResetColor();
     }
 
