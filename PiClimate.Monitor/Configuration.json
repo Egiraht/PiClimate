@@ -1,7 +1,7 @@
 {
   // Defines the used measurement source.
-  // Available values: MySql (MySqlSource).
-  "UseMeasurementSource": "MySql",
+  // Available values: MySql (MySqlSource), RandomData (RandomDataSource).
+  "UseMeasurementSource": "RandomData",
 
   // Defines the path to the directory where the data protection keys will be stored.
   // The directory must be accessible for file reading and writing.
