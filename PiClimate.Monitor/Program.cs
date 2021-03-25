@@ -28,13 +28,13 @@ namespace PiClimate.Monitor
     /// <summary>
     ///   Gets the program's name.
     /// </summary>
-    private static readonly string ProgramName = Assembly.GetExecutingAssembly()
+    public static readonly string ProgramName = Assembly.GetExecutingAssembly()
       .GetCustomAttribute<AssemblyTitleAttribute>()?.Title ?? $"{nameof(PiClimate)}.{nameof(Monitor)}";
 
     /// <summary>
     ///   Gets the program's version.
     /// </summary>
-    private static readonly string ProgramVersion = Assembly.GetExecutingAssembly()
+    public static readonly string ProgramVersion = Assembly.GetExecutingAssembly()
       .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "???";
 
     /// <summary>
@@ -62,9 +62,11 @@ namespace PiClimate.Monitor
           var loggerService = scope.ServiceProvider.GetRequiredService<ILogger<Startup>>();
           if (scope.ServiceProvider.GetService<IMeasurementSource>() == null)
           {
-            loggerService.LogError("Cannot start a web host as no measurement source is set.");
+            loggerService.LogError("No measurement source name is provided.");
             return -1;
           }
+
+          PrintSettings(scope.ServiceProvider);
         }
 
         // Starting the web host.
@@ -96,5 +98,18 @@ namespace PiClimate.Monitor
       .ConfigureAppConfiguration(builder => builder
         .AddJsonFile(ConfigurationJsonFileName)
         .AddCommandLine(args));
+
+    /// <summary>
+    ///   Prints the essential settings information read from the configuration file.
+    /// </summary>
+    /// <param name="provider">
+    ///   The service provider containing the services to use for printing.
+    /// </param>
+    private static void PrintSettings(IServiceProvider provider)
+    {
+      var measurementSourceName = provider.GetRequiredService<IMeasurementSource>().GetType().Name;
+      var logger = provider.GetRequiredService<ILogger<Startup>>();
+      logger.LogInformation($"Using measurement source: {measurementSourceName}.");
+    }
   }
 }
