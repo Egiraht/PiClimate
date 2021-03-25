@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
@@ -81,7 +82,7 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   Gets the return redirection path bound from the HTTP request.
     /// </summary>
-    [BindProperty]
+    [BindProperty(SupportsGet = true)]
     public string? Return { get; set; }
 
     /// <summary>
@@ -103,7 +104,33 @@ namespace PiClimate.Monitor.Pages
     /// <returns>
     ///   The processed page view result.
     /// </returns>
-    public IActionResult OnGetLogin() => Page();
+    public IActionResult OnGetLogin() => _loginPairs.Any() ? Page() : AutoLogin();
+
+    /// <summary>
+    ///   Automatically signs the user in.
+    /// </summary>
+    /// <returns>
+    ///   The return redirection result.
+    /// </returns>
+    private IActionResult AutoLogin()
+    {
+      var claims = new Claim[]
+      {
+        new(ClaimTypes.Name, "User"),
+        new(ClaimTypes.Role, "User")
+      };
+      var user = new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName, ClaimTypes.Name, ClaimTypes.Role));
+      var properties = new AuthenticationProperties
+      {
+        AllowRefresh = true,
+        IssuedUtc = DateTimeOffset.Now,
+        ExpiresUtc = DateTimeOffset.Now + _cookieExpirationPeriod,
+        IsPersistent = false,
+        RedirectUri = Return ?? DefaultReturnPath
+      };
+
+      return SignIn(user, properties, SchemeName);
+    }
 
     /// <summary>
     ///   The login callback handler for POST HTTP requests.
@@ -114,6 +141,9 @@ namespace PiClimate.Monitor.Pages
     /// </returns>
     public IActionResult OnPostLogin()
     {
+      if (!_loginPairs.Any())
+        return AutoLogin();
+
       if (!ModelState.IsValid)
         return Page();
 
@@ -162,10 +192,10 @@ namespace PiClimate.Monitor.Pages
       if (!_loginPairs.ContainsKey(loginForm.Name) || _loginPairs[loginForm.Name] != loginForm.Password)
         return null;
 
-      var claims = new[]
+      var claims = new Claim[]
       {
-        new Claim(ClaimTypes.Name, loginForm.Name),
-        new Claim(ClaimTypes.Role, "User")
+        new(ClaimTypes.Name, loginForm.Name),
+        new(ClaimTypes.Role, "User")
       };
 
       return new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName, ClaimTypes.Name, ClaimTypes.Role));

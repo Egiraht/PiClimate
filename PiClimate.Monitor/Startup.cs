@@ -68,7 +68,6 @@ namespace PiClimate.Monitor
       services.AddRazorPages();
 
       // Add cookie-based user authentication services.
-      // TODO: Add automatic authentication when there is no login pairs in the settings.
       services.AddAuthentication(Auth.SchemeName)
         .AddCookie(Auth.SchemeName, options =>
         {
