@@ -4,7 +4,7 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-namespace PiClimate.Logger.Configuration
+namespace PiClimate.Logger.Settings
 {
   /// <summary>
   ///   The section of the global settings for data row count limiters.

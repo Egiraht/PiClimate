@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PiClimate.Monitor.Components;
-using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Models;
 using PiClimate.Monitor.Sources;
+using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor.Pages
 {
@@ -61,7 +61,7 @@ namespace PiClimate.Monitor.Pages
     /// </param>
     public Latest(GlobalSettings settings, IMeasurementSource source)
     {
-      ObsoleteDataPeriod = TimeSpan.FromMinutes(settings.ObsoleteDataPeriod);
+      ObsoleteDataPeriod = TimeSpan.FromSeconds(settings.ObsoleteDataPeriod);
       _source = source;
     }
 

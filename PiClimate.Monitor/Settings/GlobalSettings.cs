@@ -5,9 +5,10 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Collections.Generic;
+using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Sources;
 
-namespace PiClimate.Monitor.Configuration
+namespace PiClimate.Monitor.Settings
 {
   /// <summary>
   ///   The global settings of the program.
@@ -22,7 +23,8 @@ namespace PiClimate.Monitor.Configuration
     /// <summary>
     ///   Defines the default used connection string value.
     /// </summary>
-    public const string DefaultConnectionStringValue = "";
+    public const string DefaultConnectionStringValue =
+      "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate";
 
     /// <summary>
     ///   Defines the default used connection string value.
@@ -30,14 +32,14 @@ namespace PiClimate.Monitor.Configuration
     public const string DefaultProtectionKeysDirectoryPath = "./Keys";
 
     /// <summary>
-    ///   Defines the default time period in minutes beyond which the latest data can be treated obsolete.
+    ///   Defines the default time period in seconds beyond which the latest data can be treated obsolete.
     /// </summary>
-    public const int DefaultObsoleteDataPeriod = 10;
+    public const int DefaultObsoleteDataPeriod = 10 * TimePeriods.Minute;
 
     /// <summary>
     ///   Gets or sets the name of the used measurement source.
     /// </summary>
-    public string UseMeasurementSource { get; set; } = nameof(MySqlSource);
+    public string UseMeasurementSource { get; set; } = nameof(RandomDataSource);
 
     /// <summary>
     ///   Gets or sets the path to the directory where the data protection keys will be stored.
@@ -45,7 +47,7 @@ namespace PiClimate.Monitor.Configuration
     public string ProtectionKeysDirectoryPath { get; set; } = DefaultProtectionKeysDirectoryPath;
 
     /// <summary>
-    ///   Gets the time period in minutes from the latest logged measurement till the current moment beyond which
+    ///   Gets the time period in seconds from the latest logged measurement till the current moment beyond which
     ///   the data can be treated obsolete, so the corresponding warning will appear.
     /// </summary>
     public int ObsoleteDataPeriod { get; set; } = DefaultObsoleteDataPeriod;

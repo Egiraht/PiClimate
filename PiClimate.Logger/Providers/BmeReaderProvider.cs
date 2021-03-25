@@ -11,8 +11,8 @@ using System.IO.Ports;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
+using PiClimate.Logger.Settings;
 using UnitsNet;
 using UnitsNet.Units;
 

@@ -5,8 +5,9 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Collections.Generic;
+using PiClimate.Monitor.Components;
 
-namespace PiClimate.Monitor.Configuration
+namespace PiClimate.Monitor.Settings
 {
   /// <summary>
   ///   The section of the global settings for authentication options.
@@ -14,12 +15,12 @@ namespace PiClimate.Monitor.Configuration
   public class AuthenticationOptions
   {
     /// <summary>
-    ///   Defines the default authentication cookie expiration period in days.
+    ///   Defines the default authentication cookie expiration period in seconds.
     /// </summary>
-    public const int DefaultCookieExpirationPeriod = 7;
+    public const int DefaultCookieExpirationPeriod = TimePeriods.Week;
 
     /// <summary>
-    ///   Defines the authentication cookie expiration period in days used when the "Remember me" option is active.
+    ///   Defines the authentication cookie expiration period in seconds used when the "Remember me" option is active.
     /// </summary>
     public int CookieExpirationPeriod { get; set; } = DefaultCookieExpirationPeriod;
 

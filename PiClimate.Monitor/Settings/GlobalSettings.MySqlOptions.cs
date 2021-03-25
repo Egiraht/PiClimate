@@ -4,7 +4,7 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-namespace PiClimate.Monitor.Configuration
+namespace PiClimate.Monitor.Settings
 {
   /// <summary>
   ///   The section of the global settings for MySQL connections.

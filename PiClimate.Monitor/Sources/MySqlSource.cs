@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
-using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Models;
+using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor.Sources
 {

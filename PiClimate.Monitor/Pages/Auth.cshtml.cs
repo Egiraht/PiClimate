@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Models;
+using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor.Pages
 {
@@ -93,7 +93,7 @@ namespace PiClimate.Monitor.Pages
     /// </param>
     public Auth(GlobalSettings settings)
     {
-      _cookieExpirationPeriod = TimeSpan.FromDays(settings.AuthenticationOptions.CookieExpirationPeriod);
+      _cookieExpirationPeriod = TimeSpan.FromSeconds(settings.AuthenticationOptions.CookieExpirationPeriod);
       _loginPairs = settings.AuthenticationOptions.LoginPairs;
     }
 

@@ -10,9 +10,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using PiClimate.Common;
 using PiClimate.Logger.Components;
-using PiClimate.Logger.Configuration;
+using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger
 {
@@ -22,9 +22,10 @@ namespace PiClimate.Logger
   internal static class Program
   {
     /// <summary>
-    ///   The configuration JSON file name.
+    ///   The settings JSON file path.
     /// </summary>
-    private const string ConfigurationJsonFileName = "Configuration.json";
+    private static readonly string SettingsFilePath =
+      $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/Settings.json";
 
     /// <summary>
     ///   The console writer instance used for console output message formatting.
@@ -62,8 +63,7 @@ namespace PiClimate.Logger
         ConsoleWriter.WriteNotice("Starting the measurement loop...");
 
         // Collecting the program's configuration.
-        var configuration = ConfigureConfigurationBuilder(args).Build();
-        var settings = configuration.Get<GlobalSettings>();
+        var settings = await SettingsFactory.ReadSettingsAsync<GlobalSettings>(SettingsFilePath, args);
         PrintSettings(settings);
 
         // Building and starting the measurement loop.
@@ -94,30 +94,6 @@ namespace PiClimate.Logger
     }
 
     /// <summary>
-    ///   Configures the program's <see cref="ConfigurationBuilder" /> instance.
-    ///   The program's configuration is collected from the JSON configuration file available at the
-    ///   <see cref="ConfigurationJsonFileName" /> path and program's command line arguments.
-    /// </summary>
-    /// <param name="commandLineArguments">
-    ///   An array of program's command line arguments.
-    /// </param>
-    /// <returns>
-    ///   The configured program's <see cref="ConfigurationBuilder" /> instance.
-    /// </returns>
-    private static ConfigurationBuilder ConfigureConfigurationBuilder(string[]? commandLineArguments = null)
-    {
-      var configurationBuilder = new ConfigurationBuilder();
-      var jsonFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? ".",
-        ConfigurationJsonFileName);
-
-      // Command line argument values have priority over the configuration file values.
-      configurationBuilder.AddJsonFile(jsonFilePath);
-      configurationBuilder.AddCommandLine(commandLineArguments ?? Array.Empty<string>());
-
-      return configurationBuilder;
-    }
-
-    /// <summary>
     ///   Prints the essential settings information read from the configuration file.
     /// </summary>
     /// <param name="settings">
@@ -131,8 +107,10 @@ namespace PiClimate.Logger
       var limiterTypeNames = string.Join(", ",
         ClassFactory.GetMeasurementLimiterTypes(settings.UseMeasurementLimiters).Select(type => type.Name));
       ConsoleWriter.WriteNotice($"Using measurement provider: {providerTypeName}.");
-      ConsoleWriter.WriteNotice($"Using measurement loggers: {(!string.IsNullOrEmpty(loggerTypeNames) ? loggerTypeNames : "none")}.");
-      ConsoleWriter.WriteNotice($"Using measurement limiters: {(!string.IsNullOrEmpty(limiterTypeNames) ? limiterTypeNames : "none")}.");
+      ConsoleWriter.WriteNotice(
+        $"Using measurement loggers: {(!string.IsNullOrEmpty(loggerTypeNames) ? loggerTypeNames : "none")}.");
+      ConsoleWriter.WriteNotice(
+        $"Using measurement limiters: {(!string.IsNullOrEmpty(limiterTypeNames) ? limiterTypeNames : "none")}.");
       ConsoleWriter.WriteNotice($"Using measurement loop delay: {settings.MeasurementLoopDelay} second(s).");
     }
 

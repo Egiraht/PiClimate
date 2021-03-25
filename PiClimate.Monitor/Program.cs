@@ -5,9 +5,9 @@
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -21,9 +21,10 @@ namespace PiClimate.Monitor
   internal static class Program
   {
     /// <summary>
-    ///   The configuration JSON file name.
+    ///   The settings JSON file path.
     /// </summary>
-    private const string ConfigurationJsonFileName = "Configuration.json";
+    public static readonly string SettingsFilePath =
+      $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/Settings.json";
 
     /// <summary>
     ///   Gets the program's name.
@@ -56,18 +57,8 @@ namespace PiClimate.Monitor
         // Building the web host.
         var host = CreateHostBuilder(args).Build();
 
-        // Checking the service configuration.
-        using (var scope = host.Services.CreateScope())
-        {
-          var loggerService = scope.ServiceProvider.GetRequiredService<ILogger<Startup>>();
-          if (scope.ServiceProvider.GetService<IMeasurementSource>() == null)
-          {
-            loggerService.LogError("No measurement source name is provided.");
-            return -1;
-          }
-
-          PrintSettings(scope.ServiceProvider);
-        }
+        // Printing the settings.
+        PrintSettings(host.Services);
 
         // Starting the web host.
         host.Run();
@@ -76,7 +67,9 @@ namespace PiClimate.Monitor
       }
       catch (Exception e)
       {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.Error.WriteLine($"The fatal error encountered: {e.Message}");
+        Console.ResetColor();
         return -1;
       }
     }
@@ -91,13 +84,10 @@ namespace PiClimate.Monitor
     ///   The configured web host builder instance.
     /// </returns>
     private static IHostBuilder CreateHostBuilder(string[] args) => Host
-      .CreateDefaultBuilder()
+      .CreateDefaultBuilder(args)
       .ConfigureWebHostDefaults(builder => builder
         .UseStartup<Startup>()
-        .UseWebRoot("Static"))
-      .ConfigureAppConfiguration(builder => builder
-        .AddJsonFile(ConfigurationJsonFileName)
-        .AddCommandLine(args));
+        .UseWebRoot("Static"));
 
     /// <summary>
     ///   Prints the essential settings information read from the configuration file.

@@ -49,7 +49,7 @@ namespace PiClimate.Monitor.Components
     /// <param name="services">
     ///   The service collection where the measurement source should be added.
     /// </param>
-    /// <param name="measurementSourceClassType">
+    /// <param name="sourceType">
     ///   <see cref="Type" /> of the measurement source class to be set as a singleton service.
     /// </param>
     /// <exception cref="ArgumentException">
@@ -59,13 +59,13 @@ namespace PiClimate.Monitor.Components
     ///   The modified service collection.
     /// </returns>
     public static IServiceCollection AddMeasurementSource(this IServiceCollection services,
-      Type measurementSourceClassType)
+      Type sourceType)
     {
-      if (measurementSourceClassType.GetInterface(nameof(IMeasurementSource)) == null)
+      if (sourceType.GetInterface(nameof(IMeasurementSource)) == null)
         throw new ArgumentException(
-          $"Type \"{measurementSourceClassType.Name}\" is not a measurement source class type.");
+          $"Type \"{sourceType.Name}\" is not a measurement source class type.");
 
-      services.AddSingleton(typeof(IMeasurementSource), measurementSourceClassType);
+      services.AddSingleton(typeof(IMeasurementSource), sourceType);
       return services;
     }
 
@@ -76,16 +76,16 @@ namespace PiClimate.Monitor.Components
     /// <param name="services">
     ///   The service collection where the measurement source should be added.
     /// </param>
-    /// <param name="measurementSource">
+    /// <param name="source">
     ///   The <see cref="IMeasurementSource" /> instance to be set as a singleton service.
     /// </param>
     /// <returns>
     ///   The modified service collection.
     /// </returns>
     public static IServiceCollection AddMeasurementSource(this IServiceCollection services,
-      IMeasurementSource measurementSource)
+      IMeasurementSource source)
     {
-      services.AddSingleton(measurementSource);
+      services.AddSingleton(source);
       return services;
     }
 
@@ -96,30 +96,31 @@ namespace PiClimate.Monitor.Components
     /// <param name="services">
     ///   The service collection where the measurement source should be added.
     /// </param>
-    /// <param name="measurementSourceClassName">
-    ///   The class name of the measurement source to be set as a singleton service.
-    ///   The class name suffix (<see cref="MeasurementSourceClassNameSuffix" />) may be omitted.
+    /// <param name="sourceName">
+    ///   The name of the measurement provider to create an instance for.
+    ///   Can be a full class name or a class name with a <see cref="MeasurementSourceClassNameSuffix" /> omitted.
     /// </param>
     /// <exception cref="ArgumentException">
-    ///   Cannot find a measurement source class with the provided name.
+    ///   Cannot find a measurement source class with the provided name or the name is empty.
     /// </exception>
     /// <returns>
     ///   The modified service collection.
     /// </returns>
     public static IServiceCollection AddMeasurementSource(this IServiceCollection services,
-      string measurementSourceClassName)
+      string sourceName)
     {
-      if (string.IsNullOrWhiteSpace(measurementSourceClassName))
-        return services;
+      sourceName = sourceName.Trim();
+      if (string.IsNullOrEmpty(sourceName))
+        throw new ArgumentException("No measurement source name is provided.");
 
       var measurementSourceType = Assembly.GetExecutingAssembly()
         .GetTypes()
         .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IMeasurementSource)) &&
-          (type.Name == measurementSourceClassName ||
-            type.Name == $"{measurementSourceClassName}{MeasurementSourceClassNameSuffix}"));
+          (type.Name == sourceName ||
+            type.Name == $"{sourceName}{MeasurementSourceClassNameSuffix}"));
       if (measurementSourceType == null)
         throw new ArgumentException(
-          $"Cannot find a measurement source class with the name \"{measurementSourceClassName}\".");
+          $"Cannot find a measurement source class with the name \"{sourceName}\".");
 
       return AddMeasurementSource(services, measurementSourceType);
     }

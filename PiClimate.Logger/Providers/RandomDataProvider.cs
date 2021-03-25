@@ -6,8 +6,8 @@
 
 using System;
 using System.Threading.Tasks;
-using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
+using PiClimate.Logger.Settings;
 using UnitsNet;
 using UnitsNet.Units;
 

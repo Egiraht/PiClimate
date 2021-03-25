@@ -12,8 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
-using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Models;
+using PiClimate.Logger.Settings;
 using UnitsNet;
 
 // ReSharper disable InconsistentNaming

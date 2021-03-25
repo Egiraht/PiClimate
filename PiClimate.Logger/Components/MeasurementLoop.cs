@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using PiClimate.Logger.Configuration;
 using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
+using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Components
 {

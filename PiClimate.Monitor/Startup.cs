@@ -4,17 +4,18 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PiClimate.Common;
 using PiClimate.Monitor.Components;
-using PiClimate.Monitor.Configuration;
 using PiClimate.Monitor.Pages;
+using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor
 {
@@ -41,18 +42,15 @@ namespace PiClimate.Monitor
     /// <summary>
     ///   Creates a new web host startup class instance.
     /// </summary>
-    /// <param name="configuration">
-    ///   The web host configuration.
-    ///   Provided via dependency injection.
-    /// </param>
     /// <param name="environment">
     ///   The web host environment.
     ///   Provided via dependency injection.
     /// </param>
-    public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+    public Startup(IWebHostEnvironment environment)
     {
-      _settings = configuration.Get<GlobalSettings>();
       _environment = environment;
+      _settings = SettingsFactory.ReadSettings<GlobalSettings>(Program.SettingsFilePath,
+        Environment.GetCommandLineArgs());
     }
 
     /// <summary>
@@ -70,6 +68,7 @@ namespace PiClimate.Monitor
       services.AddRazorPages();
 
       // Add cookie-based user authentication services.
+      // TODO: Add automatic authentication when there is no login pairs in the settings.
       services.AddAuthentication(Auth.SchemeName)
         .AddCookie(Auth.SchemeName, options =>
         {

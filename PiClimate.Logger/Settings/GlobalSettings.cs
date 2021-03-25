@@ -4,12 +4,11 @@
 //
 // Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
 
-using System;
 using System.Collections.Generic;
 using PiClimate.Logger.Loggers;
 using PiClimate.Logger.Providers;
 
-namespace PiClimate.Logger.Configuration
+namespace PiClimate.Logger.Settings
 {
   /// <summary>
   ///   The global settings of the program.
@@ -24,12 +23,13 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   Defines the default used connection string value.
     /// </summary>
-    public const string DefaultConnectionStringValue = "";
+    public const string DefaultConnectionStringValue =
+      "Server=localhost; Port=3306; UserId=root; Password=; Database=PiClimate";
 
     /// <summary>
     ///   The default measurement loop delay in seconds.
     /// </summary>
-    public const int DefaultMeasurementLoopDelay = 60;
+    public const int DefaultMeasurementLoopDelay = 1;
 
     /// <summary>
     ///   The default measurement provider class name.
@@ -44,7 +44,7 @@ namespace PiClimate.Logger.Configuration
     /// <summary>
     ///   The list of class names of the default measurement limiters.
     /// </summary>
-    private static readonly string[] DefaultMeasurementLimiterClassNames = Array.Empty<string>();
+    private static readonly string[] DefaultMeasurementLimiterClassNames = {};
 
     /// <summary>
     ///   Gets or sets the name of the measurement provider to use.

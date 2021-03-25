@@ -24,6 +24,12 @@ ProjectSection(SolutionItems) = preProject
 	Icon\PiClimate.svg = Icon\PiClimate.svg
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiClimate.Common", "PiClimate.Common\PiClimate.Common.csproj", "{A9F40204-AB1F-454B-AD75-FAB04908322E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PiClimate.Logger", "PiClimate.Logger", "{D8D04257-043D-463B-B708-205BBFAEB6E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PiClimate.Monitor", "PiClimate.Monitor", "{DF91BAD7-FD04-43E4-840C-93A20E861DC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,8 +46,15 @@ Global
 		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{617312B8-A1DE-4778-AE07-0E4F9F5C308C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A9F40204-AB1F-454B-AD75-FAB04908322E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9F40204-AB1F-454B-AD75-FAB04908322E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9F40204-AB1F-454B-AD75-FAB04908322E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9F40204-AB1F-454B-AD75-FAB04908322E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{369820F4-36CD-46EF-807A-749098E08AF1} = {CFB00F1B-295B-48FC-BBF1-41F5E9D1FCF2}
+		{A9F40204-AB1F-454B-AD75-FAB04908322E} = {CFB00F1B-295B-48FC-BBF1-41F5E9D1FCF2}
+		{408D4853-607D-4A8D-A40E-F7CC845FC5BA} = {D8D04257-043D-463B-B708-205BBFAEB6E2}
+		{617312B8-A1DE-4778-AE07-0E4F9F5C308C} = {DF91BAD7-FD04-43E4-840C-93A20E861DC2}
 	EndGlobalSection
 EndGlobal

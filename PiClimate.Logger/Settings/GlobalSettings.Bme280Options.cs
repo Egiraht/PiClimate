@@ -9,7 +9,7 @@ using Iot.Device.Bmxx80.FilteringMode;
 using Iot.Device.Bmxx80.PowerMode;
 
 // ReSharper disable InconsistentNaming
-namespace PiClimate.Logger.Configuration
+namespace PiClimate.Logger.Settings
 {
   /// <summary>
   ///   The section of the global settings for BME280 sensor.

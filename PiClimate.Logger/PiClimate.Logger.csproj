@@ -17,8 +17,8 @@
     <Description>Climatic data monitor</Description>
     <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <InformationalVersion>1.1.0</InformationalVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <InformationalVersion>1.2.0</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
@@ -47,11 +47,8 @@
     <PackageReference Include="MySqlConnector" Version="1.3.1" />
   </ItemGroup>
 
-  <!-- Copy the "Configuration.json" file to the output directory. -->
+  <!-- Local project references. -->
   <ItemGroup>
-    <None Remove="Configuration.json" />
-    <Content Include="Configuration.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="../PiClimate.Common/PiClimate.Common.csproj" />
   </ItemGroup>
 </Project>
