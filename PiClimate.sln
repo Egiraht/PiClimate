@@ -13,6 +13,7 @@ ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 	Readme.md = Readme.md
 	License.txt = License.txt
+	Publish.sh = Publish.sh
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiClimate.Monitor", "PiClimate.Monitor\PiClimate.Monitor.csproj", "{617312B8-A1DE-4778-AE07-0E4F9F5C308C}"

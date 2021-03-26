@@ -438,5 +438,8 @@ fabric.properties
 
 
 ### Solution-specific ignores
+# Ignore the published files directory.
+Published/
+
 # Ignore the "Keys" directory that can be created by default for data protection keys.
 Keys/
