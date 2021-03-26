@@ -1,0 +1,33 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inherits LayoutComponentBase
+
+<div class="container-fluid p-0">
+  <div class="row flex-column flex-lg-row flex-nowrap vh-100">
+    @* Navigation menu. *@
+    <aside id="nav-menu" class="navbar navbar-dark bg-dark overflow-auto flex-lg-column flex-nowrap col-auto">
+      <NavMenu />
+
+      @* Footer for narrow viewports. *@
+      <div class="d-none d-lg-block mt-3">
+        <SiteFooter />
+      </div>
+    </aside>
+
+    @* Main content. *@
+    <main id="main" class="bg-light overflow-auto col py-3">
+      @Body
+    </main>
+
+    @* Footer for wide viewports. *@
+    <div class="d-block d-lg-none flex-grow-0 flex-shrink-0 bg-dark py-2">
+      <SiteFooter />
+    </div>
+  </div>
+</div>

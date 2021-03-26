@@ -1,0 +1,57 @@
+<!--
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+-->
+
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" TreatAsLocalProperty="SelfContained">
+  <!-- Common configuration. -->
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <SelfContained>true</SelfContained>
+    <Nullable>enable</Nullable>
+    <Title>PiClimate Monitor WebAssembly</Title>
+    <Authors>Maxim Yudin</Authors>
+    <Description>Climatic data monitor (WebAssembly package)</Description>
+    <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
+    <Company>Maxim Yudin</Company>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <InformationalVersion>2.0.0</InformationalVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor.WASM</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Measurements, pressure, temperature, humidity, monitor, Blazor, WebAssembly</PackageTags>
+    <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+
+  <!-- Release build configuration. -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <!-- Project dependencies. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="5.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.4" PrivateAssets="all" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.9.0" />
+  </ItemGroup>
+
+  <!-- Local project references. -->
+  <ItemGroup>
+    <ProjectReference Include="../PiClimate.Common/PiClimate.Common.csproj" />
+  </ItemGroup>
+
+  <!-- File dependencies. -->
+  <ItemGroup>
+    <None Update="Shared/Chart.razor.css">
+      <DependentUpon>Chart.razor</DependentUpon>
+    </None>
+  </ItemGroup>
+</Project>

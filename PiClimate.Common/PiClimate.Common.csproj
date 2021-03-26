@@ -3,7 +3,7 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-  Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 -->
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -14,10 +14,10 @@
     <Title>PiClimate Common</Title>
     <Authors>Maxim Yudin</Authors>
     <Description>Climatic data common library</Description>
-    <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
+    <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <InformationalVersion>1.2.1</InformationalVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <InformationalVersion>2.0.0</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Common</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
@@ -34,6 +34,8 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
+
+  <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />

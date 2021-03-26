@@ -1,0 +1,38 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+<CascadingAuthenticationState>
+  <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+    <Found Context="routeData">
+      <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout)">
+        <Authorizing>
+          Authorizing...
+        </Authorizing>
+        <NotAuthorized>
+          @if (context.User.Identity?.IsAuthenticated == true)
+          {
+            <div>
+              You are not authorized to see this page.
+            </div>
+          }
+          else
+          {
+            <div>
+              Login form.
+            </div>
+          }
+        </NotAuthorized>
+      </AuthorizeRouteView>
+    </Found>
+    <NotFound>
+      <LayoutView Layout="@typeof(Layout)">
+        <p>Sorry, there's nothing at this address.</p>
+      </LayoutView>
+    </NotFound>
+  </Router>
+</CascadingAuthenticationState>

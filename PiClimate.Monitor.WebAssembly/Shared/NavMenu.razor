@@ -1,0 +1,169 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inject NavigationManager NavigationManager
+
+<ul class="navbar-nav flex-row flex-lg-column flex-fill flex-wrap w-100">
+  <li class="nav-item px-3">
+    <a class="navbar-brand" href="/">@nameof(PiClimate) @nameof(Monitor)</a>
+  </li>
+
+  <hr class="border-light w-100 d-none d-lg-block mx-0" />
+
+  <li class="flex-fill d-lg-none"></li>
+
+  <li class="nav-item px-3">
+    <div class="nav-link text-secondary">
+      <AuthorizeView Context="authContext">
+        <Authorized>
+          Signed in as <span class="font-weight-bold">@authContext.User.Identity?.Name</span>
+        </Authorized>
+        <Authorizing>
+          Signing in...
+        </Authorizing>
+        <NotAuthorized>
+          You are not signed in
+        </NotAuthorized>
+      </AuthorizeView>
+    </div>
+  </li>
+
+  <AuthorizeView>
+    <li class="nav-item px-3">
+      <input type="submit" class="btn btn-link nav-link border-0" value="Sign out" />
+    </li>
+  </AuthorizeView>
+
+  <hr class="border-light w-100" />
+
+  <li class="w-100 d-lg-none"></li>
+
+  <AuthorizeView Context="authContext">
+    <li class="nav-item px-3">
+      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Day)"
+               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Day}")" class="nav-link">
+        Last day
+      </NavLink>
+    </li>
+
+    <li class="nav-item px-3">
+      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Week)"
+               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Week}")" class="nav-link">
+        Last week
+      </NavLink>
+    </li>
+
+    <li class="nav-item px-3">
+      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Month)"
+               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Month}")" class="nav-link">
+        Last month
+      </NavLink>
+    </li>
+
+    <li class="nav-item px-3">
+      <a href="#custom-period-form" data-toggle="collapse"
+         class="nav-link dropdown-toggle collapsed @(IsCustomTimespanActive ? "active" : "")">
+        Custom timespan
+      </a>
+    </li>
+
+    <li class="w-100 d-lg-none"></li>
+
+    <li id="custom-period-form" class="nav-item bg-secondary rounded collapse w-100 my-2">
+      <EditForm Model="@this" OnValidSubmit="CustomTimespanSubmit"
+                class="form-row flex-lg-column align-items-end mx-3 mt-3 mb-1 my-lg-3">
+        <div class="form-group col-4 col-lg">
+          <label>From:</label>
+          <InputDate @bind-Value="@CustomPeriodDate1" class="form-control form-control-sm mb-1" />
+          <input @bind="@CustomPeriodTime1" type="time" class="form-control form-control-sm" />
+        </div>
+
+        <div class="form-group col-4 col-lg">
+          <label>To:</label>
+          <InputDate @bind-Value="@CustomPeriodDate2" class="form-control form-control-sm mb-1" />
+          <input @bind="@CustomPeriodTime2" type="time" class="form-control form-control-sm" />
+        </div>
+
+        <div class="form-group col-4 col-lg mb-lg-1">
+          <label>Resolution (1-3000):</label>
+          <InputNumber @bind-Value="@CustomResolution" class="form-control form-control-sm mb-1" min="1" max="3000" />
+          <button type="submit" class="btn btn-block btn-sm btn-light">Show</button>
+        </div>
+      </EditForm>
+    </li>
+  </AuthorizeView>
+</ul>
+
+@code
+{
+  #nullable enable
+
+  /// <summary>
+  ///   Defines the default custom timespan resolution.
+  /// </summary>
+  public const int DefaultCustomResolution = 1500;
+
+  /// <summary>
+  ///   Checks or sets if the custom timespan is active at the moment.
+  /// </summary>
+  private bool IsCustomTimespanActive => NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+    .StartsWith($"{nameof(Monitor)}/Period");
+
+  /// <summary>
+  ///   Gets or sets the custom timespan first date component.
+  /// </summary>
+  private DateTime CustomPeriodDate1 { get; set; } = (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).Date;
+
+  /// <summary>
+  ///   Gets or sets the custom timespan first time component.
+  /// </summary>
+  private DateTime CustomPeriodTime1 { get; set; } =
+    default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
+
+  /// <summary>
+  ///   Gets or sets the custom timespan second date component.
+  /// </summary>
+  private DateTime CustomPeriodDate2 { get; set; } = DateTime.Now.Date;
+
+  /// <summary>
+  ///   Gets or sets the custom timespan second time component.
+  /// </summary>
+  private DateTime CustomPeriodTime2 { get; set; } = default(DateTime) + DateTime.Now.TimeOfDay;
+
+  /// <summary>
+  ///   Gets or sets the custom timespan resolution.
+  /// </summary>
+  private int CustomResolution { get; set; } = DefaultCustomResolution;
+
+  /// <inheritdoc />
+  protected override void OnInitialized() => NavigationManager.LocationChanged += (_, _) => StateHasChanged();
+
+  /// <summary>
+  ///   Updates the custom timespan values.
+  /// </summary>
+  /// <param name="offset">
+  ///   The time offset in seconds from the current moment.
+  /// </param>
+  private void UpdateCustomTimespan(int offset)
+  {
+    CustomPeriodDate1 = (DateTime.Now - TimeSpan.FromSeconds(offset)).Date;
+    CustomPeriodTime1 = default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
+    CustomPeriodDate2 = DateTime.Now.Date;
+    CustomPeriodTime2 = default(DateTime) + DateTime.Now.TimeOfDay;
+    CustomResolution = DefaultCustomResolution;
+  }
+
+  /// <summary>
+  ///   The callback method handling the custom timespan button click.
+  /// </summary>
+  private void CustomTimespanSubmit() =>
+    NavigationManager.NavigateTo($"{nameof(Monitor)}/Period" +
+      $"/{CustomPeriodDate1 + CustomPeriodTime1.TimeOfDay:s}" +
+      $"/{CustomPeriodDate2 + CustomPeriodTime2.TimeOfDay:s}" +
+      $"/{CustomResolution}");
+}

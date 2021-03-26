@@ -3,7 +3,7 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-  Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 -->
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -15,10 +15,10 @@
     <Title>PiClimate Logger</Title>
     <Authors>Maxim Yudin</Authors>
     <Description>Climatic data monitor</Description>
-    <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
+    <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <InformationalVersion>1.2.1</InformationalVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <InformationalVersion>2.0.0</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>

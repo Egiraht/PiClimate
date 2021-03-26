@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using PiClimate.Common;
+using PiClimate.Common.Components;
 using PiClimate.Logger.Components;
 using PiClimate.Logger.Settings;
 

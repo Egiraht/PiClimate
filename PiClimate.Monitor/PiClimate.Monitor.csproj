@@ -3,7 +3,7 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-  Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 -->
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -14,10 +14,10 @@
     <Title>PiClimate Monitor</Title>
     <Authors>Maxim Yudin</Authors>
     <Description>Climatic data monitor</Description>
-    <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
+    <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <InformationalVersion>1.2.1</InformationalVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <InformationalVersion>2.0.0</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
@@ -26,7 +26,6 @@
     <PackageTags>Measurements, pressure, temperature, humidity, monitor</PackageTags>
     <ApplicationIcon>../Icon/PiClimate.ico</ApplicationIcon>
     <LangVersion>default</LangVersion>
-    <TypeScriptToolsVersion>latest</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <!-- Release build configuration. -->
@@ -38,21 +37,16 @@
   <!-- Project dependencies. -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.4" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.9.0" />
     <PackageReference Include="MySqlConnector" Version="1.3.1" />
   </ItemGroup>
 
   <!-- Local project references. -->
   <ItemGroup>
+    <ProjectReference Include="../PiClimate.Monitor.WebAssembly/PiClimate.Monitor.WebAssembly.csproj" />
     <ProjectReference Include="../PiClimate.Common/PiClimate.Common.csproj" />
-  </ItemGroup>
-
-  <!-- Copy all files from the "Static" directory to the output directory. -->
-  <ItemGroup>
-    <None Remove="Static/**/*" />
-    <Content Remove="Static/**/*.json" />
-    <Content Include="Static/**/*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <!-- Ignore contents of the "Keys" directory that may be created in the project directory during debugging. -->

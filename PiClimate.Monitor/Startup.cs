@@ -2,19 +2,22 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
 using System.IO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PiClimate.Common;
+using PiClimate.Common.Components;
 using PiClimate.Monitor.Components;
-using PiClimate.Monitor.Pages;
+using PiClimate.Monitor.Services;
 using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor
@@ -24,11 +27,6 @@ namespace PiClimate.Monitor
   /// </summary>
   public class Startup
   {
-    /// <summary>
-    ///   Defines the name for anti-forgery token parameters.
-    /// </summary>
-    private const string AntiForgeryTokenParameterName = "AntiForgeryToken";
-
     /// <summary>
     ///   The global settings to be used for configuring a host.
     /// </summary>
@@ -64,35 +62,28 @@ namespace PiClimate.Monitor
       // Add the global settings object as a service.
       services.AddSingleton(_settings);
 
-      // Add services related to the Razor Pages.
-      services.AddRazorPages();
+      // Add services related to controllers.
+      services.AddControllers()
+        .ConfigureApiBehaviorOptions(options =>
+          options.InvalidModelStateResponseFactory = DefaultRequestHandlers.InvalidModelStateHandler);
 
-      // Add cookie-based user authentication services.
-      services.AddAuthentication(Auth.SchemeName)
-        .AddCookie(Auth.SchemeName, options =>
+      // Adding the JWT token manipulation service.
+      var tokenService = new JwtService(_settings);
+      services.AddSingleton<ITokenService>(tokenService);
+
+      // Adding the authentication service based on JWT tokens.
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {
-          options.LoginPath = Auth.LoginPath;
-          options.LogoutPath = Auth.LogoutPath;
-          options.AccessDeniedPath = $"/{nameof(Status)}/{StatusCodes.Status403Forbidden}";
-          options.ReturnUrlParameter = Auth.ReturnQueryParameterName;
-          options.Cookie.Name = Auth.CookieName;
+          options.ClaimsIssuer = tokenService.TokenValidationParameters.ValidIssuer;
+          options.TokenValidationParameters = tokenService.TokenValidationParameters;
         });
 
       // Add authorization services.
       services.AddAuthorization();
 
-      // Configure the anti-forgery protection services.
-      services.AddAntiforgery(options =>
-      {
-        options.FormFieldName = AntiForgeryTokenParameterName;
-        options.Cookie.Name = AntiForgeryTokenParameterName;
-      });
-
       // Add cross-origin request sharing services.
       services.AddCors(options => options.AddDefaultPolicy(builder => builder.AllowAnyOrigin()));
-
-      // Add the selected measurement source as a service.
-      services.AddMeasurementSource(_settings.UseMeasurementSource);
 
       // Configure the data protection services to put the persistent protection keys to the dedicated directory.
       var protectionKeysDirectoryPath = _settings.ProtectionKeysDirectoryPath;
@@ -102,6 +93,9 @@ namespace PiClimate.Monitor
         Directory.CreateDirectory(protectionKeysDirectoryPath);
       services.AddDataProtection()
         .PersistKeysToFileSystem(new DirectoryInfo(protectionKeysDirectoryPath));
+
+      // Add the selected measurement source as a service.
+      services.AddMeasurementSource(_settings.UseMeasurementSource);
     }
 
     /// <summary>
@@ -113,18 +107,25 @@ namespace PiClimate.Monitor
     public void Configure(IApplicationBuilder app)
     {
       if (_environment.IsDevelopment())
-        app.UseDeveloperExceptionPage();
-      else
-        app.UseExceptionHandler($"/{nameof(Error)}");
-
-      app.UseStatusCodePagesWithReExecute($"/{nameof(Status)}/{{0}}");
+        app.UseWebAssemblyDebugging();
+      app.UseExceptionHandler(builder => builder.Run(async context =>
+        await DefaultRequestHandlers.ExceptionHandler(context)
+          .ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ActionDescriptor()))));
+      app.UseStatusCodePages(builder => builder.Run(async context =>
+        await DefaultRequestHandlers.StatusCodeHandler(context)
+          .ExecuteResultAsync(new ActionContext(context, context.GetRouteData(), new ActionDescriptor()))));
       app.UseHttpsRedirection();
+      app.UseBlazorFrameworkFiles();
       app.UseStaticFiles();
       app.UseRouting();
       app.UseAuthentication();
       app.UseAuthorization();
       app.UseCors();
-      app.UseEndpoints(endpoints => endpoints.MapRazorPages());
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+        endpoints.MapFallbackToFile("index.html");
+      });
     }
   }
 }

@@ -1,0 +1,38 @@
+:root
+{
+  --time-color: dimgrey;
+  --pressure-color: blue;
+  --temperature-color: green;
+  --humidity-color: red;
+}
+
+body
+{
+  min-width: 750px;
+}
+
+#blazor-error-ui
+{
+  display: none;
+  text-align: center;
+}
+
+.dropdown-toggle::after
+{
+  border-top: 0;
+  border-bottom: solid .3em;
+}
+
+.dropdown-toggle.collapsed::after
+{
+  border-top: solid .3em;
+  border-bottom: 0;
+}
+
+@media (min-width: 992px)
+{
+  #nav-menu
+  {
+    flex-basis: 300px;
+  }
+}

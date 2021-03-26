@@ -1,0 +1,79 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@page "/Monitor/Offset/{Offset:int}/{Resolution:int?}"
+@page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
+
+<div>
+  @* TODO: Remove test measurements: *@
+  @{
+    var measurements = new Measurement[]
+    {
+      new()
+      {
+        Timestamp = DateTime.Now - TimeSpan.FromDays(1),
+        Pressure = 700.0,
+        Temperature = 40.0,
+        Humidity = 50.0
+      },
+      new()
+      {
+        Timestamp = DateTime.Now,
+        Pressure = 800.0,
+        Temperature = 30.0,
+        Humidity = 50.0
+      }
+    };
+  }
+
+  <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@measurements" />
+</div>
+
+@code
+{
+  /// <summary>
+  ///   Gets or sets the time offset in seconds from the current moment to be used for timespan calculation.
+  /// </summary>
+  [Parameter]
+  public int Offset { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the starting timestamp of the timespan to be displayed.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodStart { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the ending timestamp of the timespan to be displayed.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodEnd { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the timespan resolution.
+  /// </summary>
+  [Parameter]
+  public int Resolution { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the chart settings object.
+  /// </summary>
+  private ChartSettings ChartSettings { get; set; } = new();
+
+  /// <inheritdoc />
+  protected override void OnParametersSet()
+  {
+    if (PeriodStart == default || PeriodEnd == default)
+    {
+      PeriodStart = DateTime.Now - TimeSpan.FromSeconds(Offset);
+      PeriodEnd = DateTime.Now;
+    }
+    if (Resolution == default)
+      Resolution = 1500;
+  }
+}
