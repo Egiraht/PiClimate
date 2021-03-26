@@ -1,27 +1,26 @@
 # PiClimate.Monitor
 
-**PiClimate.Monitor** is a web server used for visualization of the climatic data stored by the *PiClimate.Logger*
-service.
+**PiClimate.Monitor** is a web server used for climatic data visualization.
 
 ## Features
 
-The server uses **Chart.js**-generated charts to visualize the climatic data that can be filtered for the selected time
-period.
+Climatic data are acquired by the server using the measurement data source concept.
+At the moment these data sources are provided:
 
-For data acquisition the server uses the data sources. At the moment these data sources are provided:
+* **MySqlSource** - acquires the climatic data from the specified MySQL database,
+* **RandomDataSource** - generates random climatic data for testing purposes (selected by default).
 
-* **MySqlSource** - acquires the climatic data from the specified MySQL database.
+By accessing the web server page, collected data can further be visualized using charts for selected time periods.
 
-## Configuration
+## Settings
 
-The program can be configured using the *Configuration.json* file available in the program's root directory. See the
-description comments in the file for more information about the settings it provides. Also the individual configuration
+The program can be configured using the *Settings.json* file added the program's root directory. Also individual
 settings can be overriden using the command line arguments with syntax of `--parameter=value` or
 `--section:parameter=value`.
 
 ## Requirements
 
-The program requires the *.NET Runtime 5.0* and the *ASP.NET Core Runtime 5.0* to be installed in the system.
+The program requires the *.NET Runtime 5.0* and *ASP.NET Core Runtime 5.0* packages to be installed in the system.
 
 ## References
 
