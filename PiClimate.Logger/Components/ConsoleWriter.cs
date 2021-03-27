@@ -106,7 +106,7 @@ namespace PiClimate.Logger.Components
       Console.BackgroundColor = WarningBackgroundColor;
       Console.ForegroundColor = WarningTextColor;
       if (printTimestamp)
-        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
+        Console.Error.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Error.WriteLine(message);
       Console.ResetColor();
     }
@@ -125,7 +125,7 @@ namespace PiClimate.Logger.Components
       Console.BackgroundColor = ErrorBackgroundColor;
       Console.ForegroundColor = ErrorTextColor;
       if (printTimestamp)
-        Console.Out.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
+        Console.Error.Write($"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ");
       Console.Error.WriteLine(message);
       Console.ResetColor();
     }
