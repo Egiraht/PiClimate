@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PiClimate.Common;
 using PiClimate.Common.Models;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Sources;
@@ -17,7 +18,7 @@ namespace PiClimate.Monitor.Controllers
   ///   An API controller that filters the measurement data using the provided measurement filter and returns the result
   ///   in JSON format.
   /// </summary>
-  [ApiController, Route("Api/[controller]")]
+  [ApiController, Route(ApiEndpoints.MeasurementDataEndpoint)]
   public class Data
   {
     /// <summary>

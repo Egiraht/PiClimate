@@ -53,5 +53,8 @@
     <None Update="Shared/Chart.razor.css">
       <DependentUpon>Chart.razor</DependentUpon>
     </None>
+    <None Update="Pages/Monitor.razor.css">
+      <DependentUpon>Monitor.razor</DependentUpon>
+    </None>
   </ItemGroup>
 </Project>

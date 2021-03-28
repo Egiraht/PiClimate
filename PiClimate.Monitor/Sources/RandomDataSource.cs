@@ -20,8 +20,8 @@ namespace PiClimate.Monitor.Sources
     public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
     {
       var random = new Random();
-      var fromTime = filter.FromTime!.Value;
-      var timeStep = (filter.ToTime - fromTime).Duration() / filter.Resolution;
+      var fromTime = filter.PeriodStart!.Value;
+      var timeStep = (filter.PeriodEnd - fromTime).Duration() / filter.Resolution;
       var measurements = new List<Measurement>();
 
       for (var counter = 0; counter < filter.Resolution; counter++)

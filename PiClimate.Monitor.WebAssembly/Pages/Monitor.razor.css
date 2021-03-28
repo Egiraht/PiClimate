@@ -1,0 +1,52 @@
+.empty::before,
+.updating::before,
+.failed::before
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  content: "";
+  z-index: 10000;
+}
+
+.empty::after,
+.updating::after,
+.failed::after
+{
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  content: "";
+  z-index: 10001;
+}
+
+.empty::after
+{
+  color: darkcyan;
+  content: attr(data-empty-notice);
+}
+
+.updating::after
+{
+  color: darkcyan;
+  content: attr(data-updating-notice);
+}
+
+.failed::after
+{
+  color: darkred;
+  content: attr(data-failed-notice) !important;
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+.updating ::deep.chart-wrapper,
+.failed ::deep.chart-wrapper,
+.empty ::deep.chart-wrapper
+{
+  visibility: hidden;
+}

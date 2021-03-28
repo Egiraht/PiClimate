@@ -8,10 +8,7 @@
 
 @inject IJSRuntime JsRuntime
 
-<div id="@ChartSettings.ChartId-wrapper" class="chart-wrapper position-relative"
-     data-empty-notice="No measurements found for the period."
-     data-updating-notice="Updating..."
-     data-failed-notice="Failed to get the measurements.">
+<div id="@ChartSettings.ChartId-wrapper" class="chart-wrapper position-relative">
   <canvas id="@ChartSettings.ChartId" class="chart-canvas"></canvas>
 
   <div id="@ChartSettings.ChartId-summary" class="chart-summary container-fluid py-2">

@@ -43,8 +43,8 @@ namespace PiClimate.Monitor.Sources
         ROUND(AVG(`{nameof(Measurement.Humidity)}`), 3)
           AS `{nameof(Measurement.Humidity)}`
       FROM `{_measurementsTableName}`
-      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.FromTime)} AND
-        @{nameof(MeasurementFilter.ToTime)}
+      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.PeriodStart)} AND
+        @{nameof(MeasurementFilter.PeriodEnd)}
       GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)}
       ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
     ";

@@ -46,21 +46,21 @@
   <AuthorizeView Context="authContext">
     <li class="nav-item px-3">
       <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Day)"
-               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Day}")" class="nav-link">
+               href="@($"{Monitor.OffsetPath}/{TimePeriods.Day}")" class="nav-link">
         Last day
       </NavLink>
     </li>
 
     <li class="nav-item px-3">
       <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Week)"
-               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Week}")" class="nav-link">
+               href="@($"{Monitor.OffsetPath}/{TimePeriods.Week}")" class="nav-link">
         Last week
       </NavLink>
     </li>
 
     <li class="nav-item px-3">
       <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Month)"
-               href="@($"/{nameof(Monitor)}/Offset/{TimePeriods.Month}")" class="nav-link">
+               href="@($"{Monitor.OffsetPath}/{TimePeriods.Month}")" class="nav-link">
         Last month
       </NavLink>
     </li>
@@ -104,15 +104,10 @@
   #nullable enable
 
   /// <summary>
-  ///   Defines the default custom timespan resolution.
-  /// </summary>
-  public const int DefaultCustomResolution = 1500;
-
-  /// <summary>
   ///   Checks or sets if the custom timespan is active at the moment.
   /// </summary>
-  private bool IsCustomTimespanActive => NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
-    .StartsWith($"{nameof(Monitor)}/Period");
+  private bool IsCustomTimespanActive => $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}"
+    .StartsWith(Monitor.PeriodPath);
 
   /// <summary>
   ///   Gets or sets the custom timespan first date component.
@@ -138,7 +133,7 @@
   /// <summary>
   ///   Gets or sets the custom timespan resolution.
   /// </summary>
-  private int CustomResolution { get; set; } = DefaultCustomResolution;
+  private int CustomResolution { get; set; } = MeasurementFilter.DefaultResolution;
 
   /// <inheritdoc />
   protected override void OnInitialized() => NavigationManager.LocationChanged += (_, _) => StateHasChanged();
@@ -155,15 +150,12 @@
     CustomPeriodTime1 = default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
     CustomPeriodDate2 = DateTime.Now.Date;
     CustomPeriodTime2 = default(DateTime) + DateTime.Now.TimeOfDay;
-    CustomResolution = DefaultCustomResolution;
+    CustomResolution = MeasurementFilter.DefaultResolution;
   }
 
   /// <summary>
   ///   The callback method handling the custom timespan button click.
   /// </summary>
-  private void CustomTimespanSubmit() =>
-    NavigationManager.NavigateTo($"{nameof(Monitor)}/Period" +
-      $"/{CustomPeriodDate1 + CustomPeriodTime1.TimeOfDay:s}" +
-      $"/{CustomPeriodDate2 + CustomPeriodTime2.TimeOfDay:s}" +
-      $"/{CustomResolution}");
+  private void CustomTimespanSubmit() => NavigationManager.NavigateTo(
+    $"{Monitor.PeriodPath}/{CustomPeriodDate1 + CustomPeriodTime1.TimeOfDay:s}/{CustomPeriodDate2 + CustomPeriodTime2.TimeOfDay:s}/{CustomResolution}");
 }

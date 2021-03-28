@@ -6,7 +6,6 @@
 
 using System;
 using System.Text.Json.Serialization;
-using PiClimate.Common.Components;
 
 namespace PiClimate.Common.Models
 {
@@ -15,10 +14,6 @@ namespace PiClimate.Common.Models
   /// </summary>
   public class MeasurementFilter
   {
-    private int _timePeriod = DefaultTimePeriod;
-    private DateTime? _fromTime;
-    private int _resolution = DefaultResolution;
-
     /// <summary>
     ///   Defines the minimal data resolution within the selected timespan.
     /// </summary>
@@ -35,41 +30,24 @@ namespace PiClimate.Common.Models
     public const int DefaultResolution = 1500;
 
     /// <summary>
-    ///   Defines the default time period in seconds to be used for the timespan.
+    ///   Defines the default time period timespan.
     /// </summary>
-    public const int DefaultTimePeriod = TimePeriods.Day;
+    public static readonly TimeSpan DefaultTimePeriod = TimeSpan.FromDays(1);
 
     /// <summary>
-    ///   Gets or sets the time period in seconds defining the beginning of the selected timespan relatively to
-    ///   the <see cref="ToTime" /> property value.
-    ///   This value is used only if the <see cref="FromTime" /> property is assigned to <c>null</c>.
-    ///   The minimal value is 1 second.
+    ///   The backing field for the <see cref="Resolution" /> property.
     /// </summary>
-    [JsonIgnore]
-    public int TimePeriod
-    {
-      get => _timePeriod;
-      set => _timePeriod = Math.Max(value, 1);
-    }
+    private int _resolution = DefaultResolution;
 
     /// <summary>
-    ///   Gets or sets the beginning of the selected timespan.
-    ///   If the property is assigned to <c>null</c> the actual value will be calculated using the value of the
-    ///   <see cref="TimePeriod" /> property. Otherwise the assigned value is used as the timespan beginning
-    ///   date-time, and the <see cref="TimePeriod" /> value will be ignored.
-    ///   On reading the value is never <c>null</c> so it can be safely cast to <see cref="DateTime" /> or accessed
-    ///   using <c>FromTime!.Value</c> pattern.
+    ///   Gets or sets the period starting timestamp.
     /// </summary>
-    public DateTime? FromTime
-    {
-      get => _fromTime ?? ToTime - TimeSpan.FromSeconds(TimePeriod);
-      set => _fromTime = value;
-    }
+    public DateTime? PeriodStart { get; set; } = DateTime.Now - DefaultTimePeriod;
 
     /// <summary>
-    ///   Gets or sets the ending of the selected timespan.
+    ///   Gets or sets the period ending timestamp.
     /// </summary>
-    public DateTime ToTime { get; set; } = DateTime.Now;
+    public DateTime PeriodEnd { get; set; } = DateTime.Now;
 
     /// <summary>
     ///   Gets or sets the data resolution to be used within the selected timespan.
@@ -84,9 +62,9 @@ namespace PiClimate.Common.Models
     }
 
     /// <summary>
-    ///   Gets the time step in seconds to be used within the time period.
+    ///   Gets the time step duration expressed in seconds according to the current period timestamps and resolution.
     /// </summary>
     [JsonIgnore]
-    public int TimeStep => Math.Max((int) ((ToTime - FromTime!.Value).Duration().TotalSeconds / Resolution), 1);
+    public int TimeStep => Math.Max((int) ((PeriodEnd - PeriodStart!.Value).Duration().TotalSeconds / Resolution), 1);
   }
 }

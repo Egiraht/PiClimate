@@ -8,34 +8,28 @@
 
 @page "/Monitor/Offset/{Offset:int}/{Resolution:int?}"
 @page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
+@using PiClimate.Monitor.WebAssembly.Components
+@inject HttpClient Client
 
-<div>
-  @* TODO: Remove test measurements: *@
-  @{
-    var measurements = new Measurement[]
-    {
-      new()
-      {
-        Timestamp = DateTime.Now - TimeSpan.FromDays(1),
-        Pressure = 700.0,
-        Temperature = 40.0,
-        Humidity = 50.0
-      },
-      new()
-      {
-        Timestamp = DateTime.Now,
-        Pressure = 800.0,
-        Temperature = 30.0,
-        Humidity = 50.0
-      }
-    };
-  }
-
-  <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@measurements" />
+<div class="@(IsDataEmpty ? "empty" : "") @(IsDataUpdating ? "updating" : "") @(IsDataAcquisitionFailed ? "failed" : "")"
+     data-empty-notice="No measurements found for the period."
+     data-updating-notice="Updating..."
+     data-failed-notice="Failed to get the measurements.">
+  <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
 </div>
 
 @code
 {
+  /// <summary>
+  ///   Defines the path used for the offset type timespan definition.
+  /// </summary>
+  public const string OffsetPath = "/Monitor/Offset";
+
+  /// <summary>
+  ///   Defines the path used for the period type timespan definition.
+  /// </summary>
+  public const string PeriodPath = "/Monitor/Period";
+
   /// <summary>
   ///   Gets or sets the time offset in seconds from the current moment to be used for timespan calculation.
   /// </summary>
@@ -61,19 +55,67 @@
   public int Resolution { get; set; }
 
   /// <summary>
+  ///   Gets or sets an enumeration of measurements to be displayed on a chart.
+  /// </summary>
+  public IEnumerable<Measurement>? Measurements { get; set; }
+
+  /// <summary>
+  ///   Checks if the measurements data are being updating at the moment.
+  /// </summary>
+  public bool IsDataUpdating { get; private set; }
+
+  /// <summary>
+  ///   Checks if the last measurements data acquisition has failed.
+  /// </summary>
+  public bool IsDataAcquisitionFailed { get; private set; }
+
+  /// <summary>
+  ///   Checks if empty measurements data have been acquired from the last request.
+  /// </summary>
+  public bool IsDataEmpty => !IsDataUpdating && !IsDataAcquisitionFailed && Measurements?.Any() != true;
+
+  /// <summary>
   ///   Gets or sets the chart settings object.
   /// </summary>
   private ChartSettings ChartSettings { get; set; } = new();
 
   /// <inheritdoc />
-  protected override void OnParametersSet()
+  protected override async Task OnParametersSetAsync()
   {
-    if (PeriodStart == default || PeriodEnd == default)
+    try
     {
-      PeriodStart = DateTime.Now - TimeSpan.FromSeconds(Offset);
-      PeriodEnd = DateTime.Now;
+      IsDataAcquisitionFailed = false;
+      IsDataUpdating = true;
+      StateHasChanged();
+
+      if (Offset != default)
+      {
+        PeriodStart = DateTime.Now - TimeSpan.FromSeconds(Offset);
+        PeriodEnd = DateTime.Now;
+      }
+
+      if (Resolution == default)
+        Resolution = 1500;
+
+      var response = await Client.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(ApiEndpoints.MeasurementDataEndpoint, new MeasurementFilter
+      {
+        PeriodStart = PeriodStart.ToUniversalTime(),
+        PeriodEnd = PeriodEnd.ToUniversalTime(),
+        Resolution = Resolution
+      });
+
+      if (response?.StatusCode == 200)
+        Measurements = response.Data;
     }
-    if (Resolution == default)
-      Resolution = 1500;
+    catch (Exception e)
+    {
+      Console.WriteLine(e.Message);
+      IsDataAcquisitionFailed = true;
+    }
+    finally
+    {
+      IsDataUpdating = false;
+      StateHasChanged();
+    }
   }
 }

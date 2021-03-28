@@ -1,8 +1,3 @@
-.chart-canvas
-{
-  display: none;
-}
-
 .text-date
 {
   color: var(--time-color) !important;
@@ -21,60 +16,4 @@
 .text-humidity
 {
   color: var(--humidity-color) !important;
-}
-
-.border-inherit
-{
-  border-color: inherit !important;
-}
-
-.empty::before,
-.updating::before,
-.failed::before
-{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
-  content: "";
-  z-index: 10000;
-}
-
-.empty::after,
-.updating::after,
-.failed::after
-{
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  text-align: center;
-  content: "";
-  z-index: 10001;
-}
-
-.empty::after
-{
-  color: var(--info);
-  content: attr(data-empty-notice);
-}
-
-.updating::after
-{
-  color: var(--info);
-  content: attr(data-updating-notice);
-}
-
-.failed::after
-{
-  color: var(--danger);
-  content: attr(data-failed-notice) !important;
-}
-
-.empty .chart-summary,
-.updating .chart-summary,
-.failed .chart-summary
-{
-  display: none;
 }
