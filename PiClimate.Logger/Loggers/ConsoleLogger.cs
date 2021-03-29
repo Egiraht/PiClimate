@@ -5,8 +5,8 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Threading.Tasks;
+using PiClimate.Common.Models;
 using PiClimate.Logger.Components;
-using PiClimate.Logger.Models;
 using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Loggers

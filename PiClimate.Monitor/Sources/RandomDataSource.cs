@@ -20,17 +20,16 @@ namespace PiClimate.Monitor.Sources
     public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
     {
       var random = new Random();
-      var fromTime = filter.PeriodStart!.Value;
-      var timeStep = (filter.PeriodEnd - fromTime).Duration() / filter.Resolution;
+      var timeStep = (filter.PeriodEnd - filter.PeriodStart).Duration() / filter.Resolution;
       var measurements = new List<Measurement>();
 
       for (var counter = 0; counter < filter.Resolution; counter++)
         measurements.Add(new Measurement
         {
-          Timestamp = (fromTime + counter * timeStep).ToLocalTime(),
-          Pressure = Math.Round(700.0 + 10.0 * random.NextDouble() + 100.0 * counter / filter.Resolution, 3),
-          Temperature = Math.Round(40.0 + 1.0 * random.NextDouble() - 10.0 * counter / filter.Resolution, 3),
-          Humidity =
+          Timestamp = (filter.PeriodStart + counter * timeStep).ToLocalTime(),
+          PressureInMmHg = Math.Round(700.0 + 10.0 * random.NextDouble() + 100.0 * counter / filter.Resolution, 3),
+          TemperatureInDegC = Math.Round(40.0 + 1.0 * random.NextDouble() - 10.0 * counter / filter.Resolution, 3),
+          HumidityInPercent =
             Math.Round(80.0 + 6.0 * random.NextDouble() - 60.0 * Math.Sin(Math.PI * counter / filter.Resolution), 3)
         });
 
@@ -52,9 +51,9 @@ namespace PiClimate.Monitor.Sources
         measurements.Add(new Measurement
         {
           Timestamp = (fromTime + TimeSpan.FromSeconds(counter)).ToLocalTime(),
-          Pressure = Math.Round(700.0 + 100.0 * random.NextDouble(), 3),
-          Temperature = Math.Round(40.0 * random.NextDouble(), 3),
-          Humidity = Math.Round(100.0 * random.NextDouble(), 3)
+          PressureInMmHg = Math.Round(700.0 + 100.0 * random.NextDouble(), 3),
+          TemperatureInDegC = Math.Round(40.0 * random.NextDouble(), 3),
+          HumidityInPercent = Math.Round(100.0 * random.NextDouble(), 3)
         });
 
       return measurements;

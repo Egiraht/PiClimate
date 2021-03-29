@@ -37,11 +37,11 @@ namespace PiClimate.Monitor.Sources
           @{nameof(MeasurementFilter.TimeStep)}))
           AS `{nameof(Measurement.Timestamp)}`,
         ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
-          AS `{nameof(Measurement.Pressure)}`,
+          AS `{nameof(Measurement.PressureInMmHg)}`,
         ROUND(AVG(`{nameof(Measurement.Temperature)}`), 3)
-          AS `{nameof(Measurement.Temperature)}`,
+          AS `{nameof(Measurement.TemperatureInDegC)}`,
         ROUND(AVG(`{nameof(Measurement.Humidity)}`), 3)
-          AS `{nameof(Measurement.Humidity)}`
+          AS `{nameof(Measurement.HumidityInPercent)}`
       FROM `{_measurementsTableName}`
       WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.PeriodStart)} AND
         @{nameof(MeasurementFilter.PeriodEnd)}
@@ -56,11 +56,11 @@ namespace PiClimate.Monitor.Sources
       SELECT
         `{nameof(Measurement.Timestamp)}`,
         ROUND(`{nameof(Measurement.Pressure)}`, 3) 
-          AS `{nameof(Measurement.Pressure)}`,
+          AS `{nameof(Measurement.PressureInMmHg)}`,
         ROUND(`{nameof(Measurement.Temperature)}`, 3)
-          AS `{nameof(Measurement.Temperature)}`,
+          AS `{nameof(Measurement.TemperatureInDegC)}`,
         ROUND(`{nameof(Measurement.Humidity)}`, 3)
-          AS `{nameof(Measurement.Humidity)}`
+          AS `{nameof(Measurement.HumidityInPercent)}`
       FROM `{_measurementsTableName}`
       ORDER BY `{nameof(Measurement.Timestamp)}` DESC
       LIMIT @{nameof(LatestDataRequest.MaxRows)};
@@ -83,25 +83,21 @@ namespace PiClimate.Monitor.Sources
     }
 
     /// <inheritdoc />
-    public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
-    {
-      using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(FilterMeasurementsSqlTemplate, filter);
-    }
+    public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter) =>
+      GetMeasurementsAsync(filter).GetAwaiter().GetResult();
 
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter)
     {
+      filter.PeriodStart = filter.PeriodStart.ToLocalTime();
+      filter.PeriodEnd = filter.PeriodEnd.ToLocalTime();
       await using var connection = new MySqlConnection(_connectionString);
       return await connection.QueryAsync<Measurement>(FilterMeasurementsSqlTemplate, filter);
     }
 
     /// <inheritdoc />
-    public IEnumerable<Measurement> GetLatestMeasurements(LatestDataRequest request)
-    {
-      using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(LatestMeasurementSqlTemplate, request);
-    }
+    public IEnumerable<Measurement> GetLatestMeasurements(LatestDataRequest request) =>
+      GetLatestMeasurementsAsync(request).GetAwaiter().GetResult();
 
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetLatestMeasurementsAsync(LatestDataRequest request)

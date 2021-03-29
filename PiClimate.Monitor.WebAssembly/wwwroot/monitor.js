@@ -9,28 +9,43 @@
 /**
  * Initializes a new <i>Chart.js</i> chart object.
  * @param chartId The HTML <i>canvas</i> element ID to be used for chart rendering.
- * @param settings The chart settings object.
+ * @param config The chart configuration object. Gets serialized from the <i>ChartSettings.ChartJsConfig</i> class.
  */
-function initializeChart(chartId, settings)
+function initializeChart(chartId, config)
 {
-  // Checking the libraries.
-  if (!Chart)
-    console.error("Chart.js library is missing!");
-  if (!moment)
-    console.error("Moment.js library is missing!");
+  "use strict";
 
-  // Setting the date-time locale.
-  moment.locale(settings.format.locale);
+  if (!chartId)
+  {
+    console.error("No chart ID is provided.");
+    return;
+  }
+  if (!config)
+  {
+    console.error("The provided chart configuration object is empty.");
+    return;
+  }
+  if (!moment)
+  {
+    console.error("Moment.js library is missing.");
+    return;
+  }
+  if (!Chart)
+  {
+    console.error("Chart.js library is missing.");
+    return;
+  }
 
   // Setting the callbacks for chart tooltip format customization.
-  settings.options.tooltips.callbacks = {
-    title: tooltipItems => moment(tooltipItems[0].xLabel).format(settings.format.dateTimeFormat),
+  moment.locale(config.format.locale);
+  config.options.tooltips.callbacks = {
+    title: tooltipItems => moment(tooltipItems[0].xLabel).format("L LTS"),
     label: tooltipItem =>
     {
       let units = [
-        settings.format.units.pressureUnits,
-        settings.format.units.temperatureUnits,
-        settings.format.units.humidityUnits
+        config.format.units.pressureUnits,
+        config.format.units.temperatureUnits,
+        config.format.units.humidityUnits
       ];
       return `${tooltipItem.yLabel} ${units[tooltipItem.datasetIndex]}`
     }
@@ -46,6 +61,6 @@ function initializeChart(chartId, settings)
     delete window[`chartSettings:${chartId}`];
 
   // Creating and registering a new chart object.
-  window[`chartSettings:${chartId}`] = settings;
-  window[`chart:${chartId}`] = new Chart(chartId, settings);
+  window[`chartSettings:${chartId}`] = config;
+  window[`chart:${chartId}`] = new Chart(chartId, config);
 }

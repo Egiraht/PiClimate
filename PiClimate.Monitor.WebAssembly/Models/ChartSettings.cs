@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PiClimate.Common.Models;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace PiClimate.Monitor.WebAssembly.Models
 {
@@ -35,26 +37,6 @@ namespace PiClimate.Monitor.WebAssembly.Models
     public const string DefaultHumidityLineColor = "red";
 
     /// <summary>
-    ///   Defines the default measurement units for pressure.
-    /// </summary>
-    public const string DefaultPressureUnits = "mmHg";
-
-    /// <summary>
-    ///   Defines the default measurement units for temperature.
-    /// </summary>
-    public const string DefaultTemperatureUnits = "°C";
-
-    /// <summary>
-    ///   Defines the default measurement units for humidity.
-    /// </summary>
-    public const string DefaultHumidityUnits = "%";
-
-    /// <summary>
-    ///   Defines the default full date-time format.
-    /// </summary>
-    public const string DefaultDateTimeFormat = "L LTS";
-
-    /// <summary>
     ///   Gets the ID string identifying the chart in the HTML markup.
     /// </summary>
     public string ChartId { get; set; } = DefaultChartElementId;
@@ -77,17 +59,17 @@ namespace PiClimate.Monitor.WebAssembly.Models
     /// <summary>
     ///   Gets or sets the string of units the pressure is expressed in.
     /// </summary>
-    public string PressureUnits { get; set; } = DefaultPressureUnits;
+    public PressureUnit PressureUnit { get; set; } = PressureUnit.MillimeterOfMercury;
 
     /// <summary>
     ///   Gets or sets the string of units the temperature is expressed in.
     /// </summary>
-    public string TemperatureUnits { get; set; } = DefaultTemperatureUnits;
+    public TemperatureUnit TemperatureUnit { get; set; } = TemperatureUnit.DegreeCelsius;
 
     /// <summary>
     ///   Gets or sets the string of units the humidity is expressed in.
     /// </summary>
-    public string HumidityUnits { get; set; } = DefaultHumidityUnits;
+    public RelativeHumidityUnit HumidityUnit { get; set; } = RelativeHumidityUnit.Percent;
 
     /// <summary>
     ///   Gets or sets the chart's line color value for pressure.
@@ -105,9 +87,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
     public string HumidityLineColor { get; set; } = DefaultHumidityLineColor;
 
     /// <summary>
-    ///   Gets or sets the chart's line color value for humidity.
+    ///   Gets or sets the culture information object used for data formatting.
     /// </summary>
-    public string DateTimeFormat { get; set; } = DefaultDateTimeFormat;
+    public CultureInfo CultureInfo { get; set; } = CultureInfo.InvariantCulture;
 
     /// <summary>
     ///   Creates a <i>Chart.js</i> configuration object that can be provided when creating a new chart instance.
@@ -167,7 +149,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
             Data = _measurements.Select(measurement => new
             {
               X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Pressure
+              Y = measurement.Pressure.As(_chartSettings.PressureUnit)
             })
           },
           new
@@ -181,7 +163,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
             Data = _measurements.Select(measurement => new
             {
               X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Temperature
+              Y = measurement.Temperature.As(_chartSettings.TemperatureUnit)
             })
           },
           new
@@ -195,7 +177,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
             Data = _measurements.Select(measurement => new
             {
               X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Humidity
+              Y = measurement.Humidity.As(_chartSettings.HumidityUnit)
             })
           }
         }
@@ -247,7 +229,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
               ScaleLabel = new
               {
                 Display = true,
-                LabelString = $"{_chartSettings.PressureChartLabel}, {_chartSettings.PressureUnits}",
+                LabelString =
+                  $"{_chartSettings.PressureChartLabel}, {Pressure.GetAbbreviation(_chartSettings.PressureUnit, _chartSettings.CultureInfo)}",
                 FontColor = _chartSettings.PressureLineColor
               },
               GridLines = new
@@ -269,7 +252,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
               ScaleLabel = new
               {
                 Display = true,
-                LabelString = $"{_chartSettings.TemperatureChartLabel}, {_chartSettings.TemperatureUnits}",
+                LabelString =
+                  $"{_chartSettings.TemperatureChartLabel}, {Temperature.GetAbbreviation(_chartSettings.TemperatureUnit, _chartSettings.CultureInfo)}",
                 FontColor = _chartSettings.TemperatureLineColor
               },
               GridLines = new
@@ -291,7 +275,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
               ScaleLabel = new
               {
                 Display = true,
-                LabelString = $"{_chartSettings.HumidityChartLabel}, {_chartSettings.HumidityUnits}",
+                LabelString =
+                  $"{_chartSettings.HumidityChartLabel}, {RelativeHumidity.GetAbbreviation(_chartSettings.HumidityUnit, _chartSettings.CultureInfo)}",
                 FontColor = _chartSettings.HumidityLineColor
               },
               GridLines = new
@@ -341,7 +326,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
           AnimationDuration = 0
         },
 
-        ResponsiveAnimationDuration = 0
+        ResponsiveAnimationDuration = 0,
+        Locale = _chartSettings.CultureInfo.Name
       };
 
       /// <summary>
@@ -349,13 +335,12 @@ namespace PiClimate.Monitor.WebAssembly.Models
       /// </summary>
       public object Format => new
       {
-        Locale = CultureInfo.CurrentUICulture.ToString(),
-        DateTimeFormat = _chartSettings.DateTimeFormat,
+        Locale = _chartSettings.CultureInfo.Name,
         Units = new
         {
-          PressureUnits = _chartSettings.PressureUnits,
-          TemperatureUnits = _chartSettings.TemperatureUnits,
-          HumidityUnits = _chartSettings.HumidityUnits
+          PressureUnits = Pressure.GetAbbreviation(_chartSettings.PressureUnit, _chartSettings.CultureInfo),
+          TemperatureUnits = Temperature.GetAbbreviation(_chartSettings.TemperatureUnit, _chartSettings.CultureInfo),
+          HumidityUnits = RelativeHumidity.GetAbbreviation(_chartSettings.HumidityUnit, _chartSettings.CultureInfo)
         }
       };
 
@@ -410,8 +395,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
         if (!_measurements.Any())
           return _periodEnd;
 
-        var minTimestamp = _measurements.Max(measurement => measurement.Timestamp);
-        return _periodStart > minTimestamp ? _periodStart : minTimestamp;
+        var maxTimestamp = _measurements.Max(measurement => measurement.Timestamp);
+        return _periodEnd > maxTimestamp ? _periodEnd : maxTimestamp;
       }
     }
   }

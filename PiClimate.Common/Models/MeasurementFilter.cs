@@ -42,7 +42,7 @@ namespace PiClimate.Common.Models
     /// <summary>
     ///   Gets or sets the period starting timestamp.
     /// </summary>
-    public DateTime? PeriodStart { get; set; } = DateTime.Now - DefaultTimePeriod;
+    public DateTime PeriodStart { get; set; } = DateTime.Now - DefaultTimePeriod;
 
     /// <summary>
     ///   Gets or sets the period ending timestamp.
@@ -65,6 +65,6 @@ namespace PiClimate.Common.Models
     ///   Gets the time step duration expressed in seconds according to the current period timestamps and resolution.
     /// </summary>
     [JsonIgnore]
-    public int TimeStep => Math.Max((int) ((PeriodEnd - PeriodStart!.Value).Duration().TotalSeconds / Resolution), 1);
+    public int TimeStep => Math.Max((int) ((PeriodEnd - PeriodStart).Duration().TotalSeconds / Resolution), 1);
   }
 }

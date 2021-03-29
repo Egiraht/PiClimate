@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
-using PiClimate.Logger.Models;
+using PiClimate.Common.Models;
 using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Limiters

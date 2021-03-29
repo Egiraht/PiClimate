@@ -6,7 +6,7 @@
 
 using System;
 using System.Threading.Tasks;
-using PiClimate.Logger.Models;
+using PiClimate.Common.Models;
 using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Providers
