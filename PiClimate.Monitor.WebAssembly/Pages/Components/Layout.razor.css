@@ -6,21 +6,10 @@
   Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
  */
 
-:root
+@media (min-width: 992px)
 {
-  --time-color: lightgrey;
-  --pressure-color: lightblue;
-  --temperature-color: lightgreen;
-  --humidity-color: lightcoral;
-}
-
-body
-{
-  min-width: 750px;
-}
-
-#blazor-error-ui
-{
-  display: none;
-  text-align: center;
+  #nav-panel
+  {
+    flex-basis: 300px;
+  }
 }

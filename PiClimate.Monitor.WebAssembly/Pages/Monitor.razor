@@ -10,11 +10,17 @@
 @page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
 @inject HttpClient Client
 
-<div class="@(IsDataEmpty ? "empty" : "") @(IsDataUpdating ? "updating" : "") @(IsDataAcquisitionFailed ? "failed" : "")"
+<div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "updating" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
      data-empty-notice="No measurements found for the period."
      data-updating-notice="Updating..."
      data-failed-notice="Failed to get the measurements.">
-  <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
+  <div class="flex-fill w-100">
+    <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
+  </div>
+
+  <div class="position-sticky bottom-0 w-100">
+    <DataSummary Measurements="@Measurements" CultureInfo="@ChartSettings.CultureInfo" />
+  </div>
 </div>
 
 @code
