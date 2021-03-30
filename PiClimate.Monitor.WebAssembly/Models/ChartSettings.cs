@@ -113,7 +113,6 @@ namespace PiClimate.Monitor.WebAssembly.Models
     /// <summary>
     ///   The JSON-serializable object containing the configuration for rendering a <i>Chart.js</i> chart.
     /// </summary>
-    // ReSharper disable UnusedMember.Local
     private class ChartJsConfig
     {
       private const string DateAxisId = "date";
@@ -230,7 +229,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
               {
                 Display = true,
                 LabelString =
-                  $"{_chartSettings.PressureChartLabel}, {Pressure.GetAbbreviation(_chartSettings.PressureUnit, _chartSettings.CultureInfo)}",
+                  $"{_chartSettings.PressureChartLabel}, {GetUnitAbbreviation(_chartSettings.PressureUnit)}",
                 FontColor = _chartSettings.PressureLineColor
               },
               GridLines = new
@@ -253,7 +252,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
               {
                 Display = true,
                 LabelString =
-                  $"{_chartSettings.TemperatureChartLabel}, {Temperature.GetAbbreviation(_chartSettings.TemperatureUnit, _chartSettings.CultureInfo)}",
+                  $"{_chartSettings.TemperatureChartLabel}, {GetUnitAbbreviation(_chartSettings.TemperatureUnit)}",
                 FontColor = _chartSettings.TemperatureLineColor
               },
               GridLines = new
@@ -276,7 +275,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
               {
                 Display = true,
                 LabelString =
-                  $"{_chartSettings.HumidityChartLabel}, {RelativeHumidity.GetAbbreviation(_chartSettings.HumidityUnit, _chartSettings.CultureInfo)}",
+                  $"{_chartSettings.HumidityChartLabel}, {GetUnitAbbreviation(_chartSettings.HumidityUnit)}",
                 FontColor = _chartSettings.HumidityLineColor
               },
               GridLines = new
@@ -338,9 +337,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
         Locale = _chartSettings.CultureInfo.Name,
         Units = new
         {
-          PressureUnits = Pressure.GetAbbreviation(_chartSettings.PressureUnit, _chartSettings.CultureInfo),
-          TemperatureUnits = Temperature.GetAbbreviation(_chartSettings.TemperatureUnit, _chartSettings.CultureInfo),
-          HumidityUnits = RelativeHumidity.GetAbbreviation(_chartSettings.HumidityUnit, _chartSettings.CultureInfo)
+          PressureUnits = GetUnitAbbreviation(_chartSettings.PressureUnit),
+          TemperatureUnits = GetUnitAbbreviation(_chartSettings.TemperatureUnit),
+          HumidityUnits = GetUnitAbbreviation(_chartSettings.HumidityUnit)
         }
       };
 
@@ -398,6 +397,21 @@ namespace PiClimate.Monitor.WebAssembly.Models
         var maxTimestamp = _measurements.Max(measurement => measurement.Timestamp);
         return _periodEnd > maxTimestamp ? _periodEnd : maxTimestamp;
       }
+
+      /// <summary>
+      ///   Gets the localized unit abbreviation string using the locale provided in chart settings.
+      /// </summary>
+      /// <typeparam name="TUnit">
+      ///   The enumeration type containing units for a particular physical magnitude (e.g. <see cref="PressureUnit" />).
+      /// </typeparam>
+      /// <param name="unit">
+      ///   The unit value within the <typeparamref name="TUnit" /> enumeration to get an abbreviation for.
+      /// </param>
+      /// <returns>
+      ///   The unit abbreviation string.
+      /// </returns>
+      private string GetUnitAbbreviation<TUnit>(TUnit unit) where TUnit : Enum =>
+        UnitAbbreviationsCache.Default.GetDefaultAbbreviation(unit, _chartSettings.CultureInfo);
     }
   }
 }

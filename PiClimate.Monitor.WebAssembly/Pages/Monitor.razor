@@ -82,7 +82,7 @@
   /// <summary>
   ///   Gets or sets the chart settings object.
   /// </summary>
-  private ChartSettings ChartSettings { get; set; } = new() {CultureInfo = CultureInfo.CurrentUICulture};
+  private ChartSettings ChartSettings { get; set; } = new() {CultureInfo = LocalizationUtils.GetBrowserCultureInfo()};
 
   /// <inheritdoc />
   protected override async Task OnParametersSetAsync()
