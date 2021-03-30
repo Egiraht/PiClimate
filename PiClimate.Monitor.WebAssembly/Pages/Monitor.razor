@@ -26,35 +26,35 @@
 @code
 {
   /// <summary>
-  ///   Defines the path used for the offset type timespan definition.
+  ///   Defines the path used for the offset type period definition.
   /// </summary>
   public const string OffsetPath = "/Monitor/Offset";
 
   /// <summary>
-  ///   Defines the path used for the period type timespan definition.
+  ///   Defines the path used for the period type period definition.
   /// </summary>
   public const string PeriodPath = "/Monitor/Period";
 
   /// <summary>
-  ///   Gets or sets the time offset in seconds from the current moment to be used for timespan calculation.
+  ///   Gets or sets the time offset in seconds from the current moment to be used for period calculation.
   /// </summary>
   [Parameter]
   public int Offset { get; set; }
 
   /// <summary>
-  ///   Gets or sets the starting timestamp of the timespan to be displayed.
+  ///   Gets or sets the starting timestamp of the period to be displayed.
   /// </summary>
   [Parameter]
   public DateTime PeriodStart { get; set; }
 
   /// <summary>
-  ///   Gets or sets the ending timestamp of the timespan to be displayed.
+  ///   Gets or sets the ending timestamp of the period to be displayed.
   /// </summary>
   [Parameter]
   public DateTime PeriodEnd { get; set; }
 
   /// <summary>
-  ///   Gets or sets the timespan resolution.
+  ///   Gets or sets the period resolution.
   /// </summary>
   [Parameter]
   public int Resolution { get; set; }

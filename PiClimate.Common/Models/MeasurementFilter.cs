@@ -15,22 +15,22 @@ namespace PiClimate.Common.Models
   public class MeasurementFilter
   {
     /// <summary>
-    ///   Defines the minimal data resolution within the selected timespan.
+    ///   Defines the minimal data resolution within the selected period.
     /// </summary>
     public const int MinimalResolution = 1;
 
     /// <summary>
-    ///   Defines the maximal data resolution within the selected timespan.
+    ///   Defines the maximal data resolution within the selected period.
     /// </summary>
     public const int MaximalResolution = 3000;
 
     /// <summary>
-    ///   Defines the default data resolution within the selected timespan.
+    ///   Defines the default data resolution within the selected period.
     /// </summary>
     public const int DefaultResolution = 1500;
 
     /// <summary>
-    ///   Defines the default time period timespan.
+    ///   Defines the default time period period.
     /// </summary>
     public static readonly TimeSpan DefaultTimePeriod = TimeSpan.FromDays(1);
 
@@ -50,7 +50,7 @@ namespace PiClimate.Common.Models
     public DateTime PeriodEnd { get; set; } = DateTime.Now;
 
     /// <summary>
-    ///   Gets or sets the data resolution to be used within the selected timespan.
+    ///   Gets or sets the data resolution to be used within the selected period.
     ///   The actual number of filtered data entries may not be equal to the provided value.
     ///   The value must be in range between the <see cref="MinimalResolution" /> and <see cref="MaximalResolution" />
     ///   values.

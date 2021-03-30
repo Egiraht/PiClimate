@@ -9,16 +9,21 @@
 @inject NavigationManager NavigationManager
 
 <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap w-100">
-  <li class="nav-item px-3">
-    <a class="navbar-brand" href="/">@nameof(PiClimate) @nameof(Monitor)</a>
+  <li class="nav-item px-2">
+    <a class="navbar-brand align-baseline mr-2" href="/">
+      @nameof(PiClimate) @nameof(Monitor)
+    </a>
+    <span class="text-sm-left text-secondary align-baseline">
+      v@(GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "???")
+    </span>
   </li>
 
   <hr class="d-none d-lg-block border-light w-100 my-2" />
 
   <li class="flex-fill d-lg-none"></li>
 
-  <li class="nav-item px-3">
-    <div class="nav-link text-secondary">
+  <li class="nav-item px-2">
+    <div class="nav-link text-light">
       <AuthorizeView Context="authContext">
         <Authorized>
           Signed in as <span class="font-weight-bold">@authContext.User.Identity?.Name</span>
@@ -34,7 +39,7 @@
   </li>
 
   <AuthorizeView>
-    <li class="nav-item px-3">
+    <li class="nav-item px-2">
       <input type="submit" class="btn btn-link nav-link border-0" value="Sign out" />
     </li>
   </AuthorizeView>
@@ -44,94 +49,105 @@
   <li class="w-100 d-lg-none"></li>
 
   <AuthorizeView Context="authContext">
-    <li class="nav-item px-3">
-      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Day)"
-               href="@($"{Monitor.OffsetPath}/{TimePeriods.Day}")" class="nav-link">
-        Last day
-      </NavLink>
-    </li>
-
-    <li class="nav-item px-3">
-      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Week)"
-               href="@($"{Monitor.OffsetPath}/{TimePeriods.Week}")" class="nav-link">
-        Last week
-      </NavLink>
-    </li>
-
-    <li class="nav-item px-3">
-      <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomTimespan(TimePeriods.Month)"
-               href="@($"{Monitor.OffsetPath}/{TimePeriods.Month}")" class="nav-link">
-        Last month
-      </NavLink>
-    </li>
-
-    <li class="nav-item px-3">
-      <a href="#custom-period-form" data-toggle="collapse"
-         class="nav-link dropdown-toggle collapsed @(IsCustomTimespanActive ? "active" : "")">
-        Custom timespan
+    <li class="nav-item p-2">
+      <a href="#measurement-menu" data-toggle="collapse" class="nav-link dropdown-toggle">
+        Measurements
       </a>
     </li>
 
-    <li class="w-100 d-lg-none"></li>
+    <li id="measurement-menu" class="nav-item bg-secondary rounded w-100 collapse show">
+      <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap flex-lg-nowrap w-100">
+        @* Standard offset links *@
+        @foreach (var (name, offset) in StandardOffsets)
+        {
+          <li class="nav-item px-2">
+            <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomPeriod(offset)"
+                     href="@($"{Monitor.OffsetPath}/{offset}")" class="nav-link pl-lg-2">
+              @name
+            </NavLink>
+          </li>
+        }
 
-    <li id="custom-period-form" class="nav-item bg-secondary rounded collapse w-100 my-2">
-      <EditForm Model="@this" OnValidSubmit="CustomTimespanSubmit"
-                class="form-row flex-lg-column align-items-end mx-3 mt-3 mb-1 my-lg-3">
-        <div class="form-group col-4 col-lg">
-          <label>From:</label>
-          <InputDate @bind-Value="@CustomPeriodDate1" class="form-control form-control-sm mb-1" />
-          <input @bind="@CustomPeriodTime1" type="time" class="form-control form-control-sm" />
-        </div>
+        @* Custom period form *@
+        <li class="nav-item px-2">
+          <a href="#custom-period-form" data-toggle="collapse"
+             class="nav-link dropdown-toggle pl-lg-2 collapsed @(IsCustomPeriodActive ? "active" : "")">
+            Custom period
+          </a>
+        </li>
 
-        <div class="form-group col-4 col-lg">
-          <label>To:</label>
-          <InputDate @bind-Value="@CustomPeriodDate2" class="form-control form-control-sm mb-1" />
-          <input @bind="@CustomPeriodTime2" type="time" class="form-control form-control-sm" />
-        </div>
+        <li class="w-100 d-lg-none"></li>
 
-        <div class="form-group col-4 col-lg mb-lg-1">
-          <label>Resolution (1-3000):</label>
-          <InputNumber @bind-Value="@CustomResolution" class="form-control form-control-sm mb-1" min="1" max="3000" />
-          <button type="submit" class="btn btn-block btn-sm btn-light">Show</button>
-        </div>
-      </EditForm>
+        <li id="custom-period-form" class="collapse w-100">
+          <div class="nav-item p-2 w-100">
+            <EditForm Model="@this" OnValidSubmit="CustomPeriodSubmit"
+              class="form-row flex-lg-column align-items-end bg-dark rounded w-100 m-0">
+              <div class="form-group col-4 col-lg p-2 m-0">
+                <label class="text-light">From:</label>
+                <InputDate @bind-Value="@CustomPeriodStartDate" class="form-control form-control-sm mb-1" />
+                <input @bind="@CustomPeriodStartTime" type="time" class="form-control form-control-sm" />
+              </div>
+
+              <div class="form-group col-4 col-lg p-2 m-0">
+                <label class="text-light">To:</label>
+                <InputDate @bind-Value="@CustomPeriodEndDate" class="form-control form-control-sm mb-1" />
+                <input @bind="@CustomPeriodEndTime" type="time" class="form-control form-control-sm" />
+              </div>
+
+              <div class="form-group col-4 col-lg p-2 m-0">
+                <label class="text-light">Resolution (1-3000):</label>
+                <InputNumber @bind-Value="@CustomResolution" class="form-control form-control-sm mb-1" min="1" max="3000" />
+                <button type="submit" class="btn btn-block btn-sm btn-light">Show</button>
+              </div>
+            </EditForm>
+          </div>
+        </li>
+      </ul>
     </li>
   </AuthorizeView>
 </ul>
 
 @code
 {
-  #nullable enable
+  /// <summary>
+  ///   The list of standard offsets to be used for links creation in the measurements menu.
+  /// </summary>
+  private static readonly Dictionary<string, int> StandardOffsets = new()
+  {
+    {"Last day", TimePeriods.Day},
+    {"Last week", TimePeriods.Week},
+    {"Last month", TimePeriods.Month}
+  };
 
   /// <summary>
-  ///   Checks or sets if the custom timespan is active at the moment.
+  ///   Checks or sets if the custom period is active at the moment.
   /// </summary>
-  private bool IsCustomTimespanActive => $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}"
+  private bool IsCustomPeriodActive => $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}"
     .StartsWith(Monitor.PeriodPath);
 
   /// <summary>
-  ///   Gets or sets the custom timespan first date component.
+  ///   Gets or sets the custom period starting date component.
   /// </summary>
-  private DateTime CustomPeriodDate1 { get; set; } = (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).Date;
+  private DateTime CustomPeriodStartDate { get; set; } = (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).Date;
 
   /// <summary>
-  ///   Gets or sets the custom timespan first time component.
+  ///   Gets or sets the custom period starting time component.
   /// </summary>
-  private DateTime CustomPeriodTime1 { get; set; } =
+  private DateTime CustomPeriodStartTime { get; set; } =
     default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
 
   /// <summary>
-  ///   Gets or sets the custom timespan second date component.
+  ///   Gets or sets the custom period ending date component.
   /// </summary>
-  private DateTime CustomPeriodDate2 { get; set; } = DateTime.Now.Date;
+  private DateTime CustomPeriodEndDate { get; set; } = DateTime.Now.Date;
 
   /// <summary>
-  ///   Gets or sets the custom timespan second time component.
+  ///   Gets or sets the custom period ending time component.
   /// </summary>
-  private DateTime CustomPeriodTime2 { get; set; } = default(DateTime) + DateTime.Now.TimeOfDay;
+  private DateTime CustomPeriodEndTime { get; set; } = default(DateTime) + DateTime.Now.TimeOfDay;
 
   /// <summary>
-  ///   Gets or sets the custom timespan resolution.
+  ///   Gets or sets the custom period resolution.
   /// </summary>
   private int CustomResolution { get; set; } = MeasurementFilter.DefaultResolution;
 
@@ -139,23 +155,23 @@
   protected override void OnInitialized() => NavigationManager.LocationChanged += (_, _) => StateHasChanged();
 
   /// <summary>
-  ///   Updates the custom timespan values.
+  ///   Updates the custom period values.
   /// </summary>
   /// <param name="offset">
   ///   The time offset in seconds from the current moment.
   /// </param>
-  private void UpdateCustomTimespan(int offset)
+  private void UpdateCustomPeriod(int offset)
   {
-    CustomPeriodDate1 = (DateTime.Now - TimeSpan.FromSeconds(offset)).Date;
-    CustomPeriodTime1 = default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
-    CustomPeriodDate2 = DateTime.Now.Date;
-    CustomPeriodTime2 = default(DateTime) + DateTime.Now.TimeOfDay;
+    CustomPeriodStartDate = (DateTime.Now - TimeSpan.FromSeconds(offset)).Date;
+    CustomPeriodStartTime = default(DateTime) + (DateTime.Now - TimeSpan.FromSeconds(TimePeriods.Day)).TimeOfDay;
+    CustomPeriodEndDate = DateTime.Now.Date;
+    CustomPeriodEndTime = default(DateTime) + DateTime.Now.TimeOfDay;
     CustomResolution = MeasurementFilter.DefaultResolution;
   }
 
   /// <summary>
-  ///   The callback method handling the custom timespan button click.
+  ///   The callback method handling the custom period button click.
   /// </summary>
-  private void CustomTimespanSubmit() => NavigationManager.NavigateTo(
-    $"{Monitor.PeriodPath}/{CustomPeriodDate1 + CustomPeriodTime1.TimeOfDay:s}/{CustomPeriodDate2 + CustomPeriodTime2.TimeOfDay:s}/{CustomResolution}");
+  private void CustomPeriodSubmit() => NavigationManager.NavigateTo(
+    $"{Monitor.PeriodPath}/{CustomPeriodStartDate + CustomPeriodStartTime.TimeOfDay:s}/{CustomPeriodEndDate + CustomPeriodEndTime.TimeOfDay:s}/{CustomResolution}");
 }
