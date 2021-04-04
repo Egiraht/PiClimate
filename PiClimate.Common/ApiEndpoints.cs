@@ -12,6 +12,21 @@ namespace PiClimate.Common
   public static class ApiEndpoints
   {
     /// <summary>
+    ///   Defines the endpoint path for user signing in.
+    /// </summary>
+    public const string UserSignInEndpoint = "/Api/Auth/SignIn";
+
+    /// <summary>
+    ///   Defines the endpoint path for user signing out.
+    /// </summary>
+    public const string UserSignOutEndpoint = "/Api/Auth/SignOut";
+
+    /// <summary>
+    ///   Defines the endpoint path for getting a response with the specified status code.
+    /// </summary>
+    public const string StatusEndpoint = "/Api/Status";
+
+    /// <summary>
     ///   Defines the endpoint path for acquiring filtered measurements data.
     /// </summary>
     public const string MeasurementDataEndpoint = "/Api/Data";

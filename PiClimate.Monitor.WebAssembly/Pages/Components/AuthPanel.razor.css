@@ -1,18 +1,21 @@
-﻿@*
+/*
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
   Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
-*@
+ */
 
-@page "/"
-@attribute [Authorize]
-@inject NavigationManager _navigationManager
-
-@code
+/*noinspection CssInvalidPseudoSelector*/
+::deep .invalid
 {
-  /// <inheritdoc />
-  protected override void OnInitialized() =>
-    _navigationManager.NavigateTo($"{Monitor.OffsetPath}/{TimePeriods.Day}");
+  border-color: var(--danger);
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+::deep .validation-errors
+{
+  text-align: center;
+  color: var(--info);
+  margin: 0;
 }

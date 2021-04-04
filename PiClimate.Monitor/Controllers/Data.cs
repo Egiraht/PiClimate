@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PiClimate.Common;
 using PiClimate.Common.Models;
@@ -18,8 +19,8 @@ namespace PiClimate.Monitor.Controllers
   ///   An API controller that filters the measurement data using the provided measurement filter and returns the result
   ///   in JSON format.
   /// </summary>
-  [ApiController, Route(ApiEndpoints.MeasurementDataEndpoint)]
-  public class Data
+  [ApiController, Authorize, Route(ApiEndpoints.MeasurementDataEndpoint)]
+  public class Data : Controller
   {
     /// <summary>
     ///   The used measurement source service.
@@ -27,7 +28,7 @@ namespace PiClimate.Monitor.Controllers
     private IMeasurementSource Source { get; }
 
     /// <summary>
-    ///   Initializes the new instance of the page.
+    ///   Initializes a new instance of the controller.
     /// </summary>
     /// <param name="source">
     ///   The used measurement source service.

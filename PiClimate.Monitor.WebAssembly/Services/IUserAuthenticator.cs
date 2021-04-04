@@ -4,43 +4,43 @@
 //
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
-using System.Security.Claims;
 using System.Threading.Tasks;
-using PiClimate.Common.Models;
 
 namespace PiClimate.Monitor.WebAssembly.Services
 {
   /// <summary>
-  ///   The interface for services performing the user authentication operations.
+  ///   The common interface for authenticator service classes.
+  ///   This basic interface variant supports only signing out operations. For signing in operations use the generic
+  ///   interface variant <see cref="IUserAuthenticator{TAuthRequest,TAuthResponse}" />.
   /// </summary>
   public interface IUserAuthenticator
   {
     /// <summary>
-    ///   Gets the current user object.
-    /// </summary>
-    ClaimsPrincipal User { get; }
-
-    /// <summary>
-    ///   Gets the flag indicating whether the authentication process is running at the moment.
-    /// </summary>
-    bool IsAuthenticating { get; }
-
-    /// <summary>
-    ///   Asynchronously signs the user in using the provided login credentials.
-    /// </summary>
-    /// <param name="loginForm">
-    ///   The user's login credentials.
-    /// </param>
-    Task SignInAsync(LoginForm loginForm);
-
-    /// <summary>
     ///   Asynchronously signs the user out.
     /// </summary>
     Task SignOutAsync();
+  }
 
+  /// <summary>
+  ///   The common interface for authenticator service classes.
+  /// </summary>
+  /// <typeparam name="TAuthData">
+  ///   The type of the authentication data object.
+  /// </typeparam>
+  /// <typeparam name="TAuthResponse">
+  ///   The type of the authentication response object.
+  /// </typeparam>
+  public interface IUserAuthenticator<in TAuthData, TAuthResponse> : IUserAuthenticator
+  {
     /// <summary>
-    ///   Asynchronously restores the user data from the previous session if it is possible.
+    ///   Asynchronously signs the user in using the provided authentication data.
     /// </summary>
-    Task RestoreSessionAsync();
+    /// <param name="authRequest">
+    ///   The authentication data object.
+    /// </param>
+    /// <returns>
+    ///   The authentication response object.
+    /// </returns>
+    Task<TAuthResponse> SignInAsync(TAuthData authRequest);
   }
 }

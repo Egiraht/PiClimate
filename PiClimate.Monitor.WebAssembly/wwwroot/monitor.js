@@ -7,9 +7,10 @@
  */
 
 /**
- * Initializes a new <i>Chart.js</i> chart object.
- * @param chartId The HTML <i>canvas</i> element ID to be used for chart rendering.
- * @param config The chart configuration object. Gets serialized from the <i>ChartSettings.ChartJsConfig</i> class.
+ * @summary Initializes a new <i>Chart.js</i> chart object.
+ * @param chartId {string} The HTML <i>canvas</i> element ID to be used for chart rendering.
+ * @param config {object} The chart configuration object. Gets serialized from the <i>ChartSettings.ChartJsConfig</i>
+ *   class.
  */
 function initializeChart(chartId, config)
 {

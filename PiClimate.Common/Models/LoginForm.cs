@@ -9,25 +9,24 @@ using System.ComponentModel.DataAnnotations;
 namespace PiClimate.Common.Models
 {
   /// <summary>
-  ///   The record representing user login form data.
+  ///   The record containing the user authentication data.
   /// </summary>
   public record LoginForm
   {
     /// <summary>
-    ///   User's name.
+    ///   Gets the username.
     /// </summary>
     [Required]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    ///   User's password.
+    ///   Gets the password.
     /// </summary>
-    [Required]
     public string Password { get; set; } = string.Empty;
 
     /// <summary>
-    ///   The flag indicating whether the user should be remembered over different browser sessions.
+    ///   Gets the flag indicating whether the authentication state should persist between browser sessions.
     /// </summary>
-    public bool Remember { get; set; }
+    public bool Remember { get; set; } = false;
   }
 }

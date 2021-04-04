@@ -15,44 +15,15 @@ namespace PiClimate.Monitor.Settings
   public class AuthenticationOptions
   {
     /// <summary>
-    ///   Defines the default access token expiration time in seconds.
+    ///   Defines the default authentication cookie expiration period in seconds.
     /// </summary>
-    public const int DefaultAccessTokenExpirationTime = 15 * TimePeriods.Minute;
+    public const int DefaultCookieExpirationPeriod = TimePeriods.Week;
 
     /// <summary>
-    ///   Defines the default refresh token expiration time in seconds.
+    ///   Defines the authentication cookie expiration period in seconds.
+    ///   This value is used when the "Remember" option is selected in the login form.
     /// </summary>
-    public const int DefaultRefreshTokenExpirationTime = TimePeriods.Week;
-
-    /// <summary>
-    ///   Defines the default clock skew period in seconds.
-    /// </summary>
-    public const int DefaultClockSkewPeriod = TimePeriods.Minute;
-
-    /// <summary>
-    ///   Gets or sets the signing key used for issuing tokens.
-    /// </summary>
-    public string TokenSigningKey { get; set; } = $"{nameof(PiClimate)}.{nameof(TokenSigningKey)}";
-
-    /// <summary>
-    ///   Gets or sets the signing key used for hash generation.
-    /// </summary>
-    public string HashSigningKey { get; set; } = $"{nameof(PiClimate)}.{nameof(HashSigningKey)}";
-
-    /// <summary>
-    ///   Gets or sets the access token expiration time in seconds.
-    /// </summary>
-    public int AccessTokenExpirationTime { get; set; } = DefaultAccessTokenExpirationTime;
-
-    /// <summary>
-    ///   Gets or sets the refresh token expiration time in seconds.
-    /// </summary>
-    public int RefreshTokenExpirationTime { get; set; } = DefaultRefreshTokenExpirationTime;
-
-    /// <summary>
-    ///   Gets or sets the clock skew period in seconds used to compensate the client-server clock time difference.
-    /// </summary>
-    public int ClockSkewPeriod { get; set; } = DefaultClockSkewPeriod;
+    public int CookieExpirationPeriod { get; set; } = DefaultCookieExpirationPeriod;
 
     /// <summary>
     ///   Defines the list of key-value pairs representing user names and corresponding passwords used for signing in.

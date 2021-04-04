@@ -7,18 +7,18 @@
 namespace PiClimate.Common.Models
 {
   /// <summary>
-  ///   The record containing user authentication tokens.
+  ///   The record containing the authentication information.
   /// </summary>
-  public record AuthTokens
+  public record AuthInfo
   {
     /// <summary>
-    ///   The access token used for user authentication.
+    ///   Gets the user name.
     /// </summary>
-    public string? AccessToken { get; init; }
+    public string Name { get; init; } = string.Empty;
 
     /// <summary>
-    ///   The refresh token used for access token refreshing.
+    ///   Gets the user role.
     /// </summary>
-    public string? RefreshToken { get; init; }
+    public string Role { get; init; } = string.Empty;
   }
 }

@@ -12,17 +12,17 @@ namespace PiClimate.Common.Components
   /// <typeparam name="TData">
   ///   The type of the data stored in the payload.
   /// </typeparam>
-  public record JsonPayload<TData> where TData : class
+  public record JsonPayload<TData>
   {
     /// <summary>
     ///   Gets or sets the status code of the response.
     /// </summary>
-    public int StatusCode { get; init; }
+    public int StatusCode { get; init; } = 200;
 
     /// <summary>
     ///   Gets or sets the status description message of the response.
     /// </summary>
-    public string? Description { get; init; }
+    public string Description { get; init; } = "OK";
 
     /// <summary>
     ///   Gets or sets the data object of type <typeparamref name="TData" />.

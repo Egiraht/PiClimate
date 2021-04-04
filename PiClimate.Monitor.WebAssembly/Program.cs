@@ -5,12 +5,11 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
-using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using PiClimate.Common.Models;
 using PiClimate.Monitor.WebAssembly.Services;
 
 namespace PiClimate.Monitor.WebAssembly
@@ -20,25 +19,6 @@ namespace PiClimate.Monitor.WebAssembly
   /// </summary>
   internal static class Program
   {
-    /// <summary>
-    ///   Test authentication state provider class.
-    /// </summary>
-    /// TODO: Remove after implementing normal authentication.
-    private class AuthProvider : AuthenticationStateProvider
-    {
-      public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
-        Task.FromResult(
-          new AuthenticationState(
-            new ClaimsPrincipal(
-              new ClaimsIdentity(
-                new Claim[]
-                {
-                  new(ClaimTypes.Name, "User"),
-                  new(ClaimTypes.Role, "User")
-                },
-                "Bearer", ClaimTypes.Name, ClaimTypes.Role))));
-    };
-
     /// <summary>
     ///   The program's entry point.
     /// </summary>
@@ -51,10 +31,22 @@ namespace PiClimate.Monitor.WebAssembly
       builder.RootComponents.Add<App>("#app");
 
       builder.Services.AddOptions();
-      builder.Services.AddScoped(_ => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
       builder.Services.AddAuthorizationCore();
-      builder.Services.AddScoped<AuthenticationStateProvider>(_ => new AuthProvider());
-      builder.Services.AddSingleton<IStorageProvider, LocalStorageProvider>();
+
+      builder.Services.AddTransient<IStorageProvider, LocalStorageProvider>();
+
+      builder.Services.AddTransient<UnauthorizedMessageHandler>();
+      builder.Services
+        .AddHttpClient(string.Empty, client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+        .AddHttpMessageHandler<UnauthorizedMessageHandler>();
+
+      builder.Services.AddSingleton<AuthInfoAuthenticator>();
+      builder.Services.AddSingleton<AuthenticationStateProvider>(provider =>
+        provider.GetRequiredService<AuthInfoAuthenticator>());
+      builder.Services.AddSingleton<IUserAuthenticator>(provider =>
+        provider.GetRequiredService<AuthInfoAuthenticator>());
+      builder.Services.AddSingleton<IUserAuthenticator<LoginForm, AuthInfo>>(provider =>
+        provider.GetRequiredService<AuthInfoAuthenticator>());
 
       await builder.Build().RunAsync();
     }

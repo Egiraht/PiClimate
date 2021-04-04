@@ -25,7 +25,7 @@ namespace PiClimate.Monitor.Components
     ///   If set to <c>null</c>, a standard status code description will be used.
     /// </param>
     public EmptyJsonResponse(int statusCode = StatusCodes.Status200OK, string? statusDescription = null) :
-      base(new { }, statusCode, statusDescription)
+      base(null, statusCode, statusDescription)
     {
     }
   }

@@ -17,7 +17,7 @@ namespace PiClimate.Monitor.Components
   /// <typeparam name="TData">
   ///   Type of the data object to be sent as a resulting data payload.
   /// </typeparam>
-  public class JsonResponse<TData> : JsonResult where TData : class
+  public class JsonResponse<TData> : JsonResult
   {
     /// <summary>
     ///   Creates a new JSON response.
@@ -26,6 +26,7 @@ namespace PiClimate.Monitor.Components
     ///   A <typeparamref name="TData" /> object defining the actual payload of the response.
     ///   It will be serialized into the <see cref="JsonPayload{TData}.Data" /> property within the response
     ///   JSON object.
+    ///   Can be <c>null</c> if no data are necessary.
     /// </param>
     /// <param name="statusCode">
     ///   An HTTP status code describing the request processing status.
@@ -35,7 +36,7 @@ namespace PiClimate.Monitor.Components
     ///   An optional HTTP status code description string.
     ///   If set to <c>null</c>, a standard status code description will be used.
     /// </param>
-    public JsonResponse(TData data, int statusCode = StatusCodes.Status200OK, string? statusDescription = null) :
+    public JsonResponse(TData? data, int statusCode = StatusCodes.Status200OK, string? statusDescription = null) :
       base(null)
     {
       StatusCode = statusCode;

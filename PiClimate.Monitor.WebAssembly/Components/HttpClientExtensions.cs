@@ -10,7 +10,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using PiClimate.Monitor.WebAssembly.Services;
 
 namespace PiClimate.Monitor.WebAssembly.Components
 {
@@ -44,11 +43,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="requestData">
     ///   The request body data object to be serialized into JSON.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -57,7 +53,7 @@ namespace PiClimate.Monitor.WebAssembly.Components
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
     public static async Task<TResponse?> SendJsonAsync<TRequest, TResponse>(this HttpClient httpClient, string uri,
-      HttpMethod method, TRequest? requestData, IAccessTokenProvider? accessTokenProvider = null)
+      HttpMethod method, TRequest? requestData)
       where TRequest : class
       where TResponse : class
     {
@@ -71,16 +67,14 @@ namespace PiClimate.Monitor.WebAssembly.Components
         RequestUri = new Uri(uri.StartsWith("/") ? $"{httpClient.BaseAddress}{uri.Remove(0, 1)}" : uri)
       };
 
-      if (accessTokenProvider != null)
-        message.Headers.Authorization = await accessTokenProvider.CreateAuthorizationHeaderAsync();
-
       var response = await httpClient.SendAsync(message);
 
       if (!response.IsSuccessStatusCode)
-        throw new HttpResponseException($"The HTTP request failed with status code {(int) response.StatusCode}.",
+        throw new HttpResponseException(
+          $"The HTTP request failed: [{(int) response.StatusCode}] {response.ReasonPhrase}",
           response);
 
-      return await response.Content.ReadFromJsonAsync<TResponse?>();
+      return response.Content.Headers.ContentLength > 0 ? await response.Content.ReadFromJsonAsync<TResponse?>() : null;
     }
 
     /// <summary>
@@ -97,11 +91,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="uri">
     ///   The URI of the WebAPI endpoint to send the request to.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -109,9 +100,9 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <exception cref="HttpResponseException">
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
-    public static async Task<TResponse?> GetJsonAsync<TResponse>(this HttpClient httpClient, string uri,
-      IAccessTokenProvider? accessTokenProvider = null) where TResponse : class =>
-      await SendJsonAsync<object, TResponse>(httpClient, uri, HttpMethod.Get, null, accessTokenProvider);
+    public static async Task<TResponse?> GetJsonAsync<TResponse>(this HttpClient httpClient, string uri)
+      where TResponse : class =>
+      await SendJsonAsync<object, TResponse>(httpClient, uri, HttpMethod.Get, null);
 
     /// <summary>
     ///   Sends the JSON-encoded HTTP request of type <typeparamref name="TRequest"/> to the WebAPI endpoint located
@@ -134,11 +125,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="requestData">
     ///   The request body data object to be serialized into JSON.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -147,10 +135,10 @@ namespace PiClimate.Monitor.WebAssembly.Components
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
     public static async Task<TResponse?> PostJsonAsync<TRequest, TResponse>(this HttpClient httpClient, string uri,
-      TRequest requestData, IAccessTokenProvider? accessTokenProvider = null)
+      TRequest requestData)
       where TRequest : class
       where TResponse : class =>
-      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Post, requestData, accessTokenProvider);
+      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Post, requestData);
 
     /// <summary>
     ///   Sends the JSON-encoded HTTP request of type <typeparamref name="TRequest"/> to the WebAPI endpoint located
@@ -173,11 +161,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="requestData">
     ///   The request body data object to be serialized into JSON.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -186,10 +171,10 @@ namespace PiClimate.Monitor.WebAssembly.Components
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
     public static async Task<TResponse?> PutJsonAsync<TRequest, TResponse>(this HttpClient httpClient, string uri,
-      TRequest requestData, IAccessTokenProvider? accessTokenProvider = null)
+      TRequest requestData)
       where TRequest : class
       where TResponse : class =>
-      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Put, requestData, accessTokenProvider);
+      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Put, requestData);
 
     /// <summary>
     ///   Sends the JSON-encoded HTTP request of type <typeparamref name="TRequest"/> to the WebAPI endpoint located
@@ -212,11 +197,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="requestData">
     ///   The request body data object to be serialized into JSON.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -225,10 +207,10 @@ namespace PiClimate.Monitor.WebAssembly.Components
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
     public static async Task<TResponse?> PatchJsonAsync<TRequest, TResponse>(this HttpClient httpClient, string uri,
-      TRequest requestData, IAccessTokenProvider? accessTokenProvider = null)
+      TRequest requestData)
       where TRequest : class
       where TResponse : class =>
-      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Patch, requestData, accessTokenProvider);
+      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Patch, requestData);
 
     /// <summary>
     ///   Sends the JSON-encoded HTTP request of type <typeparamref name="TRequest"/> to the WebAPI endpoint located
@@ -251,11 +233,8 @@ namespace PiClimate.Monitor.WebAssembly.Components
     /// <param name="requestData">
     ///   The request body data object to be serialized into JSON.
     /// </param>
-    /// <param name="accessTokenProvider">
-    ///   The optional <see cref="IAccessTokenProvider" /> service instance used for token based request authorization.
-    /// </param>
     /// <returns>
-    ///   The object from the response body deserialized from JSON.
+    ///   The object from the response body deserialized from JSON, or <c>null</c> if the response body is empty.
     /// </returns>
     /// <exception cref="HttpRequestException">
     ///   Unable to send the HTTP request because of WebAPI endpoint connection failure.
@@ -264,9 +243,9 @@ namespace PiClimate.Monitor.WebAssembly.Components
     ///   The HTTP status code of the response is not a successful one (200-299).
     /// </exception>
     public static async Task<TResponse?> DeleteJsonAsync<TRequest, TResponse>(this HttpClient httpClient, string uri,
-      TRequest requestData, IAccessTokenProvider? accessTokenProvider = null)
+      TRequest requestData)
       where TRequest : class
       where TResponse : class =>
-      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Delete, requestData, accessTokenProvider);
+      await SendJsonAsync<TRequest, TResponse>(httpClient, uri, HttpMethod.Delete, requestData);
   }
 }

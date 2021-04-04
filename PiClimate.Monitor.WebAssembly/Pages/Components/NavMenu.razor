@@ -7,6 +7,7 @@
 *@
 
 @inject NavigationManager _navigationManager
+@inject IUserAuthenticator _authenticator
 
 <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap w-100">
   <li class="nav-item px-2">
@@ -40,7 +41,9 @@
 
   <AuthorizeView>
     <li class="nav-item px-2">
-      <input type="submit" class="btn btn-link nav-link border-0" value="Sign out" />
+      <a href="@_navigationManager.Uri" @onclick="@_authenticator.SignOutAsync" class="nav-link">
+        Sign out
+      </a>
     </li>
   </AuthorizeView>
 
@@ -48,7 +51,7 @@
 
   <li class="w-100 d-lg-none"></li>
 
-  <AuthorizeView Context="authContext">
+  <AuthorizeView>
     <li class="nav-item p-2">
       <a href="#measurement-menu" data-toggle="collapse" class="nav-link dropdown-toggle">
         Measurements
@@ -80,7 +83,7 @@
 
         <li id="custom-period-form" class="collapse w-100">
           <div class="nav-item p-2 w-100">
-            <EditForm Model="@this" OnValidSubmit="CustomPeriodSubmit"
+            <EditForm Model="@this" OnValidSubmit="CustomPeriodSubmit" Context="formContext"
                       class="form-row flex-lg-column align-items-end bg-dark rounded w-100 m-0">
               <div class="form-group col-4 col-lg p-2 m-0">
                 <label class="text-light">From:</label>

@@ -8,7 +8,8 @@
 
 @page "/Monitor/Offset/{Offset:int}/{Resolution:int?}"
 @page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
-@inject HttpClient _httpClient
+@attribute [Authorize]
+@inject IHttpClientFactory _httpClientFactory
 
 <div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "updating" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
      data-empty-notice="No measurements found for the period."
@@ -62,22 +63,22 @@
   /// <summary>
   ///   Gets or sets an enumeration of measurements to be displayed on a chart.
   /// </summary>
-  public IEnumerable<Measurement>? Measurements { get; set; }
+  private IEnumerable<Measurement>? Measurements { get; set; }
 
   /// <summary>
   ///   Checks if the measurements data are being updating at the moment.
   /// </summary>
-  public bool IsDataUpdating { get; private set; }
+  private bool IsDataUpdating { get; set; }
 
   /// <summary>
   ///   Checks if the last measurements data acquisition has failed.
   /// </summary>
-  public bool IsDataAcquisitionFailed { get; private set; }
+  private bool IsDataAcquisitionFailed { get; set; }
 
   /// <summary>
   ///   Checks if empty measurements data have been acquired from the last request.
   /// </summary>
-  public bool IsDataEmpty => !IsDataUpdating && !IsDataAcquisitionFailed && Measurements?.Any() != true;
+  private bool IsDataEmpty => !IsDataUpdating && !IsDataAcquisitionFailed && Measurements?.Any() != true;
 
   /// <summary>
   ///   Gets or sets the chart settings object.
@@ -102,7 +103,8 @@
       if (Resolution == default)
         Resolution = MeasurementFilter.DefaultResolution;
 
-      var response = await _httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
+      using var httpClient = _httpClientFactory.CreateClient();
+      var response = await httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
         ApiEndpoints.MeasurementDataEndpoint, new MeasurementFilter
         {
           PeriodStart = PeriodStart.ToUniversalTime(),
@@ -119,7 +121,7 @@
     }
     catch (Exception e)
     {
-      Console.WriteLine($"Failed to receive the measurements data: {e.Message}.");
+      Console.WriteLine($"Failed to receive the measurements data: {e.Message}");
       IsDataAcquisitionFailed = true;
     }
     finally

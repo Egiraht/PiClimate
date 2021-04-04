@@ -6,18 +6,19 @@
 
 using System;
 using System.IO;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PiClimate.Common;
 using PiClimate.Common.Components;
 using PiClimate.Monitor.Components;
-using PiClimate.Monitor.Services;
+using PiClimate.Monitor.Controllers;
 using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor
@@ -67,16 +68,21 @@ namespace PiClimate.Monitor
         .ConfigureApiBehaviorOptions(options =>
           options.InvalidModelStateResponseFactory = DefaultRequestHandlers.InvalidModelStateHandler);
 
-      // Adding the JWT token manipulation service.
-      var tokenService = new JwtService(_settings);
-      services.AddSingleton<ITokenService>(tokenService);
-
-      // Adding the authentication service based on JWT tokens.
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+      // Add cookie-based user authentication services.
+      services.AddAuthentication(Auth.SchemeName)
+        .AddCookie(Auth.SchemeName, options =>
         {
-          options.ClaimsIssuer = tokenService.TokenValidationParameters.ValidIssuer;
-          options.TokenValidationParameters = tokenService.TokenValidationParameters;
+          options.ClaimsIssuer = $"{nameof(PiClimate)}.{nameof(Monitor)}";
+          options.LoginPath = $"{ApiEndpoints.StatusEndpoint}/{StatusCodes.Status401Unauthorized}";
+          options.LogoutPath = ApiEndpoints.UserSignOutEndpoint;
+          options.AccessDeniedPath = $"{ApiEndpoints.StatusEndpoint}/{StatusCodes.Status403Forbidden}";
+          options.SlidingExpiration = true;
+          options.ExpireTimeSpan = TimeSpan.FromSeconds(_settings.AuthenticationOptions.CookieExpirationPeriod);
+          options.Cookie.Name = Auth.CookieName;
+          options.Cookie.HttpOnly = true;
+          options.Cookie.SameSite = SameSiteMode.Lax;
+          options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+          options.Cookie.IsEssential = true;
         });
 
       // Add authorization services.
