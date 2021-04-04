@@ -27,7 +27,7 @@ namespace PiClimate.Common.Models
     /// <summary>
     ///   Defines the default data resolution within the selected period.
     /// </summary>
-    public const int DefaultResolution = 1500;
+    public const int DefaultResolution = 500;
 
     /// <summary>
     ///   Defines the default time period period.

@@ -12,6 +12,7 @@ using PiClimate.Common.Models;
 using UnitsNet;
 using UnitsNet.Units;
 
+// ReSharper disable UnusedMember.Local
 namespace PiClimate.Monitor.WebAssembly.Models
 {
   public class ChartSettings
@@ -322,7 +323,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
 
         Hover = new
         {
-          AnimationDuration = 0
+          AnimationDuration = 250
         },
 
         ResponsiveAnimationDuration = 0,

@@ -8,7 +8,7 @@
 
 @page "/Monitor/Offset/{Offset:int}/{Resolution:int?}"
 @page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
-@inject HttpClient Client
+@inject HttpClient _httpClient
 
 <div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "updating" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
      data-empty-notice="No measurements found for the period."
@@ -100,21 +100,26 @@
       }
 
       if (Resolution == default)
-        Resolution = 1500;
+        Resolution = MeasurementFilter.DefaultResolution;
 
-      var response = await Client.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(ApiEndpoints.MeasurementDataEndpoint, new MeasurementFilter
-      {
-        PeriodStart = PeriodStart.ToUniversalTime(),
-        PeriodEnd = PeriodEnd.ToUniversalTime(),
-        Resolution = Resolution
-      });
+      var response = await _httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
+        ApiEndpoints.MeasurementDataEndpoint, new MeasurementFilter
+        {
+          PeriodStart = PeriodStart.ToUniversalTime(),
+          PeriodEnd = PeriodEnd.ToUniversalTime(),
+          Resolution = Resolution
+        });
 
       if (response?.StatusCode == 200)
-        Measurements = response.Data;
+        Measurements = response!.Data;
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
     }
     catch (Exception e)
     {
-      Console.WriteLine(e.Message);
+      Console.WriteLine($"Failed to receive the measurements data: {e.Message}.");
       IsDataAcquisitionFailed = true;
     }
     finally

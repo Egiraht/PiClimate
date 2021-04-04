@@ -6,7 +6,7 @@
   Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 *@
 
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime _jsRuntime
 
 <canvas id="@ChartSettings.ChartId" class="chart-canvas p-3"></canvas>
 
@@ -46,7 +46,7 @@
   {
     try
     {
-      await JsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.ChartId,
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.ChartId,
         ChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, Measurements));
     }
     catch

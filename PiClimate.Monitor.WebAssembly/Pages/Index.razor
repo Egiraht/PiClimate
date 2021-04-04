@@ -7,8 +7,8 @@
 *@
 
 @page "/"
-@inject NavigationManager NavigationManager
+@inject NavigationManager _navigationManager
 
 @{
-  NavigationManager.NavigateTo($"{Monitor.OffsetPath}/{TimePeriods.Day}");
+  _navigationManager.NavigateTo($"{Monitor.OffsetPath}/{TimePeriods.Day}");
 }
