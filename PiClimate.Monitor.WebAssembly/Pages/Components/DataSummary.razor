@@ -6,6 +6,11 @@
   Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 *@
 
+@{
+  if (Measurements == null || !Measurements.Any())
+    return;
+}
+
 <div id="data-summary-wrapper" class="px-4">
   <div class="text-center w-100">
     <a href="#data-summary" data-toggle="collapse"
@@ -21,13 +26,13 @@
           Period start:
         </div>
         <div class="text-left col-9 col-xl-4">
-          @(Measurements?.Min(measurement => measurement.Timestamp).ToString(CultureInfo) ?? "???")
+          @Measurements.Min(measurement => measurement.Timestamp).ToString(CultureInfo)
         </div>
         <div class="text-right col-3 col-xl-2">
           Period end:
         </div>
         <div class="text-left col-9 col-xl-4">
-          @(Measurements?.Max(measurement => measurement.Timestamp).ToString(CultureInfo) ?? "???")
+          @Measurements.Max(measurement => measurement.Timestamp).ToString(CultureInfo)
         </div>
       </div>
 
@@ -37,10 +42,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var minPressure = Measurements?.Min(measurement => measurement.Pressure);
+            var minPressure = Measurements.Min(measurement => measurement.Pressure);
             var minPressureTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Pressure == minPressure)?.Timestamp;
-            @($"{minPressure?.ToString("F3", CultureInfo) ?? "???"} ({minPressureTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Pressure == minPressure).Timestamp;
+            @($"{minPressure.ToString("F3", CultureInfo)} ({minPressureTimestamp.ToString(CultureInfo)})")
           }
         </div>
         <div class="text-right col-3 col-xl-2">
@@ -48,10 +53,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var maxPressure = Measurements?.Max(measurement => measurement.Pressure);
+            var maxPressure = Measurements.Max(measurement => measurement.Pressure);
             var maxPressureTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Pressure == maxPressure)?.Timestamp;
-            @($"{maxPressure?.ToString("F3", CultureInfo) ?? "???"} ({maxPressureTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Pressure == maxPressure).Timestamp;
+            @($"{maxPressure.ToString("F3", CultureInfo)} ({maxPressureTimestamp.ToString(CultureInfo)})")
           }
         </div>
       </div>
@@ -62,10 +67,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var minTemperature = Measurements?.Min(measurement => measurement.Temperature);
+            var minTemperature = Measurements.Min(measurement => measurement.Temperature);
             var minTemperatureTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Temperature == minTemperature)?.Timestamp;
-            @($"{minTemperature?.ToString("F3", CultureInfo) ?? "???"} ({minTemperatureTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Temperature == minTemperature).Timestamp;
+            @($"{minTemperature.ToString("F3", CultureInfo)} ({minTemperatureTimestamp.ToString(CultureInfo)})")
           }
         </div>
         <div class="text-right col-3 col-xl-2">
@@ -73,10 +78,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var maxTemperature = Measurements?.Max(measurement => measurement.Temperature);
+            var maxTemperature = Measurements.Max(measurement => measurement.Temperature);
             var maxTemperatureTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Temperature == maxTemperature)?.Timestamp;
-            @($"{maxTemperature?.ToString("F3", CultureInfo) ?? "???"} ({maxTemperatureTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Temperature == maxTemperature).Timestamp;
+            @($"{maxTemperature.ToString("F3", CultureInfo)} ({maxTemperatureTimestamp.ToString(CultureInfo)})")
           }
         </div>
       </div>
@@ -87,10 +92,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var minHumidity = Measurements?.Min(measurement => measurement.Humidity);
+            var minHumidity = Measurements.Min(measurement => measurement.Humidity);
             var minHumidityTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Humidity == minHumidity)?.Timestamp;
-            @($"{minHumidity?.ToString("F3", CultureInfo) ?? "???"} ({minHumidityTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Humidity == minHumidity).Timestamp;
+            @($"{minHumidity.ToString("F3", CultureInfo)} ({minHumidityTimestamp.ToString(CultureInfo)})")
           }
         </div>
         <div class="text-right col-3 col-xl-2">
@@ -98,10 +103,10 @@
         </div>
         <div class="text-left col-9 col-xl-4">
           @{
-            var maxHumidity = Measurements?.Max(measurement => measurement.Humidity);
+            var maxHumidity = Measurements.Max(measurement => measurement.Humidity);
             var maxHumidityTimestamp =
-              Measurements?.FirstOrDefault(measurement => measurement.Humidity == maxHumidity)?.Timestamp;
-            @($"{maxHumidity?.ToString("F3", CultureInfo) ?? "???"} ({maxHumidityTimestamp?.ToString(CultureInfo) ?? "???"})")
+              Measurements.First(measurement => measurement.Humidity == maxHumidity).Timestamp;
+            @($"{maxHumidity.ToString("F3", CultureInfo)} ({maxHumidityTimestamp.ToString(CultureInfo)})")
           }
         </div>
       </div>
@@ -111,7 +116,7 @@
           Entries displayed:
         </div>
         <div class="text-left col-9 col-xl-4">
-          @(Measurements?.Count() ?? 0)
+          @Measurements.Count()
         </div>
       </div>
     </div>
