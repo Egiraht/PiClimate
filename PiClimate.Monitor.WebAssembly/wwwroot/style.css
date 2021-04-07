@@ -22,5 +22,94 @@ body
 #blazor-error-ui
 {
   display: none;
-  text-align: center;
+  background-color: rgba(127, 127, 127, 0.75);
+  z-index: 10000;
+}
+
+.loading
+{
+  position: relative !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -moz-user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+.loading > *
+{
+  filter: opacity(60%) blur(0.1em) !important;
+}
+
+.loading-block
+{
+  position: relative !important;
+  display: inline-block;
+  border-color: var(--dark);
+  color: transparent;
+  text-overflow: clip;
+  width: 3em;
+  height: 3em;
+  margin-right: 1em;
+}
+
+.loading-block::before,
+.loading::before
+{
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem;
+  background: transparent;
+  border: solid 0.25em;
+  border-color: inherit;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-radius: 50%;
+  vertical-align: middle;
+  z-index: 1000;
+  content: "";
+  animation: spinner-border 1s normal linear infinite;
+  -o-animation: spinner-border 1s normal linear infinite;
+  -webkit-animation: spinner-border 1s normal linear infinite;
+}
+
+.loading-block::after,
+.loading::after
+{
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem;
+  border: solid 0.25em;
+  border-color: inherit;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-radius: 50%;
+  vertical-align: middle;
+  z-index: 1001;
+  content: "";
+  animation: spinner-border 1s reverse linear infinite;
+  -o-animation: spinner-border 1s reverse linear infinite;
+  -webkit-animation: spinner-border 1s reverse linear infinite;
+}
+
+.loading::before,
+.loading::after
+{
+  background: var(--secondary);
+  border-top-color: var(--light);
+  border-bottom-color: var(--light);
+}
+
+.loading-text
+{
+  display: inline-block !important;
+  font-size: 1.5rem;
+  color: var(--dark);
+  margin: 0;
 }

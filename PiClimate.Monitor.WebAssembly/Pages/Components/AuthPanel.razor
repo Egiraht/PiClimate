@@ -8,7 +8,7 @@
 
 @inject IUserAuthenticator<LoginForm, AuthInfo> _authenticator
 
-<div class="alert alert-secondary m-3">
+<div class="alert alert-secondary m-3 @(IsAuthenticating ? "loading" : "")">
   <EditForm Model="@LoginForm" OnInvalidSubmit="@(() => AuthenticationMessages.Clear())" OnValidSubmit="OnSubmitAsync"
             Context="editContext">
     <DataAnnotationsValidator />
@@ -79,13 +79,21 @@
   private List<string> AuthenticationMessages { get; } = new();
 
   /// <summary>
+  ///   Gets or sets the flag indicating if the authentication process is running.
+  /// </summary>
+  private bool IsAuthenticating { get; set; } = false;
+
+  /// <summary>
   ///   Submits the login form and checks the authentication result.
   /// </summary>
   private async Task OnSubmitAsync(EditContext context)
   {
     try
     {
+      IsAuthenticating = true;
       AuthenticationMessages.Clear();
+      StateHasChanged();
+
       await _authenticator.SignInAsync(LoginForm);
     }
     catch (Exception e)
@@ -97,7 +105,10 @@
           "There is no user matching the provided name and password.",
         _ => $"Failed to sign in: {e.Message}"
       });
-
+    }
+    finally
+    {
+      IsAuthenticating = false;
       StateHasChanged();
     }
   }

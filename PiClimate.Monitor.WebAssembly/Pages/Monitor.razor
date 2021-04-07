@@ -11,9 +11,8 @@
 @attribute [Authorize]
 @inject IHttpClientFactory _httpClientFactory
 
-<div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "updating" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
+<div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "loading" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
      data-empty-notice="No measurements found for the period."
-     data-updating-notice="Updating..."
      data-failed-notice="Failed to get the measurements.">
   <div class="flex-fill w-100">
     <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
