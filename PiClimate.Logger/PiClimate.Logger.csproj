@@ -17,8 +17,8 @@
     <Description>Climatic data monitor</Description>
     <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <InformationalVersion>1.2.1</InformationalVersion>
+    <AssemblyVersion>1.2.2</AssemblyVersion>
+    <InformationalVersion>1.2.2</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
@@ -44,7 +44,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="MySqlConnector" Version="1.3.1" />
+    <PackageReference Include="MySqlConnector" Version="1.3.2" />
   </ItemGroup>
 
   <!-- Local project references. -->
