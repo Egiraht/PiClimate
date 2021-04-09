@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "PiClimate.Monitor.WASM": {
+    "PiClimate.Monitor.WebAssembly": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

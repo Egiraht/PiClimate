@@ -4,12 +4,14 @@
 //
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
+using PiClimate.Common.Settings;
+
 namespace PiClimate.Logger.Settings
 {
   /// <summary>
   ///   The section of the global settings for data row count limiters.
   /// </summary>
-  public class CountLimiterOptions
+  public class CountLimiterOptions : SettingsSection
   {
     /// <summary>
     ///   Defines the default total data row count limit.
@@ -19,14 +21,16 @@ namespace PiClimate.Logger.Settings
     /// <summary>
     ///   Gets or sets the total count of data rows to keep in the database table.
     /// </summary>
+    [Comment("Sets the total count of data rows to keep in the database table.")]
     public int CountLimit { get; set; } = DefaultCountLimit;
   }
 
   public partial class GlobalSettings
   {
     /// <summary>
-    ///   Gets or sets the settings for data row count limiters.
+    ///   Gets or sets the settings object for data row count limiters.
     /// </summary>
+    [Comment("The settings section dedicated for data row count limiters.")]
     public CountLimiterOptions CountLimiterOptions { get; set; } = new();
   }
 }

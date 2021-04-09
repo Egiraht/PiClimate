@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using PiClimate.Common.Components;
+using PiClimate.Common.Settings;
 using PiClimate.Logger.Components;
 using PiClimate.Logger.Settings;
 

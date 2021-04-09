@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PiClimate.Common;
-using PiClimate.Common.Components;
+using PiClimate.Common.Settings;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Controllers;
 using PiClimate.Monitor.Settings;

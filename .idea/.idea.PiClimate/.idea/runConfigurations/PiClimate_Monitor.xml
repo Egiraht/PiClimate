@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PiClimate.Monitor" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/PiClimate.Monitor/bin/Debug/net5.0/PiClimate.Monitor.dll" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/PiClimate.Monitor/bin/Debug/net5.0/PiClimate.Monitor.exe" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PiClimate.Monitor" />
     <option name="PASS_PARENT_ENVS" value="1" />

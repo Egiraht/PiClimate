@@ -20,7 +20,7 @@
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <InformationalVersion>2.0.0</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor.WASM</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor.WebAssembly</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
