@@ -70,5 +70,8 @@
     <None Update="Pages/Components/AuthPanel.razor.css">
       <DependentUpon>AuthPanel.razor</DependentUpon>
     </None>
+    <None Update="Pages/Components/UpdateButton.razor.css">
+      <DependentUpon>UpdateButton.razor</DependentUpon>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,0 +1,34 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inject NavigationManager _navigationManager
+
+<div class="d-inline-block">
+  <a href="@_navigationManager.Uri" title="Update" @onclick="@UpdateAsync">
+    <div class="update-icon"></div>
+  </a>
+</div>
+
+@code {
+  /// <summary>
+  ///   Gets or sets the components that needs to be updated on clicking the update button.
+  /// </summary>
+  [CascadingParameter]
+  public IUpdatable? UpdatableComponent { get; set; }
+
+  /// <summary>
+  ///   Updates the component state if it is not currently updating.
+  /// </summary>
+  private async Task UpdateAsync()
+  {
+    if (UpdatableComponent == null || UpdatableComponent.IsUpdating)
+      return;
+
+    await UpdatableComponent.UpdateAsync();
+  }
+}

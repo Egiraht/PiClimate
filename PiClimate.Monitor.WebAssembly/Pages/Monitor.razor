@@ -9,19 +9,26 @@
 @page "/Monitor/Offset/{Offset:int}/{Resolution:int?}"
 @page "/Monitor/Period/{PeriodStart:datetime}/{PeriodEnd:datetime}/{Resolution:int?}"
 @attribute [Authorize]
+@implements IUpdatable
 @inject IHttpClientFactory _httpClientFactory
 
-<div class="position-relative d-flex flex-column h-100 @(IsDataUpdating ? "loading" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
-     data-empty-notice="No measurements found for the period."
-     data-failed-notice="Failed to get the measurements.">
-  <div class="flex-fill w-100">
-    <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
-  </div>
+<CascadingValue Value="@this">
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : IsDataAcquisitionFailed ? "failed" : IsDataEmpty ? "empty" : "")"
+       data-empty-notice="No measurements found for the period."
+       data-failed-notice="Failed to get the measurements.">
+    <div class="position-fixed">
+      <UpdateButton />
+    </div>
 
-  <div class="position-sticky bottom-0 w-100">
-    <DataSummary Measurements="@Measurements" CultureInfo="@ChartSettings.CultureInfo" />
+    <div class="flex-fill w-100">
+      <Chart ChartSettings="@ChartSettings" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" Measurements="@Measurements" />
+    </div>
+
+    <div class="position-sticky bottom-0 w-100">
+      <DataSummary Measurements="@Measurements" CultureInfo="@ChartSettings.CultureInfo" />
+    </div>
   </div>
-</div>
+</CascadingValue>
 
 @code
 {
@@ -64,10 +71,8 @@
   /// </summary>
   private IEnumerable<Measurement>? Measurements { get; set; }
 
-  /// <summary>
-  ///   Checks if the measurements data are being updating at the moment.
-  /// </summary>
-  private bool IsDataUpdating { get; set; }
+  /// <inheritdoc />
+  public bool IsUpdating { get; set; }
 
   /// <summary>
   ///   Checks if the last measurements data acquisition has failed.
@@ -77,7 +82,7 @@
   /// <summary>
   ///   Checks if empty measurements data have been acquired from the last request.
   /// </summary>
-  private bool IsDataEmpty => !IsDataUpdating && !IsDataAcquisitionFailed && Measurements?.Any() != true;
+  private bool IsDataEmpty => !IsUpdating && !IsDataAcquisitionFailed && Measurements?.Any() != true;
 
   /// <summary>
   ///   Gets or sets the chart settings object.
@@ -85,12 +90,15 @@
   private ChartSettings ChartSettings { get; set; } = new() {CultureInfo = LocalizationUtils.GetBrowserCultureInfo()};
 
   /// <inheritdoc />
-  protected override async Task OnParametersSetAsync()
+  public async Task UpdateAsync()
   {
+    if (IsUpdating)
+      return;
+
     try
     {
       IsDataAcquisitionFailed = false;
-      IsDataUpdating = true;
+      IsUpdating = true;
       StateHasChanged();
 
       if (Offset != default)
@@ -125,8 +133,11 @@
     }
     finally
     {
-      IsDataUpdating = false;
+      IsUpdating = false;
       StateHasChanged();
     }
   }
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync() => await UpdateAsync();
 }
