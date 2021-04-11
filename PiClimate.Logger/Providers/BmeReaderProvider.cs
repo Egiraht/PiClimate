@@ -47,11 +47,6 @@ namespace PiClimate.Logger.Providers
       @"^\s*OK\s*;\s*P\s*=\s*([\d\.]+)\s*mmHg\s*;\s*T\s*=\s*([\d\.]+)\s*degC\s*;\s*H\s*=\s*([\d\.]+)\s*%\s*$";
 
     /// <summary>
-    ///   Defines the serial port read/write operations timeout value in milliseconds.
-    /// </summary>
-    protected const int SerialPortTimeout = 500;
-
-    /// <summary>
     ///   The object's disposal flag.
     /// </summary>
     private bool _disposed;
@@ -102,8 +97,8 @@ namespace PiClimate.Logger.Providers
       Port = new SerialPort
       {
         PortName = settings.BmeReaderOptions.SerialPortName,
-        ReadTimeout = SerialPortTimeout,
-        WriteTimeout = SerialPortTimeout,
+        ReadTimeout = settings.BmeReaderOptions.SerialPortTimeout,
+        WriteTimeout = settings.BmeReaderOptions.SerialPortTimeout,
         Encoding = Encoding.ASCII,
         NewLine = "\x0A"
       };
