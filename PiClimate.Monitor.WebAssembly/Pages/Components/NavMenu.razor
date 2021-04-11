@@ -9,6 +9,8 @@
 @inject NavigationManager _navigationManager
 @inject IUserAuthenticator _authenticator
 
+@* TODO: Rework the navigation menu to become page-independent. *@
+
 <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap w-100">
   <li class="nav-item px-2">
     <a class="navbar-brand align-baseline mr-2" href="/">
@@ -52,20 +54,27 @@
   <li class="w-100 d-lg-none"></li>
 
   <AuthorizeView>
-    <li class="nav-item p-2">
-      <a href="#measurement-menu" data-toggle="collapse" class="nav-link dropdown-toggle">
-        Measurements
+    <li class="nav-item px-2">
+      <NavLink Match="@NavLinkMatch.Prefix" ActiveClass="active" href="@Status.PathPrefix" class="nav-link">
+        Status
+      </NavLink>
+    </li>
+
+    <li class="nav-item px-2">
+      <a href="#charts-menu" data-toggle="collapse"
+        class="nav-link dropdown-toggle text-wrap collapsed @(IsChartPageActive ? "active" : "")">
+        Climatic chart
       </a>
     </li>
 
-    <li id="measurement-menu" class="nav-item bg-secondary rounded w-100 collapse show">
+    <li id="charts-menu" class="nav-item bg-secondary rounded w-100 collapse">
       <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap flex-lg-nowrap w-100">
         @* Standard offset links *@
         @foreach (var (name, offset) in StandardOffsets)
         {
           <li class="nav-item px-2">
-            <NavLink Match="NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomPeriod(offset)"
-                     href="@($"{Monitor.OffsetPath}/{offset}")" class="nav-link pl-lg-2">
+            <NavLink Match="@NavLinkMatch.Prefix" ActiveClass="active" @onclick="() => UpdateCustomPeriod(offset)"
+                     href="@($"{Chart.OffsetPathPrefix}/{offset}")" class="nav-link pl-lg-2">
               @name
             </NavLink>
           </li>
@@ -74,7 +83,7 @@
         @* Custom period form *@
         <li class="nav-item px-2">
           <a href="#custom-period-form" data-toggle="collapse"
-             class="nav-link dropdown-toggle pl-lg-2 collapsed @(IsCustomPeriodActive ? "active" : "")">
+             class="nav-link dropdown-toggle text-wrap collapsed pl-lg-2 @(IsCustomPeriodChartActive ? "active" : "")">
             Custom period
           </a>
         </li>
@@ -116,7 +125,7 @@
 @code
 {
   /// <summary>
-  ///   The list of standard offsets to be used for links creation in the measurements menu.
+  ///   The list of standard offsets to be used for links creation in the charts menu.
   /// </summary>
   private static readonly Dictionary<string, int> StandardOffsets = new()
   {
@@ -126,10 +135,16 @@
   };
 
   /// <summary>
-  ///   Checks or sets if the custom period is active at the moment.
+  ///   Checks or sets if status page is active at the moment.
   /// </summary>
-  private bool IsCustomPeriodActive => $"/{_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}"
-    .StartsWith(Monitor.PeriodPath);
+  private bool IsChartPageActive => $"/{_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}"
+    .StartsWith(Chart.PathPrefix);
+
+  /// <summary>
+  ///   Checks if the custom period chart is active at the moment.
+  /// </summary>
+  private bool IsCustomPeriodChartActive => $"/{_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}"
+    .StartsWith(Chart.PeriodPathPrefix);
 
   /// <summary>
   ///   Gets or sets the custom period starting date component.
@@ -179,5 +194,5 @@
   ///   The callback method handling the custom period button click.
   /// </summary>
   private void CustomPeriodSubmit() => _navigationManager.NavigateTo(
-    $"{Monitor.PeriodPath}/{CustomPeriodStartDate + CustomPeriodStartTime.TimeOfDay:s}/{CustomPeriodEndDate + CustomPeriodEndTime.TimeOfDay:s}/{CustomResolution}");
+    $"{Chart.PeriodPathPrefix}/{CustomPeriodStartDate + CustomPeriodStartTime.TimeOfDay:s}/{CustomPeriodEndDate + CustomPeriodEndTime.TimeOfDay:s}/{CustomResolution}");
 }

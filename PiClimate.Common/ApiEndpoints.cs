@@ -29,6 +29,11 @@ namespace PiClimate.Common
     /// <summary>
     ///   Defines the endpoint path for acquiring filtered measurements data.
     /// </summary>
-    public const string MeasurementDataEndpoint = "/Api/Data";
+    public const string FilteredMeasurementsDataEndpoint = "/Api/Data";
+
+    /// <summary>
+    ///   Defines the endpoint path for acquiring latest measurements data.
+    /// </summary>
+    public const string LatestMeasurementsDataEndpoint = "/Api/Data/Latest";
   }
 }

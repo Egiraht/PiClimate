@@ -8,20 +8,20 @@
 
 @inject IJSRuntime _jsRuntime
 
-<canvas id="@ChartSettings.ChartId" class="chart-canvas p-3"></canvas>
+<canvas id="@MiniChartSettings.MiniChartId" class="mini-chart-canvas"></canvas>
 
 @code
 {
   /// <summary>
   ///   Defines the chart initialization function name.
   /// </summary>
-  private const string ChartInitializationFunctionName = "initializeChart";
+  private const string ChartInitializationFunctionName = "initializeMiniChart";
 
   /// <summary>
-  ///   Gets or sets the chart settings object.
+  ///   Gets or sets the mini-chart settings object.
   /// </summary>
   [Parameter]
-  public ChartSettings ChartSettings { get; set; } = new();
+  public MiniChartSettings MiniChartSettings { get; set; } = new();
 
   /// <summary>
   ///   Gets or sets the starting timestamp of the chart.
@@ -36,18 +36,19 @@
   public DateTime PeriodEnd { get; set; } = DateTime.Now;
 
   /// <summary>
-  ///   Gets or sets the enumeration of climatic measurement to display.
+  ///   Gets or sets the enumeration of data points to display.
   /// </summary>
   [Parameter]
-  public IEnumerable<Measurement> Measurements { get; set; } = new List<Measurement>();
+  public IEnumerable<(DateTime Timestamp, double Value)> DataPoints { get; set; } =
+    new List<(DateTime Timestamp, double Value)>();
 
   /// <inheritdoc />
-  protected override async Task OnAfterRenderAsync(bool firstRender)
+  protected override async Task OnParametersSetAsync()
   {
     try
     {
-      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.ChartId,
-        ChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, Measurements));
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, MiniChartSettings.MiniChartId,
+        MiniChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, DataPoints));
     }
     catch
     {

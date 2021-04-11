@@ -12,6 +12,10 @@
   --pressure-color: lightblue;
   --temperature-color: lightgreen;
   --humidity-color: lightcoral;
+  --dark-time-color: grey;
+  --dark-pressure-color: blue;
+  --dark-temperature-color: green;
+  --dark-humidity-color: red;
 }
 
 body
@@ -24,6 +28,36 @@ body
   display: none;
   background-color: rgba(127, 127, 127, 0.75);
   z-index: 10000;
+}
+
+.dropdown-toggle::after
+{
+  vertical-align: 0.5ex;
+}
+
+.top-0
+{
+  top: 0 !important;
+}
+
+.bottom-0
+{
+  bottom: 0 !important;
+}
+
+.left-0
+{
+  left: 0 !important;
+}
+
+.right-0
+{
+  right: 0 !important;
+}
+
+.z-1
+{
+  z-index: 1;
 }
 
 .loading

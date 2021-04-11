@@ -19,7 +19,7 @@ namespace PiClimate.Monitor.Controllers
   ///   An API controller that filters the measurement data using the provided measurement filter and returns the result
   ///   in JSON format.
   /// </summary>
-  [ApiController, Authorize, Route(ApiEndpoints.MeasurementDataEndpoint)]
+  [ApiController, Authorize]
   public class Data : Controller
   {
     /// <summary>
@@ -40,47 +40,64 @@ namespace PiClimate.Monitor.Controllers
     }
 
     /// <summary>
-    ///   Filters the measurement data using the provided measurement filter and returns the data
-    ///   in JSON format.
+    ///   Gets the filtered measurements data using the GET request.
     /// </summary>
     /// <param name="filter">
-    ///   The measurement filter used for measurement data filtering.
-    ///   Provided via the request parameters binding.
+    ///   The measurement filter object.
+    ///   Bound from the HTTP request query string.
     /// </param>
     /// <returns>
-    ///   The JSON-encoded HTTP response containing the filtered measurement data.
+    ///   The JSON object containing the filtered measurements data.
     /// </returns>
-    [HttpGet]
+    [HttpGet(ApiEndpoints.FilteredMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnGetAsync([FromQuery] MeasurementFilter filter)
     {
       var measurements = await Source.GetMeasurementsAsync(filter);
       return new JsonResponse<IEnumerable<Measurement>>(measurements);
     }
 
-    /// <inheritdoc cref="OnGetAsync" />
-    [HttpPost]
+    /// <summary>
+    ///   Gets the filtered measurements data using the POST request.
+    /// </summary>
+    /// <param name="filter">
+    ///   The measurement filter object.
+    ///   Bound from the HTTP request body.
+    /// </param>
+    /// <returns>
+    ///   The JSON object containing the filtered measurements data.
+    /// </returns>
+    [HttpPost(ApiEndpoints.FilteredMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnPostAsync([FromBody] MeasurementFilter filter) =>
       await OnGetAsync(filter);
 
     /// <summary>
-    ///   Gets the latest logged measurements and returns them in JSON format.
+    ///   Gets the filtered measurements data using the GET request.
     /// </summary>
     /// <param name="request">
     ///   The latest data request object.
-    ///   Provided via the request parameters binding.
+    ///   Bound from the HTTP request query string.
     /// </param>
     /// <returns>
-    ///   The JSON-encoded HTTP response containing the filtered measurement data.
+    ///   The JSON object containing the latest measurements data.
     /// </returns>
-    [HttpGet("Latest")]
+    [HttpGet(ApiEndpoints.LatestMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnGetLatestAsync([FromQuery] LatestDataRequest request)
     {
       var measurements = await Source.GetLatestMeasurementsAsync(request);
       return new JsonResponse<IEnumerable<Measurement>>(measurements);
     }
 
-    /// <inheritdoc cref="OnGetLatestAsync" />
-    [HttpPost("Latest")]
+    /// <summary>
+    ///   Gets the filtered measurements data using the POST request.
+    /// </summary>
+    /// <param name="request">
+    ///   The latest data request object.
+    ///   Bound from the HTTP request body.
+    /// </param>
+    /// <returns>
+    ///   The JSON object containing the latest measurements data.
+    /// </returns>
+    [HttpPost(ApiEndpoints.LatestMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnPostLatestAsync([FromBody] LatestDataRequest request) =>
       await OnGetLatestAsync(request);
   }

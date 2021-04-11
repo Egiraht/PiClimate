@@ -26,12 +26,6 @@
   color: var(--humidity-color) !important;
 }
 
-.dropdown-toggle::after
-{
-  border-top: solid .3em;
-  border-bottom: 0;
-}
-
 .dropdown-toggle.collapsed::after
 {
   border-top: 0;

@@ -49,29 +49,4 @@
   <ItemGroup>
     <ProjectReference Include="../PiClimate.Common/PiClimate.Common.csproj" />
   </ItemGroup>
-
-  <!-- File dependencies. -->
-  <ItemGroup>
-    <None Update="Pages/Monitor.razor.css">
-      <DependentUpon>Monitor.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/Chart.razor.css">
-      <DependentUpon>Chart.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/DataSummary.razor.css">
-      <DependentUpon>DataSummary.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/Layout.razor.css">
-      <DependentUpon>Layout.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/NavMenu.razor.css">
-      <DependentUpon>NavMenu.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/AuthPanel.razor.css">
-      <DependentUpon>AuthPanel.razor</DependentUpon>
-    </None>
-    <None Update="Pages/Components/UpdateButton.razor.css">
-      <DependentUpon>UpdateButton.razor</DependentUpon>
-    </None>
-  </ItemGroup>
 </Project>

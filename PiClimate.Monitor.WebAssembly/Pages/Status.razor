@@ -1,0 +1,193 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@attribute [Route(PathRoute), Authorize]
+@implements IUpdatable
+@inject IHttpClientFactory _httpClientFactory
+
+<CascadingValue Value="@this">
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : "")">
+    <div class="position-fixed z-1">
+      <UpdateButton />
+    </div>
+
+    <div class="alert alert-secondary h4 text-center rounded-0 mb-2">
+      Latest data
+    </div>
+
+    @if (LatestMeasurement != null && Measurements?.Any() == true)
+    {
+      var pressureChartSettings = new MiniChartSettings
+      {
+        MiniChartId = "pressure-mini-chart",
+        LineColor = "blue"
+      };
+      var temperatureChartSettings = new MiniChartSettings
+      {
+        MiniChartId = "temperature-mini-chart",
+        LineColor = "green"
+      };
+      var humidityChartSettings = new MiniChartSettings
+      {
+        MiniChartId = "humidity-mini-chart",
+        LineColor = "red"
+      };
+      var pressureDataPoints = Measurements.Select(
+        measurement => (measurement.Timestamp, measurement.PressureInMmHg));
+      var temperatureDataPoints = Measurements.Select(
+        measurement => (measurement.Timestamp, measurement.TemperatureInDegC));
+      var humidityDataPoints = Measurements.Select(
+        measurement => (measurement.Timestamp, measurement.HumidityInPercent));
+
+      <div class="d-flex flex-row flex-wrap w-100 p-2">
+        <div class="col-12 col-xl-4 text-center text-pressure p-2 mb-2">
+          <div class="h5">Pressure</div>
+          <div class="h4">@LatestMeasurement.Pressure.ToString(CultureInfo)</div>
+          <div class="mini-chart chart-pressure">
+            <MiniChart MiniChartSettings="@pressureChartSettings" DataPoints="@pressureDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4 text-center text-temperature p-2 mb-2">
+          <div class="h5">Temperature</div>
+          <div class="h4">@LatestMeasurement.Temperature.ToString(CultureInfo)</div>
+          <div class="mini-chart chart-temperature">
+            <MiniChart MiniChartSettings="@temperatureChartSettings" DataPoints="@temperatureDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4 text-center text-humidity p-2 mb-2">
+          <div class="h5">Humidity</div>
+          <div class="h4">@LatestMeasurement.Humidity.ToString(CultureInfo)</div>
+          <div class="mini-chart chart-humidity">
+            <MiniChart MiniChartSettings="@humidityChartSettings" DataPoints="@humidityDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+          </div>
+        </div>
+
+        <div class="col-12 h4 text-center text-date">
+          <div class="h6">(@LatestMeasurement.Timestamp.ToString(CultureInfo))</div>
+        </div>
+      </div>
+    }
+  </div>
+</CascadingValue>
+
+@code {
+  /// <summary>
+  ///   Defines the <see cref="Status" /> page path prefix.
+  /// </summary>
+  public const string PathPrefix = "/" + nameof(Status);
+
+  /// <summary>
+  ///   Defines the <see cref="Status" /> page path route string.
+  /// </summary>
+  public const string PathRoute = PathPrefix;
+
+  /// <summary>
+  ///   Gets the time period to acquire the status data for.
+  /// </summary>
+  private TimeSpan TimePeriod { get; } = TimeSpan.FromSeconds(TimePeriods.Day);
+
+  /// <summary>
+  ///   Gets the status period start timestamp.
+  /// </summary>
+  private DateTime PeriodStart => PeriodEnd - TimePeriod;
+
+  /// <summary>
+  ///   Gets the status period end timestamp.
+  /// </summary>
+  private DateTime PeriodEnd => DateTime.Now;
+
+  /// <summary>
+  ///   Gets the chart data resolution.
+  /// </summary>
+  private int ChartResolution => 50;
+
+  /// <summary>
+  ///   Gets the latest logged measurement.
+  /// </summary>
+  private Measurement? LatestMeasurement { get; set; }
+
+  /// <summary>
+  ///   Gets or sets an enumeration of measurements to be displayed on a chart.
+  /// </summary>
+  private IEnumerable<Measurement>? Measurements { get; set; }
+
+  /// <inheritdoc />
+  public bool IsUpdating { get; private set; }
+
+  /// <inheritdoc />
+  public bool HasUpdateFailed { get; private set; }
+
+  /// <summary>
+  ///   Checks if empty measurements data have been acquired from the last request.
+  /// </summary>
+  public bool AreMeasurementsEmpty => !IsUpdating && !HasUpdateFailed && (LatestMeasurement == null ||
+    Measurements?.Any() != true);
+
+  /// <summary>
+  ///   Gets the current browser's culture information.
+  /// </summary>
+  public CultureInfo CultureInfo { get; } = LocalizationUtils.GetBrowserCultureInfo();
+
+  /// <inheritdoc />
+  public async Task UpdateAsync()
+  {
+    if (IsUpdating)
+      return;
+
+    try
+    {
+      HasUpdateFailed = false;
+      IsUpdating = true;
+      StateHasChanged();
+
+      using var httpClient = _httpClientFactory.CreateClient();
+      var response = await httpClient.PostJsonAsync<LatestDataRequest, JsonPayload<IEnumerable<Measurement>>>(
+        ApiEndpoints.LatestMeasurementsDataEndpoint, new LatestDataRequest {MaxRows = 1});
+
+      if (response?.StatusCode == 200)
+        LatestMeasurement = response.Data?.FirstOrDefault();
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
+
+      response = await httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
+        ApiEndpoints.FilteredMeasurementsDataEndpoint, new MeasurementFilter
+        {
+          PeriodStart = PeriodStart,
+          PeriodEnd = PeriodEnd,
+          Resolution = ChartResolution
+        });
+
+      if (response?.StatusCode == 200)
+        Measurements = response.Data;
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Failed to receive the measurements data: {e.Message}");
+      HasUpdateFailed = true;
+    }
+    finally
+    {
+      IsUpdating = false;
+      StateHasChanged();
+    }
+  }
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync() => await UpdateAsync();
+}

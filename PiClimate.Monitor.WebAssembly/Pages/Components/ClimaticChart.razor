@@ -1,0 +1,57 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inject IJSRuntime _jsRuntime
+
+<canvas id="@ChartSettings.ChartId" class="chart-canvas p-3"></canvas>
+
+@code
+{
+  /// <summary>
+  ///   Defines the chart initialization function name.
+  /// </summary>
+  private const string ChartInitializationFunctionName = "initializeChart";
+
+  /// <summary>
+  ///   Gets or sets the chart settings object.
+  /// </summary>
+  [Parameter]
+  public ChartSettings ChartSettings { get; set; } = new();
+
+  /// <summary>
+  ///   Gets or sets the starting timestamp of the chart.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodStart { get; set; } = DateTime.Now - TimeSpan.FromDays(1);
+
+  /// <summary>
+  ///   Gets or sets the ending timestamp of the chart.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodEnd { get; set; } = DateTime.Now;
+
+  /// <summary>
+  ///   Gets or sets the enumeration of climatic measurement to display.
+  /// </summary>
+  [Parameter]
+  public IEnumerable<Measurement> Measurements { get; set; } = new List<Measurement>();
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync()
+  {
+    try
+    {
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.ChartId,
+        ChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, Measurements));
+    }
+    catch
+    {
+      // Suppress exceptions.
+    }
+  }
+}

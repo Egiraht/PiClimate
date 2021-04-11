@@ -19,6 +19,11 @@ namespace PiClimate.Monitor.WebAssembly.Components
     bool IsUpdating { get; }
 
     /// <summary>
+    ///   Checks if the last component update has failed.
+    /// </summary>
+    bool HasUpdateFailed { get; }
+
+    /// <summary>
     ///   Forces the component to asynchronously update its state.
     /// </summary>
     Task UpdateAsync();

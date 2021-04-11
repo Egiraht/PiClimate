@@ -1,0 +1,66 @@
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+ */
+
+.text-date
+{
+  color: var(--dark-time-color) !important;
+}
+
+.text-pressure
+{
+  color: var(--dark-pressure-color) !important;
+}
+
+.text-temperature
+{
+  color: var(--dark-temperature-color) !important;
+}
+
+.text-humidity
+{
+  color: var(--dark-humidity-color) !important;
+}
+
+.mini-chart
+{
+  display: inline-block;
+  border-style: none;
+  width: 200px;
+}
+
+.mini-chart.chart-pressure
+{
+  border-color: var(--dark-pressure-color) !important;
+}
+
+.mini-chart.chart-temperature
+{
+  border-color: var(--dark-temperature-color) !important;
+}
+
+.mini-chart.chart-humidity
+{
+  border-color: var(--dark-humidity-color) !important;
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+.mini-chart ::deep canvas
+{
+  border-style: solid;
+  border-width: 1px;
+  border-color: inherit;
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+.loading ::deep *,
+.failed ::deep *,
+.empty ::deep *
+{
+  display: none;
+  visibility: collapse;
+}

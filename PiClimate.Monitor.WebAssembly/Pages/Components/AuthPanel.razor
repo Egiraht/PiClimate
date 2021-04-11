@@ -53,7 +53,7 @@
     @if (AuthenticationMessages.Any() || editContext.GetValidationMessages().Any())
     {
       <div class="alert alert-dark text-info text-center mt-3 mb-0">
-        <ul class="m-0">
+        <ul class="list-unstyled m-0">
           @foreach (var message in AuthenticationMessages)
           {
             <li>@message</li>

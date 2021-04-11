@@ -15,6 +15,9 @@ using UnitsNet.Units;
 // ReSharper disable UnusedMember.Local
 namespace PiClimate.Monitor.WebAssembly.Models
 {
+  /// <summary>
+  ///   The model class containing the chart settings.
+  /// </summary>
   public class ChartSettings
   {
     /// <summary>
@@ -38,7 +41,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
     public const string DefaultHumidityLineColor = "red";
 
     /// <summary>
-    ///   Gets the ID string identifying the chart in the HTML markup.
+    ///   Gets the ID string identifying the chart element in the HTML markup. Must be unique on the page.
     /// </summary>
     public string ChartId { get; set; } = DefaultChartElementId;
 
@@ -95,14 +98,14 @@ namespace PiClimate.Monitor.WebAssembly.Models
     /// <summary>
     ///   Creates a <i>Chart.js</i> configuration object that can be provided when creating a new chart instance.
     /// </summary>
-    /// <param name="measurements">
-    ///   The enumeration of measurements to be displayed on the chart.
-    /// </param>
     /// <param name="periodStart">
     ///   The starting timestamp of the chart.
     /// </param>
     /// <param name="periodEnd">
     ///   The ending timestamp of the chart.
+    /// </param>
+    /// <param name="measurements">
+    ///   The enumeration of measurements to be displayed on the chart.
     /// </param>
     /// <returns>
     ///   The configured <i>Chart.js</i> options object.
@@ -127,9 +130,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
       private readonly Measurement[] _measurements;
 
       /// <summary>
-      ///   Defines the <i>Chart.js</i> chart type.
+      ///   Gets the <i>Chart.js</i> chart type.
       /// </summary>
-      public string Type { get; } = "scatter";
+      public string Type => "scatter";
 
       /// <summary>
       ///   Gets the <c>data</c> section of the <i>Chart.js</i> configuration.
@@ -357,8 +360,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
       ///   The chart period ending timestamp.
       /// </param>
       /// <param name="measurements">
-      ///   The enumeration of measurements that will be displayed on the chart.
-      ///   Used for the chart's time axis bounds calculation only.
+      ///   The enumeration of measurements to be displayed on the chart.
       /// </param>
       public ChartJsConfig(ChartSettings chartSettings, DateTime periodStart, DateTime periodEnd,
         IEnumerable<Measurement> measurements)
