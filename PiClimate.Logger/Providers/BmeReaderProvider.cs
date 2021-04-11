@@ -16,7 +16,6 @@ using PiClimate.Logger.Settings;
 using UnitsNet;
 using UnitsNet.Units;
 
-// ReSharper disable InconsistentNaming
 namespace PiClimate.Logger.Providers
 {
   /// <summary>
@@ -130,29 +129,26 @@ namespace PiClimate.Logger.Providers
         Port.WriteLine(MeasureCommand);
         var response = Port.ReadLine();
         var match = Regex.Match(response, MeasurementPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        if (!match.Success)
+          throw new FormatException($"Invalid response received: {response}");
+
         return new Measurement
         {
           Timestamp = DateTime.Now,
-          Pressure = new Pressure(double.TryParse(match.Groups[1].Value, NumberStyles.Any,
-              CultureInfo.InvariantCulture, out var pressure)
-              ? pressure
-              : throw new FormatException(response),
-            PressureUnit.MillimeterOfMercury),
-          Temperature = new Temperature(double.TryParse(match.Groups[2].Value, NumberStyles.Any,
-              CultureInfo.InvariantCulture, out var temperature)
-              ? temperature
-              : throw new FormatException(response),
-            TemperatureUnit.DegreeCelsius),
-          Humidity = new RelativeHumidity(double.TryParse(match.Groups[3].Value, NumberStyles.Any,
-              CultureInfo.InvariantCulture, out var humidity)
-              ? humidity
-              : throw new FormatException(response),
-            RelativeHumidityUnit.Percent)
+          Pressure =
+            new Pressure(double.Parse(match.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture),
+              PressureUnit.MillimeterOfMercury),
+          Temperature =
+            new Temperature(double.Parse(match.Groups[2].Value, NumberStyles.Any, CultureInfo.InvariantCulture),
+              TemperatureUnit.DegreeCelsius),
+          Humidity =
+            new RelativeHumidity(double.Parse(match.Groups[3].Value, NumberStyles.Any, CultureInfo.InvariantCulture),
+              RelativeHumidityUnit.Percent)
         };
       }
-      catch (FormatException e)
+      catch (Exception e)
       {
-        throw new IOException($"Failed to receive the measurement data from the BMEReader adapter: {e.Message}");
+        throw new IOException($"Failed to read the measurement data from the BMEReader adapter: {e.Message}", e);
       }
       finally
       {
