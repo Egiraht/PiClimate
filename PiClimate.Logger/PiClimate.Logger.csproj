@@ -17,8 +17,8 @@
     <Description>Climatic data monitor</Description>
     <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.2</AssemblyVersion>
-    <InformationalVersion>1.2.2</InformationalVersion>
+    <AssemblyVersion>1.2.3</AssemblyVersion>
+    <InformationalVersion>1.2.3</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
