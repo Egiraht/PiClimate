@@ -33,8 +33,7 @@ namespace PiClimate.Monitor.Sources
     /// </summary>
     private string FilterMeasurementsSqlTemplate => $@"
       SELECT
-        FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)} *
-          @{nameof(MeasurementFilter.TimeStep)}))
+        FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`)))
           AS `{nameof(Measurement.Timestamp)}`,
         ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
           AS `{nameof(Measurement.PressureInMmHg)}`,
@@ -45,7 +44,9 @@ namespace PiClimate.Monitor.Sources
       FROM `{_measurementsTableName}`
       WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.PeriodStart)} AND
         @{nameof(MeasurementFilter.PeriodEnd)}
-      GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)}
+      GROUP BY
+        (UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) - UNIX_TIMESTAMP(@{nameof(MeasurementFilter.PeriodStart)}))
+          DIV @{nameof(MeasurementFilter.TimeStep)}
       ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
     ";
 
