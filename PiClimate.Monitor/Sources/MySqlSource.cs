@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,8 +33,7 @@ namespace PiClimate.Monitor.Sources
     /// </summary>
     private string FilterMeasurementsSqlTemplate => $@"
       SELECT
-        FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)} *
-          @{nameof(MeasurementFilter.TimeStep)}))
+        FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`)))
           AS `{nameof(Measurement.Timestamp)}`,
         ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
           AS `{nameof(Measurement.Pressure)}`,
@@ -45,8 +44,10 @@ namespace PiClimate.Monitor.Sources
       FROM `{_measurementsTableName}`
       WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.FromTime)} AND
         @{nameof(MeasurementFilter.ToTime)}
-      GROUP BY UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) DIV @{nameof(MeasurementFilter.TimeStep)}
-      ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
+      GROUP BY
+        (UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) - UNIX_TIMESTAMP(@{nameof(MeasurementFilter.FromTime)}))
+          DIV @{nameof(MeasurementFilter.TimeStep)}
+       ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
     ";
 
     /// <summary>
@@ -83,11 +84,8 @@ namespace PiClimate.Monitor.Sources
     }
 
     /// <inheritdoc />
-    public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter)
-    {
-      using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(FilterMeasurementsSqlTemplate, filter);
-    }
+    public IEnumerable<Measurement> GetMeasurements(MeasurementFilter filter) =>
+      GetMeasurementsAsync(filter).GetAwaiter().GetResult();
 
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter)
@@ -97,11 +95,8 @@ namespace PiClimate.Monitor.Sources
     }
 
     /// <inheritdoc />
-    public IEnumerable<Measurement> GetLatestMeasurements(LatestDataRequest request)
-    {
-      using var connection = new MySqlConnection(_connectionString);
-      return connection.Query<Measurement>(LatestMeasurementSqlTemplate, request);
-    }
+    public IEnumerable<Measurement> GetLatestMeasurements(LatestDataRequest request) =>
+      GetLatestMeasurementsAsync(request).GetAwaiter().GetResult();
 
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetLatestMeasurementsAsync(LatestDataRequest request)
