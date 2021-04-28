@@ -40,6 +40,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="UnitsNet" Version="4.87.0" />
+    <PackageReference Include="UnitsNet" Version="4.89.1" />
   </ItemGroup>
 </Project>

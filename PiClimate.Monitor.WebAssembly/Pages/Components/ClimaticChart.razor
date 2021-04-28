@@ -8,14 +8,14 @@
 
 @inject IJSRuntime _jsRuntime
 
-<canvas id="@ChartSettings.ChartId" class="chart-canvas p-3"></canvas>
+<canvas id="@ChartSettings.CanvasElementId" class="chart-canvas p-3"></canvas>
 
 @code
 {
   /// <summary>
   ///   Defines the chart initialization function name.
   /// </summary>
-  private const string ChartInitializationFunctionName = "initializeChart";
+  private const string ChartInitializationFunctionName = "initializeClimaticChart";
 
   /// <summary>
   ///   Gets or sets the chart settings object.
@@ -46,7 +46,7 @@
   {
     try
     {
-      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.ChartId,
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.CanvasElementId,
         ChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, Measurements));
     }
     catch

@@ -57,7 +57,7 @@ function initializeMiniChart(canvasId, config)
  * @param config {object} The chart configuration object. Gets serialized from the <i>ChartSettings.ChartJsConfig</i>
  *   class.
  */
-function initializeChart(canvasId, config)
+function initializeClimaticChart(canvasId, config)
 {
   "use strict";
 
@@ -84,8 +84,8 @@ function initializeChart(canvasId, config)
 
   // Setting the callbacks for chart tooltip format customization.
   moment.locale(config.format.locale);
-  config.options.tooltips.callbacks = {
-    title: tooltipItems => moment(tooltipItems[0].xLabel).format("L LTS"),
+  config.options.plugins.tooltip.callbacks = {
+    title: tooltipItems => moment(tooltipItems[0].raw.x).format("L LTS"),
     label: tooltipItem =>
     {
       let units = [
@@ -93,20 +93,20 @@ function initializeChart(canvasId, config)
         config.format.units.temperatureUnits,
         config.format.units.humidityUnits
       ];
-      return `${tooltipItem.yLabel} ${units[tooltipItem.datasetIndex]}`
+      return `${tooltipItem.formattedValue} ${units[tooltipItem.datasetIndex]}`
     }
   }
 
   // Removing the previous chart objects.
-  if (window[`chart:${canvasId}`] !== undefined)
+  if (window[`climaticChart:${canvasId}`] !== undefined)
   {
-    window[`chart:${canvasId}`].destroy();
-    delete window[`chart:${canvasId}`];
+    window[`climaticChart:${canvasId}`].destroy();
+    delete window[`climaticChart:${canvasId}`];
   }
-  if (window[`chartSettings:${canvasId}`] !== undefined)
-    delete window[`chartSettings:${canvasId}`];
+  if (window[`climaticChartSettings:${canvasId}`] !== undefined)
+    delete window[`climaticChartSettings:${canvasId}`];
 
   // Creating and registering a new chart object.
-  window[`chartSettings:${canvasId}`] = config;
-  window[`chart:${canvasId}`] = new Chart(canvasId, config);
+  window[`climaticChartSettings:${canvasId}`] = config;
+  window[`climaticChart:${canvasId}`] = new Chart(canvasId, config);
 }

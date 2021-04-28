@@ -21,9 +21,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
   public class ChartSettings
   {
     /// <summary>
-    ///   Defines the default chart HTML element ID.
+    ///   Defines the default <i>canvas</i> HTML element ID for climatic charts.
     /// </summary>
-    public const string DefaultChartElementId = "chart";
+    public const string DefaultCanvasElementId = "climatic-chart";
 
     /// <summary>
     ///   Defines the default line color value for pressure.
@@ -41,9 +41,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
     public const string DefaultHumidityLineColor = "red";
 
     /// <summary>
-    ///   Gets the ID string identifying the chart element in the HTML markup. Must be unique on the page.
+    ///   Gets the ID string identifying the chart <i>canvas</i> element in the HTML markup. Must be unique on the page.
     /// </summary>
-    public string ChartId { get; set; } = DefaultChartElementId;
+    public string CanvasElementId { get; set; } = DefaultCanvasElementId;
 
     /// <summary>
     ///   Gets or sets the chart's label string for pressure.
@@ -193,104 +193,107 @@ namespace PiClimate.Monitor.WebAssembly.Models
       {
         Scales = new
         {
-          XAxes = new[]
+          Date = new
           {
-            new
+            Id = DateAxisId,
+            Axis = "x",
+            Type = "time",
+            Display = true,
+            Time = new
             {
-              Id = DateAxisId,
-              Type = "time",
-              Display = true,
-              Time = new
+              IsoWeekday = true,
+              MinUnit = "second",
+              DisplayFormats = new
               {
-                IsoWeekday = true,
-                MinUnit = "second",
-                DisplayFormats = new
-                {
-                  Second = "LTS",
-                  Minute = "LT",
-                  Hour = "LT",
-                  Day = "L",
-                  Month = "L"
-                }
-              },
-              Ticks = new
-              {
-                Min = GetMinTimestamp().ToString("s"),
-                Max = GetMaxTimestamp().ToString("s")
+                Second = "LTS",
+                Minute = "LT",
+                Hour = "LT",
+                Day = "L",
+                Month = "L"
               }
+            },
+            SuggestedMin = _periodStart,
+            SuggestedMax = _periodEnd
+          },
+
+          Pressure = new
+          {
+            Id = PressureAxisId,
+            Axis = "y",
+            Type = "linear",
+            Display = "auto",
+            Position = "left",
+            Title = new
+            {
+              Color = _chartSettings.PressureLineColor,
+              Display = true,
+              Text = $"{_chartSettings.PressureChartLabel}, {GetUnitAbbreviation(_chartSettings.PressureUnit)}"
+            },
+            Grid = new
+            {
+              BorderColor = _chartSettings.PressureLineColor,
+              BorderDash = new[] {2, 10},
+              BorderDashOffset = 0,
+              Color = _chartSettings.PressureLineColor,
+              LineWidth = 1
+            },
+            Ticks = new
+            {
+              Color = _chartSettings.PressureLineColor
             }
           },
 
-          YAxes = new[]
+          Temperature = new
           {
-            new
+            Id = TemperatureAxisId,
+            Axis = "y",
+            Type = "linear",
+            Display = "auto",
+            Position = "right",
+            Title = new
             {
-              Id = PressureAxisId,
-              Type = "linear",
-              Display = "auto",
-              Position = "left",
-              ScaleLabel = new
-              {
-                Display = true,
-                LabelString =
-                  $"{_chartSettings.PressureChartLabel}, {GetUnitAbbreviation(_chartSettings.PressureUnit)}",
-                FontColor = _chartSettings.PressureLineColor
-              },
-              GridLines = new
-              {
-                Color = _chartSettings.PressureLineColor,
-                LineWidth = 0.5
-              },
-              Ticks = new
-              {
-                FontColor = _chartSettings.PressureLineColor
-              }
+              Color = _chartSettings.TemperatureLineColor,
+              Display = true,
+              Text = $"{_chartSettings.TemperatureChartLabel}, {GetUnitAbbreviation(_chartSettings.TemperatureUnit)}"
             },
-            new
+            Grid = new
             {
-              Id = TemperatureAxisId,
-              Type = "linear",
-              Display = "auto",
-              Position = "right",
-              ScaleLabel = new
-              {
-                Display = true,
-                LabelString =
-                  $"{_chartSettings.TemperatureChartLabel}, {GetUnitAbbreviation(_chartSettings.TemperatureUnit)}",
-                FontColor = _chartSettings.TemperatureLineColor
-              },
-              GridLines = new
-              {
-                Color = _chartSettings.TemperatureLineColor,
-                LineWidth = 0.5
-              },
-              Ticks = new
-              {
-                FontColor = _chartSettings.TemperatureLineColor
-              }
+              BorderColor = _chartSettings.TemperatureLineColor,
+              BorderDash = new[] {2, 10},
+              BorderDashOffset = 4,
+              Color = _chartSettings.TemperatureLineColor,
+              LineWidth = 1
             },
-            new
+            Ticks = new
             {
-              Id = HumidityAxisId,
-              Type = "linear",
-              Display = "auto",
-              Position = "right",
-              ScaleLabel = new
-              {
-                Display = true,
-                LabelString =
-                  $"{_chartSettings.HumidityChartLabel}, {GetUnitAbbreviation(_chartSettings.HumidityUnit)}",
-                FontColor = _chartSettings.HumidityLineColor
-              },
-              GridLines = new
-              {
-                Color = _chartSettings.HumidityLineColor,
-                LineWidth = 0.5
-              },
-              Ticks = new
-              {
-                FontColor = _chartSettings.HumidityLineColor
-              }
+              Color = _chartSettings.TemperatureLineColor
+            }
+          },
+
+          Humidity = new
+          {
+            Id = HumidityAxisId,
+            Axis = "y",
+            Type = "linear",
+            Display = "auto",
+            Position = "right",
+            Title = new
+            {
+              Color = _chartSettings.HumidityLineColor,
+              Display = true,
+              Text = $"{_chartSettings.HumidityChartLabel}, {GetUnitAbbreviation(_chartSettings.HumidityUnit)}"
+            },
+            Grid = new
+            {
+              BorderColor = _chartSettings.HumidityLineColor,
+              BorderDash = new[] {2, 10},
+              BorderDashOffset = 8,
+              Color = _chartSettings.HumidityLineColor,
+              LineWidth = 1
+            },
+            Ticks = new
+            {
+              Color = _chartSettings.HumidityLineColor
             }
           }
         },
@@ -300,8 +303,8 @@ namespace PiClimate.Monitor.WebAssembly.Models
           Point = new
           {
             Radius = 0.5,
-            HitRadius = 5,
-            HoverRadius = 5
+            HitRadius = 3,
+            HoverRadius = 0.5
           },
           Line = new
           {
@@ -311,25 +314,19 @@ namespace PiClimate.Monitor.WebAssembly.Models
           }
         },
 
-        Tooltips = new
+        Plugins = new
         {
-          Mode = "index",
-          Intersect = true,
-          Position = "nearest",
-          Callbacks = new { }
+          Tooltip = new
+          {
+            Enabled = true,
+            Mode = "index",
+            Intersect = true,
+            Position = "nearest",
+            Callbacks = new { }
+          }
         },
 
-        Animation = new
-        {
-          Duration = 0
-        },
-
-        Hover = new
-        {
-          AnimationDuration = 250
-        },
-
-        ResponsiveAnimationDuration = 0,
+        Animation = false,
         Locale = _chartSettings.CultureInfo.Name
       };
 
@@ -369,36 +366,6 @@ namespace PiClimate.Monitor.WebAssembly.Models
         _measurements = measurements.ToArray();
         _periodStart = periodStart;
         _periodEnd = periodEnd;
-      }
-
-      /// <summary>
-      ///   Gets the minimal timestamp for the chart's time axis.
-      /// </summary>
-      /// <returns>
-      ///   A <see cref="DateTime" /> representing the minimal timestamp.
-      /// </returns>
-      private DateTime GetMinTimestamp()
-      {
-        if (!_measurements.Any())
-          return _periodStart;
-
-        var minTimestamp = _measurements.Min(measurement => measurement.Timestamp);
-        return _periodStart < minTimestamp ? _periodStart : minTimestamp;
-      }
-
-      /// <summary>
-      ///   Gets the maximal timestamp for the chart's time axis.
-      /// </summary>
-      /// <returns>
-      ///   A <see cref="DateTime" /> representing the maximal timestamp.
-      /// </returns>
-      private DateTime GetMaxTimestamp()
-      {
-        if (!_measurements.Any())
-          return _periodEnd;
-
-        var maxTimestamp = _measurements.Max(measurement => measurement.Timestamp);
-        return _periodEnd > maxTimestamp ? _periodEnd : maxTimestamp;
       }
 
       /// <summary>

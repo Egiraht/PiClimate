@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 // ReSharper disable UnusedMember.Local
@@ -17,9 +18,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
   public class MiniChartSettings
   {
     /// <summary>
-    ///   Defines the default chart HTML element ID.
+    ///   Defines the default <i>canvas</i> HTML element ID for mini-charts.
     /// </summary>
-    public const string DefaultChartElementId = "mini-chart";
+    public const string DefaultCanvasElementId = "mini-chart";
 
     /// <summary>
     ///   Defines the default line color value.
@@ -27,14 +28,19 @@ namespace PiClimate.Monitor.WebAssembly.Models
     public const string DefaultLineColor = "gray";
 
     /// <summary>
-    ///   Gets the ID string identifying the mini-chart element in the HTML markup. Must be unique on the page.
+    ///   Gets the ID string identifying the chart <i>canvas</i> element in the HTML markup. Must be unique on the page.
     /// </summary>
-    public string MiniChartId { get; set; } = DefaultChartElementId;
+    public string CanvasElementId { get; set; } = DefaultCanvasElementId;
 
     /// <summary>
     ///   Gets or sets the chart's line color value.
     /// </summary>
     public string LineColor { get; set; } = DefaultLineColor;
+
+    /// <summary>
+    ///   Gets or sets the culture information object used for data formatting.
+    /// </summary>
+    public CultureInfo CultureInfo { get; set; } = CultureInfo.InvariantCulture;
 
     /// <summary>
     ///   Creates a <i>Chart.js</i> configuration object that can be provided when creating a new chart instance.
@@ -85,6 +91,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
           {
             XAxisID = DateAxisId,
             YAxisID = ValuesAxisId,
+            Label = string.Empty,
             BackgroundColor = _miniChartSettings.LineColor,
             BorderColor = _miniChartSettings.LineColor,
             ShowLine = true,
@@ -104,41 +111,37 @@ namespace PiClimate.Monitor.WebAssembly.Models
       {
         Scales = new
         {
-          XAxes = new[]
+          Date = new
           {
-            new
+            Id = DateAxisId,
+            Axis = "x",
+            Type = "time",
+            Display = false,
+            SuggestedMin = _periodStart.ToString("s"),
+            SuggestedMax = _periodEnd.ToString("s"),
+            Ticks = new
             {
-              Id = DateAxisId,
-              Type = "time",
-              Display = false,
-              Ticks = new
-              {
-                Display = false,
-                Min = GetMinTimestamp().ToString("s"),
-                Max = GetMaxTimestamp().ToString("s")
-              }
+              Display = false
             }
           },
 
-          YAxes = new[]
+          Values = new
           {
-            new
+            Id = ValuesAxisId,
+            Axis = "y",
+            Type = "linear",
+            Display = false,
+            ScaleLabel = new
             {
-              Id = ValuesAxisId,
-              Type = "linear",
-              Display = false,
-              ScaleLabel = new
-              {
-                Display = false
-              },
-              GridLines = new
-              {
-                Display = false
-              },
-              Ticks = new
-              {
-                Display = false
-              }
+              Display = false
+            },
+            GridLines = new
+            {
+              Display = false
+            },
+            Ticks = new
+            {
+              Display = false
             }
           }
         },
@@ -147,9 +150,9 @@ namespace PiClimate.Monitor.WebAssembly.Models
         {
           Point = new
           {
-            Radius = 0,
+            Radius = 0.5,
             HitRadius = 0,
-            HoverRadius = 0
+            HoverRadius = 0.5
           },
           Line = new
           {
@@ -159,27 +162,21 @@ namespace PiClimate.Monitor.WebAssembly.Models
           }
         },
 
-        Legend = new
+        Plugins = new
         {
-          Display = false
+          Legend = new
+          {
+            Display = false
+          },
+
+          Tooltip = new
+          {
+            Enabled = false
+          }
         },
 
-        Tooltips = new
-        {
-          Enabled = false
-        },
-
-        Animation = new
-        {
-          Duration = 0
-        },
-
-        Hover = new
-        {
-          AnimationDuration = 0
-        },
-
-        ResponsiveAnimationDuration = 0
+        Animation = false,
+        Locale = _miniChartSettings.CultureInfo.Name
       };
 
       /// <summary>
@@ -204,36 +201,6 @@ namespace PiClimate.Monitor.WebAssembly.Models
         _dataPoints = dataPoints.ToArray();
         _periodStart = periodStart;
         _periodEnd = periodEnd;
-      }
-
-      /// <summary>
-      ///   Gets the minimal timestamp for the chart's time axis.
-      /// </summary>
-      /// <returns>
-      ///   A <see cref="DateTime" /> representing the minimal timestamp.
-      /// </returns>
-      private DateTime GetMinTimestamp()
-      {
-        if (!_dataPoints.Any())
-          return _periodStart;
-
-        var minTimestamp = _dataPoints.Min(dataPoint => dataPoint.Timestamp);
-        return _periodStart < minTimestamp ? _periodStart : minTimestamp;
-      }
-
-      /// <summary>
-      ///   Gets the maximal timestamp for the chart's time axis.
-      /// </summary>
-      /// <returns>
-      ///   A <see cref="DateTime" /> representing the maximal timestamp.
-      /// </returns>
-      private DateTime GetMaxTimestamp()
-      {
-        if (!_dataPoints.Any())
-          return _periodEnd;
-
-        var maxTimestamp = _dataPoints.Max(dataPoint => dataPoint.Timestamp);
-        return _periodEnd > maxTimestamp ? _periodEnd : maxTimestamp;
       }
     }
   }

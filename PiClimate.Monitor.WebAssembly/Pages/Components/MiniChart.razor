@@ -8,7 +8,7 @@
 
 @inject IJSRuntime _jsRuntime
 
-<canvas id="@MiniChartSettings.MiniChartId" class="mini-chart-canvas"></canvas>
+<canvas id="@MiniChartSettings.CanvasElementId" class="mini-chart-canvas"></canvas>
 
 @code
 {
@@ -47,7 +47,7 @@
   {
     try
     {
-      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, MiniChartSettings.MiniChartId,
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, MiniChartSettings.CanvasElementId,
         MiniChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, DataPoints));
     }
     catch
