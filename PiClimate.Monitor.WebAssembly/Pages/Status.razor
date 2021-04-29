@@ -11,7 +11,7 @@
 @inject IHttpClientFactory _httpClientFactory
 
 <CascadingValue Value="@this">
-  <div class="position-relative d-flex flex-column h-100 m-2 @(IsUpdating ? "loading" : "")">
+  <div class="position-relative d-flex flex-column h-100 p-2 @(IsUpdating ? "loading" : "")">
     <div class="position-fixed z-1">
       <UpdateButton />
     </div>

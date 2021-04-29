@@ -18,8 +18,10 @@
     <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
     <AssemblyVersion>2.0.0</AssemblyVersion>
-    <InformationalVersion>2.0.0</InformationalVersion>
+    <InformationalVersion>2.0.0-beta</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
     <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor.WebAssembly</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Egiraht/PiClimate.git</RepositoryUrl>

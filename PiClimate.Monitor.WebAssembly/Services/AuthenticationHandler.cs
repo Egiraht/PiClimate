@@ -9,14 +9,16 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using PiClimate.Common.Models;
 
 namespace PiClimate.Monitor.WebAssembly.Services
 {
   /// <summary>
-  ///   The message handler class that automatically signs out on receiving the <c>401 Unauthorized</c> response.
+  ///   The message handler class that handles the server-side authentication process and automatically signs out on
+  ///   receiving the <c>401 Unauthorized</c> response.
   /// </summary>
-  public class UnauthorizedMessageHandler : DelegatingHandler
+  public class AuthenticationHandler : DelegatingHandler
   {
     /// <summary>
     ///   The storage provider service instance.
@@ -39,7 +41,7 @@ namespace PiClimate.Monitor.WebAssembly.Services
     ///   The authentication state provider service instance.
     ///   Provided via dependency injection.
     /// </param>
-    public UnauthorizedMessageHandler(IStorageProvider storageProvider, AuthenticationStateProvider authProvider)
+    public AuthenticationHandler(IStorageProvider storageProvider, AuthenticationStateProvider authProvider)
     {
       _storageProvider = storageProvider;
       _authProvider = authProvider;
@@ -49,6 +51,9 @@ namespace PiClimate.Monitor.WebAssembly.Services
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
       CancellationToken cancellationToken)
     {
+      request.SetBrowserRequestMode(BrowserRequestMode.Cors);
+      request.SetBrowserRequestCredentials(BrowserRequestCredentials.SameOrigin);
+
       var response = await base.SendAsync(request, cancellationToken);
       if (response.StatusCode != HttpStatusCode.Unauthorized)
         return response;

@@ -18,7 +18,7 @@
     <Copyright>Copyright © 2020-2021 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
     <AssemblyVersion>2.0.0</AssemblyVersion>
-    <InformationalVersion>2.0.0</InformationalVersion>
+    <InformationalVersion>2.0.0-beta</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>

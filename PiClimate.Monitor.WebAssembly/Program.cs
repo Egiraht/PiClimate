@@ -35,10 +35,10 @@ namespace PiClimate.Monitor.WebAssembly
 
       builder.Services.AddTransient<IStorageProvider, LocalStorageProvider>();
 
-      builder.Services.AddTransient<UnauthorizedMessageHandler>();
+      builder.Services.AddTransient<AuthenticationHandler>();
       builder.Services
         .AddHttpClient(string.Empty, client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-        .AddHttpMessageHandler<UnauthorizedMessageHandler>();
+        .AddHttpMessageHandler<AuthenticationHandler>();
 
       builder.Services.AddSingleton<AuthInfoAuthenticator>();
       builder.Services.AddSingleton<AuthenticationStateProvider>(provider =>
