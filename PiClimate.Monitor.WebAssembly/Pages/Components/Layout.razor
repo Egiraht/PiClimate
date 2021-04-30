@@ -8,14 +8,15 @@
 
 @inherits LayoutComponentBase
 
-<div id="layout" class="d-flex flex-column flex-lg-row w-100 vh-100">
+<div id="layout" class="d-flex flex-column flex-lg-row h-100">
   @* Navigation menu. *@
-  <aside id="nav-panel" class="d-flex flex-row flex-lg-column flex-nowrap flex-shrink-0 navbar navbar-dark bg-dark overflow-auto p-2">
+  <aside id="nav-panel"
+         class="d-flex flex-row flex-lg-column flex-nowrap flex-grow-0 flex-shrink-0 navbar navbar-dark bg-dark overflow-auto p-2">
     <div class="flex-fill w-100">
       <NavMenu />
     </div>
 
-    @* Footer for narrow viewports. *@
+    @* Footer for wide viewports. *@
     <hr class="d-none d-lg-block border-light w-100 my-2" />
     <div class="d-none d-lg-block">
       <SiteFooter />
@@ -23,14 +24,12 @@
   </aside>
 
   @* Main content. *@
-  <div class="overflow-auto d-flex flex-column flex-fill bg-light">
-    <main id="main" class="flex-fill w-100">
-      @Body
-    </main>
+  <main id="main" class="overflow-auto bg-light w-100 h-100">
+    @Body
+  </main>
 
-    @* Footer for wide viewports. *@
-    <div class="d-block d-lg-none bg-dark p-2 w-100">
-      <SiteFooter />
-    </div>
+  @* Footer for narrow viewports. *@
+  <div class="d-block d-lg-none bg-dark p-2">
+    <SiteFooter />
   </div>
 </div>

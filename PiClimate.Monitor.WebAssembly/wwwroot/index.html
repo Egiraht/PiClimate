@@ -21,21 +21,23 @@
   </head>
 
   <body>
-    <div id="blazor-error-ui" class="fixed-top w-100 vh-100">
-      <div class="d-flex justify-content-center align-items-center w-100 h-100">
-        <div class="alert alert-danger h4 text-center m-0">
-          <div class="m-3">
-            An unhandled exception has occurred.
+    <div id="wrapper">
+      <div id="blazor-error-ui" class="h-100">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div class="alert alert-danger h4 text-center m-0">
+            <div class="m-3">
+              An unhandled exception has occurred.
+            </div>
+            <button class="btn btn-outline-dark mb-3" onclick="location.reload()">Reload</button>
           </div>
-          <button class="btn btn-outline-dark mb-3" onclick="location.reload()">Reload</button>
         </div>
       </div>
-    </div>
-
-    <div id="app">
-      <div class="d-flex justify-content-center align-items-center fixed-top bg-dark w-100 vh-100">
-        <div class="loading-block border-light"></div>
-        <div class="loading-text text-light">Loading...</div>
+  
+      <div id="app" class="h-100">
+        <div class="d-flex flex-row justify-content-center align-items-center bg-dark h-100">
+          <div class="loading-block border-light"></div>
+          <div class="loading-text text-light">Loading...</div>
+        </div>
       </div>
     </div>
   </body>

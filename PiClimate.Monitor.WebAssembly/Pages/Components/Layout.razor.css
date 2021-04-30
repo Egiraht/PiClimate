@@ -6,6 +6,11 @@
   Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
  */
 
+#main
+{
+  min-height: 200px;
+}
+
 @media (min-width: 992px)
 {
   #nav-panel
