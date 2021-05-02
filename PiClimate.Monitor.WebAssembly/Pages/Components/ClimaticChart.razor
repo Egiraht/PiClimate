@@ -8,7 +8,7 @@
 
 @inject IJSRuntime _jsRuntime
 
-<canvas id="@ChartSettings.CanvasElementId" class="chart-canvas p-3"></canvas>
+<canvas id="@Settings.CanvasElementId" class="chart-canvas p-3"></canvas>
 
 @code
 {
@@ -18,10 +18,10 @@
   private const string ChartInitializationFunctionName = "initializeClimaticChart";
 
   /// <summary>
-  ///   Gets or sets the chart settings object.
+  ///   Gets or sets the climatic chart settings object.
   /// </summary>
   [Parameter]
-  public ChartSettings ChartSettings { get; set; } = new();
+  public ClimaticChartSettings Settings { get; set; } = new();
 
   /// <summary>
   ///   Gets or sets the starting timestamp of the chart.
@@ -46,8 +46,8 @@
   {
     try
     {
-      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, ChartSettings.CanvasElementId,
-        ChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, Measurements));
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, Settings.CanvasElementId,
+        Settings.CreateChartJsConfiguration(PeriodStart, PeriodEnd, Measurements));
     }
     catch
     {

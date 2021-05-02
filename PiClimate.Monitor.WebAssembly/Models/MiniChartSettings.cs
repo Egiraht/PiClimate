@@ -56,133 +56,143 @@ namespace PiClimate.Monitor.WebAssembly.Models
     ///   consisting of a timestamp and a corresponding data value.
     /// </param>
     /// <returns>
-    ///   The configured <i>Chart.js</i> options object.
+    ///   The configured <i>Chart.js</i> configuration object.
     /// </returns>
-    public object CreateChartJsOptions(DateTime periodStart, DateTime periodEnd,
+    public object CreateChartJsConfiguration(DateTime periodStart, DateTime periodEnd,
       IEnumerable<(DateTime Timestamp, double Value)> dataPoints) =>
-      new ChartJsConfig(this, periodStart, periodEnd, dataPoints);
+      new ChartJsConfigurationBuilder(this, periodStart, periodEnd, dataPoints).ChartJsConfiguration;
 
     /// <summary>
-    ///   The JSON-serializable object containing the configuration for rendering a <i>Chart.js</i> chart.
+    ///   The <i>Chart.js</i> mini-chart configuration builder class.
     /// </summary>
-    private class ChartJsConfig
+    private class ChartJsConfigurationBuilder
     {
       private const string DateAxisId = "date";
       private const string ValuesAxisId = "values";
 
-      private readonly MiniChartSettings _miniChartSettings;
+      private readonly MiniChartSettings _settings;
       private readonly DateTime _periodStart;
       private readonly DateTime _periodEnd;
       private readonly (DateTime Timestamp, double Value)[] _dataPoints;
+      private object? _chartJsConfiguration;
 
       /// <summary>
-      ///   Gets the <i>Chart.js</i> chart type.
+      ///   Gets the JSON-serializable mini-chart configuration object for <i>Chart.js</i>.
       /// </summary>
-      public string Type => "scatter";
-
-      /// <summary>
-      ///   Gets the <c>data</c> section of the <i>Chart.js</i> configuration.
-      /// </summary>
-      public object Data => new
+      public object ChartJsConfiguration => _chartJsConfiguration ??= new
       {
-        Datasets = new object[]
+        Type = "scatter",
+        Data = new
         {
-          new
+          Datasets = new object[]
           {
-            XAxisID = DateAxisId,
-            YAxisID = ValuesAxisId,
-            Label = string.Empty,
-            BackgroundColor = _miniChartSettings.LineColor,
-            BorderColor = _miniChartSettings.LineColor,
-            ShowLine = true,
-            Data = _dataPoints.Select(dataPoint => new
+            new
             {
-              X = dataPoint.Timestamp.ToString("s"),
-              Y = dataPoint.Value
-            })
+              XAxisID = DateAxisId,
+              YAxisID = ValuesAxisId,
+              Label = string.Empty,
+              BackgroundColor = _settings.LineColor,
+              BorderColor = _settings.LineColor,
+              ShowLine = true,
+              Data = _dataPoints.Select(dataPoint => new
+              {
+                X = dataPoint.Timestamp.ToString("s"),
+                Y = dataPoint.Value
+              })
+            }
           }
+        },
+        Options = new
+        {
+          Scales = new
+          {
+            Date = new
+            {
+              Id = DateAxisId,
+              Axis = "x",
+              Type = "time",
+              Display = true,
+              SuggestedMin = _periodStart.ToString("s"),
+              SuggestedMax = _periodEnd.ToString("s"),
+              Title = new
+              {
+                Display = true,
+                Color = _settings.LineColor,
+                Text = $"{(_periodEnd - _periodStart).Duration().TotalHours} hour(s)"
+              },
+              Grid = new
+              {
+                Display = false
+              },
+              Ticks = new
+              {
+                Display = false
+              }
+            },
+            Values = new
+            {
+              Id = ValuesAxisId,
+              Axis = "y",
+              Type = "linear",
+              Display = true,
+              Title = new
+              {
+                Display = false
+              },
+              Grid = new
+              {
+                Display = true,
+                DrawBorder = false,
+                DrawTicks = false,
+                BorderDash = new[] {1, 3},
+                Color = _settings.LineColor,
+                LineWidth = 0.5
+              },
+              Ticks = new
+              {
+                Display = true,
+                Color = _settings.LineColor,
+                MaxTicksLimit = 5,
+                Precision = 0
+              }
+            }
+          },
+          Elements = new
+          {
+            Point = new
+            {
+              Radius = 0.5,
+              HitRadius = 0,
+              HoverRadius = 0.5
+            },
+            Line = new
+            {
+              BorderWidth = 1,
+              Tension = 0,
+              Fill = false
+            }
+          },
+          Plugins = new
+          {
+            Legend = new
+            {
+              Display = false
+            },
+
+            Tooltip = new
+            {
+              Enabled = false
+            }
+          },
+          Animation = false,
+          Locale = _settings.CultureInfo.Name
         }
-      };
-
-      /// <summary>
-      ///   Gets the <c>options</c> section of the <i>Chart.js</i> configuration.
-      /// </summary>
-      public object Options => new
-      {
-        Scales = new
-        {
-          Date = new
-          {
-            Id = DateAxisId,
-            Axis = "x",
-            Type = "time",
-            Display = false,
-            SuggestedMin = _periodStart.ToString("s"),
-            SuggestedMax = _periodEnd.ToString("s"),
-            Ticks = new
-            {
-              Display = false
-            }
-          },
-
-          Values = new
-          {
-            Id = ValuesAxisId,
-            Axis = "y",
-            Type = "linear",
-            Display = false,
-            ScaleLabel = new
-            {
-              Display = false
-            },
-            GridLines = new
-            {
-              Display = false
-            },
-            Ticks = new
-            {
-              Display = false
-            }
-          }
-        },
-
-        Elements = new
-        {
-          Point = new
-          {
-            Radius = 0.5,
-            HitRadius = 0,
-            HoverRadius = 0.5
-          },
-          Line = new
-          {
-            BorderWidth = 1,
-            Tension = 0,
-            Fill = false
-          }
-        },
-
-        Plugins = new
-        {
-          Legend = new
-          {
-            Display = false
-          },
-
-          Tooltip = new
-          {
-            Enabled = false
-          }
-        },
-
-        Animation = false,
-        Locale = _miniChartSettings.CultureInfo.Name
       };
 
       /// <summary>
       ///   Creates a new <i>Chart.js</i> configuration object.
       /// </summary>
-      /// <param name="miniChartSettings">
+      /// <param name="settings">
       ///   The mini-chart settings object.
       /// </param>
       /// <param name="periodStart">
@@ -194,10 +204,10 @@ namespace PiClimate.Monitor.WebAssembly.Models
       /// <param name="dataPoints">
       ///   The enumeration of data points to be displayed on the mini-chart.
       /// </param>
-      public ChartJsConfig(MiniChartSettings miniChartSettings, DateTime periodStart, DateTime periodEnd,
+      public ChartJsConfigurationBuilder(MiniChartSettings settings, DateTime periodStart, DateTime periodEnd,
         IEnumerable<(DateTime Timestamp, double Value)> dataPoints)
       {
-        _miniChartSettings = miniChartSettings;
+        _settings = settings;
         _dataPoints = dataPoints.ToArray();
         _periodStart = periodStart;
         _periodEnd = periodEnd;

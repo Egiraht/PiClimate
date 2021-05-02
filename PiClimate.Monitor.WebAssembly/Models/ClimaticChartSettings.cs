@@ -16,9 +16,9 @@ using UnitsNet.Units;
 namespace PiClimate.Monitor.WebAssembly.Models
 {
   /// <summary>
-  ///   The model class containing the chart settings.
+  ///   The model class containing the climatic chart settings.
   /// </summary>
-  public class ChartSettings
+  public class ClimaticChartSettings
   {
     /// <summary>
     ///   Defines the default <i>canvas</i> HTML element ID for climatic charts.
@@ -108,246 +108,241 @@ namespace PiClimate.Monitor.WebAssembly.Models
     ///   The enumeration of measurements to be displayed on the chart.
     /// </param>
     /// <returns>
-    ///   The configured <i>Chart.js</i> options object.
+    ///   The configured <i>Chart.js</i> configuration object.
     /// </returns>
-    public object CreateChartJsOptions(DateTime periodStart, DateTime periodEnd,
+    public object CreateChartJsConfiguration(DateTime periodStart, DateTime periodEnd,
       IEnumerable<Measurement> measurements) =>
-      new ChartJsConfig(this, periodStart, periodEnd, measurements);
+      new ChartJsConfigurationBuilder(this, periodStart, periodEnd, measurements).ChartJsConfiguration;
 
     /// <summary>
-    ///   The JSON-serializable object containing the configuration for rendering a <i>Chart.js</i> chart.
+    ///   The <i>Chart.js</i> climatic chart configuration builder class.
     /// </summary>
-    private class ChartJsConfig
+    private class ChartJsConfigurationBuilder
     {
       private const string DateAxisId = "date";
       private const string PressureAxisId = "pressure";
       private const string TemperatureAxisId = "temperature";
       private const string HumidityAxisId = "humidity";
 
-      private readonly ChartSettings _chartSettings;
+      private readonly ClimaticChartSettings _settings;
       private readonly DateTime _periodStart;
       private readonly DateTime _periodEnd;
       private readonly Measurement[] _measurements;
+      private object? _chartJsConfiguration;
 
       /// <summary>
-      ///   Gets the <i>Chart.js</i> chart type.
+      ///   Gets the JSON-serializable mini-chart configuration object for <i>Chart.js</i>.
       /// </summary>
-      public string Type => "scatter";
-
-      /// <summary>
-      ///   Gets the <c>data</c> section of the <i>Chart.js</i> configuration.
-      /// </summary>
-      public object Data => new
+      public object ChartJsConfiguration => _chartJsConfiguration ??= new
       {
-        Datasets = new object[]
+        Type = "scatter",
+        Data = new
         {
-          new
+          Datasets = new object[]
           {
-            XAxisID = DateAxisId,
-            YAxisID = PressureAxisId,
-            Label = _chartSettings.PressureChartLabel,
-            BackgroundColor = _chartSettings.PressureLineColor,
-            BorderColor = _chartSettings.PressureLineColor,
-            ShowLine = true,
-            Data = _measurements.Select(measurement => new
+            // Pressure data points.
+            new
             {
-              X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Pressure.As(_chartSettings.PressureUnit)
-            })
-          },
-          new
-          {
-            XAxisID = DateAxisId,
-            YAxisID = TemperatureAxisId,
-            Label = _chartSettings.TemperatureChartLabel,
-            BackgroundColor = _chartSettings.TemperatureLineColor,
-            BorderColor = _chartSettings.TemperatureLineColor,
-            ShowLine = true,
-            Data = _measurements.Select(measurement => new
-            {
-              X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Temperature.As(_chartSettings.TemperatureUnit)
-            })
-          },
-          new
-          {
-            XAxisID = DateAxisId,
-            YAxisID = HumidityAxisId,
-            Label = _chartSettings.HumidityChartLabel,
-            BackgroundColor = _chartSettings.HumidityLineColor,
-            BorderColor = _chartSettings.HumidityLineColor,
-            ShowLine = true,
-            Data = _measurements.Select(measurement => new
-            {
-              X = measurement.Timestamp.ToString("s"),
-              Y = measurement.Humidity.As(_chartSettings.HumidityUnit)
-            })
-          }
-        }
-      };
-
-      /// <summary>
-      ///   Gets the <c>options</c> section of the <i>Chart.js</i> configuration.
-      /// </summary>
-      public object Options => new
-      {
-        Scales = new
-        {
-          Date = new
-          {
-            Id = DateAxisId,
-            Axis = "x",
-            Type = "time",
-            Display = true,
-            Time = new
-            {
-              IsoWeekday = true,
-              MinUnit = "second",
-              DisplayFormats = new
+              XAxisID = DateAxisId,
+              YAxisID = PressureAxisId,
+              Label = _settings.PressureChartLabel,
+              BackgroundColor = _settings.PressureLineColor,
+              BorderColor = _settings.PressureLineColor,
+              ShowLine = true,
+              Data = _measurements.Select(measurement => new
               {
-                Second = "LTS",
-                Minute = "LT",
-                Hour = "LT",
-                Day = "L",
-                Month = "L"
+                X = measurement.Timestamp.ToString("s"),
+                Y = measurement.Pressure.As(_settings.PressureUnit)
+              })
+            },
+            // Temperature data points.
+            new
+            {
+              XAxisID = DateAxisId,
+              YAxisID = TemperatureAxisId,
+              Label = _settings.TemperatureChartLabel,
+              BackgroundColor = _settings.TemperatureLineColor,
+              BorderColor = _settings.TemperatureLineColor,
+              ShowLine = true,
+              Data = _measurements.Select(measurement => new
+              {
+                X = measurement.Timestamp.ToString("s"),
+                Y = measurement.Temperature.As(_settings.TemperatureUnit)
+              })
+            },
+            // Humidity data points.
+            new
+            {
+              XAxisID = DateAxisId,
+              YAxisID = HumidityAxisId,
+              Label = _settings.HumidityChartLabel,
+              BackgroundColor = _settings.HumidityLineColor,
+              BorderColor = _settings.HumidityLineColor,
+              ShowLine = true,
+              Data = _measurements.Select(measurement => new
+              {
+                X = measurement.Timestamp.ToString("s"),
+                Y = measurement.Humidity.As(_settings.HumidityUnit)
+              })
+            }
+          }
+        },
+        Options = new
+        {
+          Scales = new
+          {
+            Date = new
+            {
+              Id = DateAxisId,
+              Axis = "x",
+              Type = "time",
+              Display = true,
+              Time = new
+              {
+                IsoWeekday = true,
+                MinUnit = "second",
+                DisplayFormats = new
+                {
+                  Second = "LTS",
+                  Minute = "LT",
+                  Hour = "LT",
+                  Day = "L",
+                  Month = "L"
+                }
+              },
+              SuggestedMin = _periodStart,
+              SuggestedMax = _periodEnd
+            },
+            Pressure = new
+            {
+              Id = PressureAxisId,
+              Axis = "y",
+              Type = "linear",
+              Display = "auto",
+              Position = "left",
+              Title = new
+              {
+                Display = true,
+                Color = _settings.PressureLineColor,
+                Text = $"{_settings.PressureChartLabel}, {GetUnitAbbreviation(_settings.PressureUnit)}"
+              },
+              Grid = new
+              {
+                Display = true,
+                BorderColor = _settings.PressureLineColor,
+                BorderDash = new[] {2, 10},
+                BorderDashOffset = 0,
+                Color = _settings.PressureLineColor,
+                LineWidth = 0.5
+              },
+              Ticks = new
+              {
+                Display = true,
+                Color = _settings.PressureLineColor
               }
             },
-            SuggestedMin = _periodStart,
-            SuggestedMax = _periodEnd
-          },
-
-          Pressure = new
-          {
-            Id = PressureAxisId,
-            Axis = "y",
-            Type = "linear",
-            Display = "auto",
-            Position = "left",
-            Title = new
+            Temperature = new
             {
-              Color = _chartSettings.PressureLineColor,
-              Display = true,
-              Text = $"{_chartSettings.PressureChartLabel}, {GetUnitAbbreviation(_chartSettings.PressureUnit)}"
+              Id = TemperatureAxisId,
+              Axis = "y",
+              Type = "linear",
+              Display = "auto",
+              Position = "right",
+              Title = new
+              {
+                Display = true,
+                Color = _settings.TemperatureLineColor,
+                Text = $"{_settings.TemperatureChartLabel}, {GetUnitAbbreviation(_settings.TemperatureUnit)}"
+              },
+              Grid = new
+              {
+                Display = true,
+                BorderColor = _settings.TemperatureLineColor,
+                BorderDash = new[] {2, 10},
+                BorderDashOffset = 4,
+                Color = _settings.TemperatureLineColor,
+                LineWidth = 0.5
+              },
+              Ticks = new
+              {
+                Display = true,
+                Color = _settings.TemperatureLineColor
+              }
             },
-            Grid = new
+            Humidity = new
             {
-              BorderColor = _chartSettings.PressureLineColor,
-              BorderDash = new[] {2, 10},
-              BorderDashOffset = 0,
-              Color = _chartSettings.PressureLineColor,
-              LineWidth = 1
-            },
-            Ticks = new
-            {
-              Color = _chartSettings.PressureLineColor
+              Id = HumidityAxisId,
+              Axis = "y",
+              Type = "linear",
+              Display = "auto",
+              Position = "right",
+              Title = new
+              {
+                Display = true,
+                Color = _settings.HumidityLineColor,
+                Text = $"{_settings.HumidityChartLabel}, {GetUnitAbbreviation(_settings.HumidityUnit)}"
+              },
+              Grid = new
+              {
+                Display = true,
+                BorderColor = _settings.HumidityLineColor,
+                BorderDash = new[] {2, 10},
+                BorderDashOffset = 8,
+                Color = _settings.HumidityLineColor,
+                LineWidth = 0.5
+              },
+              Ticks = new
+              {
+                Display = true,
+                Color = _settings.HumidityLineColor
+              }
             }
           },
-
-          Temperature = new
+          Elements = new
           {
-            Id = TemperatureAxisId,
-            Axis = "y",
-            Type = "linear",
-            Display = "auto",
-            Position = "right",
-            Title = new
+            Point = new
             {
-              Color = _chartSettings.TemperatureLineColor,
-              Display = true,
-              Text = $"{_chartSettings.TemperatureChartLabel}, {GetUnitAbbreviation(_chartSettings.TemperatureUnit)}"
+              Radius = 0.5,
+              HitRadius = 3,
+              HoverRadius = 0.5
             },
-            Grid = new
+            Line = new
             {
-              BorderColor = _chartSettings.TemperatureLineColor,
-              BorderDash = new[] {2, 10},
-              BorderDashOffset = 4,
-              Color = _chartSettings.TemperatureLineColor,
-              LineWidth = 1
-            },
-            Ticks = new
-            {
-              Color = _chartSettings.TemperatureLineColor
+              BorderWidth = 2,
+              Tension = 0,
+              Fill = false
             }
           },
-
-          Humidity = new
+          Plugins = new
           {
-            Id = HumidityAxisId,
-            Axis = "y",
-            Type = "linear",
-            Display = "auto",
-            Position = "right",
-            Title = new
+            Tooltip = new
             {
-              Color = _chartSettings.HumidityLineColor,
-              Display = true,
-              Text = $"{_chartSettings.HumidityChartLabel}, {GetUnitAbbreviation(_chartSettings.HumidityUnit)}"
-            },
-            Grid = new
-            {
-              BorderColor = _chartSettings.HumidityLineColor,
-              BorderDash = new[] {2, 10},
-              BorderDashOffset = 8,
-              Color = _chartSettings.HumidityLineColor,
-              LineWidth = 1
-            },
-            Ticks = new
-            {
-              Color = _chartSettings.HumidityLineColor
+              Enabled = true,
+              Mode = "index",
+              Intersect = true,
+              Position = "nearest",
+              Callbacks = new { }
             }
-          }
-        },
-
-        Elements = new
-        {
-          Point = new
-          {
-            Radius = 0.5,
-            HitRadius = 3,
-            HoverRadius = 0.5
           },
-          Line = new
-          {
-            BorderWidth = 2,
-            Tension = 0,
-            Fill = false
-          }
+          Animation = false,
+          Locale = _settings.CultureInfo.Name
         },
-
-        Plugins = new
+        Format = new
         {
-          Tooltip = new
+          Locale = _settings.CultureInfo.Name,
+          Units = new
           {
-            Enabled = true,
-            Mode = "index",
-            Intersect = true,
-            Position = "nearest",
-            Callbacks = new { }
+            PressureUnits = GetUnitAbbreviation(_settings.PressureUnit),
+            TemperatureUnits = GetUnitAbbreviation(_settings.TemperatureUnit),
+            HumidityUnits = GetUnitAbbreviation(_settings.HumidityUnit)
           }
-        },
-
-        Animation = false,
-        Locale = _chartSettings.CultureInfo.Name
-      };
-
-      /// <summary>
-      ///   Gets the additional non-standard <c>format</c> section of the configuration used for chart customization.
-      /// </summary>
-      public object Format => new
-      {
-        Locale = _chartSettings.CultureInfo.Name,
-        Units = new
-        {
-          PressureUnits = GetUnitAbbreviation(_chartSettings.PressureUnit),
-          TemperatureUnits = GetUnitAbbreviation(_chartSettings.TemperatureUnit),
-          HumidityUnits = GetUnitAbbreviation(_chartSettings.HumidityUnit)
         }
       };
 
       /// <summary>
       ///   Creates a new <i>Chart.js</i> configuration object.
       /// </summary>
-      /// <param name="chartSettings">
+      /// <param name="settings">
       ///   The chart settings object.
       /// </param>
       /// <param name="periodStart">
@@ -359,10 +354,10 @@ namespace PiClimate.Monitor.WebAssembly.Models
       /// <param name="measurements">
       ///   The enumeration of measurements to be displayed on the chart.
       /// </param>
-      public ChartJsConfig(ChartSettings chartSettings, DateTime periodStart, DateTime periodEnd,
+      public ChartJsConfigurationBuilder(ClimaticChartSettings settings, DateTime periodStart, DateTime periodEnd,
         IEnumerable<Measurement> measurements)
       {
-        _chartSettings = chartSettings;
+        _settings = settings;
         _measurements = measurements.ToArray();
         _periodStart = periodStart;
         _periodEnd = periodEnd;
@@ -381,7 +376,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
       ///   The unit abbreviation string.
       /// </returns>
       private string GetUnitAbbreviation<TUnit>(TUnit unit) where TUnit : Enum =>
-        UnitAbbreviationsCache.Default.GetDefaultAbbreviation(unit, _chartSettings.CultureInfo);
+        UnitAbbreviationsCache.Default.GetDefaultAbbreviation(unit, _settings.CultureInfo);
     }
   }
 }

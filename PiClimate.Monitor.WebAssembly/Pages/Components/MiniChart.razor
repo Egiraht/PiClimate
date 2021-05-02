@@ -8,7 +8,7 @@
 
 @inject IJSRuntime _jsRuntime
 
-<canvas id="@MiniChartSettings.CanvasElementId" class="mini-chart-canvas"></canvas>
+<canvas id="@Settings.CanvasElementId" class="mini-chart-canvas"></canvas>
 
 @code
 {
@@ -21,7 +21,7 @@
   ///   Gets or sets the mini-chart settings object.
   /// </summary>
   [Parameter]
-  public MiniChartSettings MiniChartSettings { get; set; } = new();
+  public MiniChartSettings Settings { get; set; } = new();
 
   /// <summary>
   ///   Gets or sets the starting timestamp of the chart.
@@ -47,8 +47,8 @@
   {
     try
     {
-      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, MiniChartSettings.CanvasElementId,
-        MiniChartSettings.CreateChartJsOptions(PeriodStart, PeriodEnd, DataPoints));
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, Settings.CanvasElementId,
+        Settings.CreateChartJsConfiguration(PeriodStart, PeriodEnd, DataPoints));
     }
     catch
     {

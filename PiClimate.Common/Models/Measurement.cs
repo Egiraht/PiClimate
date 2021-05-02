@@ -17,6 +17,11 @@ namespace PiClimate.Common.Models
   public record Measurement
   {
     /// <summary>
+    ///   Gets an empty measurement.
+    /// </summary>
+    public static Measurement Empty { get; } = new();
+
+    /// <summary>
     ///   The timestamp of the measurement.
     /// </summary>
     [JsonPropertyName("d")]

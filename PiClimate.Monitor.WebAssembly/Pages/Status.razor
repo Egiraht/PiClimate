@@ -45,7 +45,8 @@
           <div class="h5">Pressure</div>
           <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
           <div class="mini-chart chart-pressure">
-            <MiniChart MiniChartSettings="@PressureChartSettings" DataPoints="@PressureDataPoints" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+            <MiniChart Settings="@PressureChartSettings" DataPoints="@PressureDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
           </div>
         </div>
 
@@ -53,7 +54,8 @@
           <div class="h5">Temperature</div>
           <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
           <div class="mini-chart chart-temperature">
-            <MiniChart MiniChartSettings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+            <MiniChart Settings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
           </div>
         </div>
 
@@ -61,7 +63,8 @@
           <div class="h5">Humidity</div>
           <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
           <div class="mini-chart chart-humidity">
-            <MiniChart MiniChartSettings="@HumidityChartSettings" DataPoints="@HumidityDataPoints" PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+            <MiniChart Settings="@HumidityChartSettings" DataPoints="@HumidityDataPoints"
+                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
           </div>
         </div>
       </div>
@@ -69,7 +72,8 @@
   </div>
 </CascadingValue>
 
-@code {
+@code
+{
   /// <summary>
   ///   Defines the <see cref="Status" /> page path prefix.
   /// </summary>
@@ -103,7 +107,7 @@
   /// <summary>
   ///   Gets or sets the latest logged measurement.
   /// </summary>
-  private Measurement LatestMeasurement { get; set; } = new();
+  private Measurement LatestMeasurement { get; set; } = Measurement.Empty;
 
   /// <summary>
   ///   Gets or sets the enumeration of measurements to be displayed on the mini-charts.
@@ -137,7 +141,8 @@
   /// <summary>
   ///   Checks if empty measurements data have been acquired from the last request.
   /// </summary>
-  private bool AreMeasurementsEmpty => !IsUpdating && !HasUpdateFailed && !Measurements.Any();
+  private bool AreMeasurementsEmpty => !IsUpdating && !HasUpdateFailed &&
+    (!Measurements.Any() || LatestMeasurement == Measurement.Empty);
 
   /// <summary>
   ///   Gets the pressure mini-chart settings object.

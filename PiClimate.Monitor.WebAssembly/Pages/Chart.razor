@@ -11,7 +11,7 @@
 @inject IHttpClientFactory _httpClientFactory
 
 <CascadingValue Value="@this">
-  <div class="d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
        data-empty-notice="No measurements found for the period."
        data-failed-notice="Failed to get the measurements.">
     <div class="position-absolute z-1">
@@ -19,7 +19,7 @@
     </div>
 
     <div class="flex-fill pb-4">
-      <ClimaticChart ChartSettings="@ChartSettings" Measurements="@Measurements"
+      <ClimaticChart Settings="@ChartSettings" Measurements="@Measurements"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
     </div>
 
@@ -106,7 +106,7 @@
   /// <summary>
   ///   Gets the climatic chart settings object.
   /// </summary>
-  private ChartSettings ChartSettings { get; } = new()
+  private ClimaticChartSettings ChartSettings { get; } = new()
   {
     CultureInfo = LocalizationUtils.GetBrowserCultureInfo()
   };
