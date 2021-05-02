@@ -11,64 +11,51 @@
 @inject IHttpClientFactory _httpClientFactory
 
 <CascadingValue Value="@this">
-  <div class="d-flex flex-column h-100 p-2 @(IsUpdating ? "loading" : "")">
-    <div class="position-absolute z-1">
-      <UpdateButton />
+  <div class="position-absolute z-control">
+    <UpdateButton />
+  </div>
+
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
+       data-empty-notice="No latest measurements found."
+       data-failed-notice="Failed to get the latest measurements.">
+    <div class="d-flex flex-row flex-wrap w-100 p-2">
+      <div class="col-12 text-center text-date">
+        <div class="h4">
+          Latest data
+        </div>
+
+        <div class="h6">
+          (@LatestMeasurement.Timestamp.ToString(LocalizationUtils.GetBrowserCultureInfo()))
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-pressure p-2 mb-2">
+        <div class="h5">Pressure</div>
+        <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="mini-chart border-pressure">
+          <MiniChart Settings="@PressureChartSettings" DataPoints="@PressureDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-temperature p-2 mb-2">
+        <div class="h5">Temperature</div>
+        <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="mini-chart border-temperature">
+          <MiniChart Settings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-humidity p-2 mb-2">
+        <div class="h5">Humidity</div>
+        <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="mini-chart border-humidity">
+          <MiniChart Settings="@HumidityChartSettings" DataPoints="@HumidityDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
     </div>
-
-    @if (HasUpdateFailed)
-    {
-      <div class="alert alert-danger h5 text-center">
-        Failed to receive the latest data.
-      </div>
-    }
-    else if (AreMeasurementsEmpty)
-    {
-      <div class="alert alert-info h5 text-center">
-        There is no latest data to be displayed.
-      </div>
-    }
-    else
-    {
-      <div class="d-flex flex-row flex-wrap w-100 p-2">
-        <div class="col-12 text-center text-date">
-          <div class="h4">
-            Latest data
-          </div>
-
-          <div class="h6">
-            (@LatestMeasurement.Timestamp.ToString(LocalizationUtils.GetBrowserCultureInfo()))
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-4 text-center text-pressure p-2 mb-2">
-          <div class="h5">Pressure</div>
-          <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
-          <div class="mini-chart chart-pressure">
-            <MiniChart Settings="@PressureChartSettings" DataPoints="@PressureDataPoints"
-                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-4 text-center text-temperature p-2 mb-2">
-          <div class="h5">Temperature</div>
-          <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
-          <div class="mini-chart chart-temperature">
-            <MiniChart Settings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints"
-                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-4 text-center text-humidity p-2 mb-2">
-          <div class="h5">Humidity</div>
-          <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
-          <div class="mini-chart chart-humidity">
-            <MiniChart Settings="@HumidityChartSettings" DataPoints="@HumidityDataPoints"
-                       PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
-          </div>
-        </div>
-      </div>
-    }
   </div>
 </CascadingValue>
 

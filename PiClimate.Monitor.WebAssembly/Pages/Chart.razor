@@ -11,13 +11,13 @@
 @inject IHttpClientFactory _httpClientFactory
 
 <CascadingValue Value="@this">
+  <div class="position-absolute z-control">
+    <UpdateButton />
+  </div>
+
   <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
        data-empty-notice="No measurements found for the period."
        data-failed-notice="Failed to get the measurements.">
-    <div class="position-absolute z-1">
-      <UpdateButton />
-    </div>
-
     <div class="flex-fill pb-4">
       <ClimaticChart Settings="@ChartSettings" Measurements="@Measurements"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />

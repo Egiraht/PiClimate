@@ -16,6 +16,12 @@
   --dark-pressure-color: blue;
   --dark-temperature-color: green;
   --dark-humidity-color: red;
+
+  --z-above: 1;
+  --z-notice: 10;
+  --z-control: 100;
+  --z-loading: 1000;
+  --z-critical: 10000;
 }
 
 #wrapper
@@ -32,7 +38,7 @@
 {
   display: none;
   background-color: rgba(127, 127, 127, 0.75);
-  z-index: 10000;
+  z-index: var(--z-critical);
 }
 
 .dropdown-toggle::after
@@ -60,9 +66,29 @@
   right: 0 !important;
 }
 
-.z-1
+.z-above
 {
-  z-index: 1;
+  z-index: var(--z-above);
+}
+
+.z-notice
+{
+  z-index: var(--z-notice);
+}
+
+.z-control
+{
+  z-index: var(--z-control);
+}
+
+.z-loading
+{
+  z-index: var(--z-loading);
+}
+
+.z-critical
+{
+  z-index: var(--z-critical);
 }
 
 .loading
@@ -108,7 +134,7 @@
   border-right-color: transparent !important;
   border-radius: 50%;
   vertical-align: middle;
-  z-index: 1000;
+  z-index: var(--z-loading);
   content: "";
   animation: spinner-border 1s normal linear infinite;
   -o-animation: spinner-border 1s normal linear infinite;
@@ -130,7 +156,7 @@
   border-right-color: transparent !important;
   border-radius: 50%;
   vertical-align: middle;
-  z-index: 1001;
+  z-index: var(--z-loading);
   content: "";
   animation: spinner-border 1s reverse linear infinite;
   -o-animation: spinner-border 1s reverse linear infinite;
