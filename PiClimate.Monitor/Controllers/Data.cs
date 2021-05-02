@@ -25,7 +25,7 @@ namespace PiClimate.Monitor.Controllers
     /// <summary>
     ///   The used measurement source service.
     /// </summary>
-    private IMeasurementSource Source { get; }
+    private readonly IMeasurementSource _source;
 
     /// <summary>
     ///   Initializes a new instance of the controller.
@@ -34,10 +34,7 @@ namespace PiClimate.Monitor.Controllers
     ///   The used measurement source service.
     ///   Provided via dependency injection.
     /// </param>
-    public Data(IMeasurementSource source)
-    {
-      Source = source;
-    }
+    public Data(IMeasurementSource source) => _source = source;
 
     /// <summary>
     ///   Gets the filtered measurements data using the GET request.
@@ -52,7 +49,7 @@ namespace PiClimate.Monitor.Controllers
     [HttpGet(ApiEndpoints.FilteredMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnGetAsync([FromQuery] MeasurementFilter filter)
     {
-      var measurements = await Source.GetMeasurementsAsync(filter);
+      var measurements = await _source.GetMeasurementsAsync(filter);
       return new JsonResponse<IEnumerable<Measurement>>(measurements);
     }
 
@@ -83,7 +80,7 @@ namespace PiClimate.Monitor.Controllers
     [HttpGet(ApiEndpoints.LatestMeasurementsDataEndpoint)]
     public async Task<IActionResult> OnGetLatestAsync([FromQuery] LatestDataRequest request)
     {
-      var measurements = await Source.GetLatestMeasurementsAsync(request);
+      var measurements = await _source.GetLatestMeasurementsAsync(request);
       return new JsonResponse<IEnumerable<Measurement>>(measurements);
     }
 

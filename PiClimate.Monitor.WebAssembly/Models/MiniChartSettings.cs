@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using PiClimate.Common.Components;
 
 // ReSharper disable UnusedMember.Local
 namespace PiClimate.Monitor.WebAssembly.Models
@@ -118,7 +119,7 @@ namespace PiClimate.Monitor.WebAssembly.Models
               {
                 Display = true,
                 Color = _settings.LineColor,
-                Text = $"{(_periodEnd - _periodStart).Duration().TotalHours} hour(s)"
+                Text = GetTimeScaleString()
               },
               Grid = new
               {
@@ -211,6 +212,26 @@ namespace PiClimate.Monitor.WebAssembly.Models
         _dataPoints = dataPoints.ToArray();
         _periodStart = periodStart;
         _periodEnd = periodEnd;
+      }
+
+      /// <summary>
+      ///   Gets the string describing the time scale period in a human-readable manner.
+      /// </summary>
+      /// <returns>
+      ///   A string containing a number of minutes/hours/days describing the specified time scale period.
+      /// </returns>
+      public string GetTimeScaleString()
+      {
+        var timeScale = (_periodEnd - _periodStart).Duration();
+        return timeScale.TotalSeconds switch
+        {
+          < TimePeriods.Hour =>
+            $"{timeScale.TotalMinutes.ToString("0.#", _settings.CultureInfo)} minute(s)",
+          < TimePeriods.Day =>
+            $"{timeScale.TotalHours.ToString("0.#", _settings.CultureInfo)} hour(s)",
+          _ =>
+            $"{timeScale.TotalDays.ToString("0.#", _settings.CultureInfo)} day(s)"
+        };
       }
     }
   }

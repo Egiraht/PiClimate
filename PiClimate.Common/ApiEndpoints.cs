@@ -22,6 +22,11 @@ namespace PiClimate.Common
     public const string UserSignOutEndpoint = "/Api/Auth/SignOut";
 
     /// <summary>
+    ///   Defines the endpoint path for getting the client-side options.
+    /// </summary>
+    public const string OptionsEndpoint = "/Api/Options";
+
+    /// <summary>
     ///   Defines the endpoint path for getting a response with the specified status code.
     /// </summary>
     public const string StatusEndpoint = "/Api/Status";

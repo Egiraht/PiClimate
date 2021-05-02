@@ -9,6 +9,7 @@
 @attribute [Route(PathRoute), Authorize]
 @implements IUpdatable
 @inject IHttpClientFactory _httpClientFactory
+@inject ClientOptions _clientOptions
 
 <CascadingValue Value="@this">
   <div class="position-absolute z-control">
@@ -72,14 +73,9 @@
   public const string PathRoute = PathPrefix;
 
   /// <summary>
-  ///   Gets the time period to acquire the status data for.
-  /// </summary>
-  private TimeSpan TimePeriod { get; } = TimeSpan.FromSeconds(TimePeriods.Day);
-
-  /// <summary>
   ///   Gets the status period start timestamp.
   /// </summary>
-  private DateTime PeriodStart => PeriodEnd - TimePeriod;
+  private DateTime PeriodStart => PeriodEnd - TimeSpan.FromSeconds(_clientOptions.StatusPageTimeScale);
 
   /// <summary>
   ///   Gets the status period end timestamp.

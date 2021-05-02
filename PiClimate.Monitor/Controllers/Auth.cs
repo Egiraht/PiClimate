@@ -21,7 +21,7 @@ using PiClimate.Monitor.Settings;
 namespace PiClimate.Monitor.Controllers
 {
   /// <summary>
-  ///   The user authentication page code-behind class.
+  ///   The user authentication API controller class.
   /// </summary>
   [ApiController]
   public class Auth : Controller
