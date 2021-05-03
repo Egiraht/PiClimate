@@ -20,6 +20,22 @@
        data-empty-notice="No latest measurements found."
        data-failed-notice="Failed to get the latest measurements.">
     <div class="d-flex flex-row flex-wrap w-100 p-2">
+      @* Latest data expiration warning. *@
+      @if (LatestMeasurement.Timestamp != default &&
+        LatestMeasurement.Timestamp < DateTime.Now - TimeSpan.FromSeconds(_clientOptions.LatestDataExpirationPeriod))
+      {
+        <div class="col-12 alert alert-warning text-center mb-3">
+          The latest measurement has been logged more than
+          @TimePeriods.GetTimePeriodString(DateTime.Now - LatestMeasurement.Timestamp,
+            LocalizationUtils.GetBrowserCultureInfo())
+          ago.
+          <br />
+          The actual data may have changed significantly since then.
+          <br />
+          Check the measurement logger for possible communication failures.
+        </div>
+      }
+
       <div class="col-12 text-center text-date">
         <div class="h4">
           Latest data

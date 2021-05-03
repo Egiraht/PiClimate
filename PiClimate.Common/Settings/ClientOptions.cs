@@ -16,12 +16,27 @@ namespace PiClimate.Common.Settings
     /// <summary>
     ///   Defines the default status page time scale in seconds.
     /// </summary>
-    public const int DefaultStatusTimeScale = TimePeriods.Day;
+    public const int DefaultStatusPageTimeScale = TimePeriods.Day;
+
+    /// <summary>
+    ///   Defines the default time period in seconds after that the latest data expires.
+    /// </summary>
+    public const int DefaultLatestDataExpirationPeriod = 10 * TimePeriods.Minute;
 
     /// <summary>
     ///   Gets or sets the time scale period in seconds to be used for data visualization on the status page.
     /// </summary>
     [Comment("Sets the time scale period in seconds to be used for data visualization on the status page.")]
-    public int StatusPageTimeScale { get; set; } = DefaultStatusTimeScale;
+    public int StatusPageTimeScale { get; set; } = DefaultStatusPageTimeScale;
+
+    /// <summary>
+    ///   Gets or sets the time period in seconds from the latest logged measurement after that the latest data expires,
+    ///   so the corresponding warning will be displayed. This feature helps to detect communication failures on the
+    ///   measurement logger side.
+    /// </summary>
+    [Comment("Sets the time period in seconds from the latest logged measurement after that the latest data expires.")]
+    [Comment("On expiration the corresponding warning will be displayed.")]
+    [Comment("This feature helps to detect communication failures on the measurement logger side.")]
+    public int LatestDataExpirationPeriod { get; set; } = DefaultLatestDataExpirationPeriod;
   }
 }

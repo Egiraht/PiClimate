@@ -26,7 +26,6 @@ namespace PiClimate.Monitor.Settings
     /// </summary>
     [Comment("Sets the authentication cookie expiration period in seconds.")]
     [Comment("This value is used when the 'Remember' option is selected in the login form.")]
-    [Comment("Can be a floating point numeric value.")]
     public int CookieExpirationPeriod { get; set; } = DefaultCookieExpirationPeriod;
 
     /// <summary>
