@@ -17,6 +17,7 @@ using PiClimate.Common;
 using PiClimate.Common.Models;
 using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Settings;
+using AuthenticationOptions = PiClimate.Monitor.Settings.AuthenticationOptions;
 
 namespace PiClimate.Monitor.Controllers
 {
@@ -47,9 +48,9 @@ namespace PiClimate.Monitor.Controllers
     private readonly TimeSpan _cookieExpirationPeriod;
 
     /// <summary>
-    ///   The collection of login name-password pairs taken from the configuration.
+    ///   The collection of user names and corresponding hashed passwords taken from the configuration.
     /// </summary>
-    private readonly IDictionary<string, string> _loginPairs;
+    private readonly IDictionary<string, string> _signInCredentials;
 
     /// <summary>
     ///   Initializes the new instance of the controller.
@@ -61,15 +62,15 @@ namespace PiClimate.Monitor.Controllers
     public Auth(GlobalSettings settings)
     {
       _cookieExpirationPeriod = TimeSpan.FromSeconds(settings.AuthenticationOptions.CookieExpirationPeriod);
-      _loginPairs = settings.AuthenticationOptions.LoginPairs;
+      _signInCredentials = settings.AuthenticationOptions.SignInCredentials;
     }
 
     /// <summary>
-    ///   Finds the user in the collection of available login name-password pairs.
-    ///   If no login pairs are defined, return a default user with the provided user name.
+    ///   Finds the user in the collection of available sign-in credentials.
+    ///   If no sign-in credentials are defined, return a default user with the provided user name.
     /// </summary>
     /// <param name="loginForm">
-    ///   The login form containing the login name-password pair to find.
+    ///   The login form containing the sign-in credentials.
     /// </param>
     /// <returns>
     ///   The <see cref="ClaimsPrincipal" /> object representing the authenticated user if the user was found in
@@ -78,9 +79,9 @@ namespace PiClimate.Monitor.Controllers
     [NonAction]
     private ClaimsPrincipal? FindUser(LoginForm loginForm)
     {
-      // Check user names and passwords only if any login pairs are defined in the global settings.
-      if (_loginPairs.Any() &&
-        (!_loginPairs.ContainsKey(loginForm.Name) || _loginPairs[loginForm.Name] != loginForm.Password))
+      if (_signInCredentials.Any() && (!_signInCredentials.ContainsKey(loginForm.Name) ||
+        !_signInCredentials[loginForm.Name].ToHashedString().ValidateOriginalValue(loginForm.Password,
+          AuthenticationOptions.HashingKey)))
         return null;
 
       var claims = new Claim[]
