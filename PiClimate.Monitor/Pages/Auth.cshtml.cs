@@ -13,8 +13,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Models;
 using PiClimate.Monitor.Settings;
+using AuthenticationOptions = PiClimate.Monitor.Settings.AuthenticationOptions;
 
 namespace PiClimate.Monitor.Pages
 {
@@ -71,7 +73,7 @@ namespace PiClimate.Monitor.Pages
     /// <summary>
     ///   The collection of login name-password pairs taken from the configuration.
     /// </summary>
-    private readonly IDictionary<string, string> _loginPairs;
+    private readonly IDictionary<string, string> _signInCredentials;
 
     /// <summary>
     ///   Gets the login form bound from the HTTP request.
@@ -95,7 +97,7 @@ namespace PiClimate.Monitor.Pages
     public Auth(GlobalSettings settings)
     {
       _cookieExpirationPeriod = TimeSpan.FromSeconds(settings.AuthenticationOptions.CookieExpirationPeriod);
-      _loginPairs = settings.AuthenticationOptions.LoginPairs;
+      _signInCredentials = settings.AuthenticationOptions.SignInCredentials;
     }
 
     /// <summary>
@@ -104,7 +106,7 @@ namespace PiClimate.Monitor.Pages
     /// <returns>
     ///   The processed page view result.
     /// </returns>
-    public IActionResult OnGetLogin() => _loginPairs.Any() ? Page() : AutoLogin();
+    public IActionResult OnGetLogin() => _signInCredentials.Any() ? Page() : AutoLogin();
 
     /// <summary>
     ///   Automatically signs the user in.
@@ -141,7 +143,7 @@ namespace PiClimate.Monitor.Pages
     /// </returns>
     public IActionResult OnPostLogin()
     {
-      if (!_loginPairs.Any())
+      if (!_signInCredentials.Any())
         return AutoLogin();
 
       if (!ModelState.IsValid)
@@ -189,7 +191,9 @@ namespace PiClimate.Monitor.Pages
     /// </returns>
     private ClaimsPrincipal? FindUser(LoginForm loginForm)
     {
-      if (!_loginPairs.ContainsKey(loginForm.Name) || _loginPairs[loginForm.Name] != loginForm.Password)
+      if (!_signInCredentials.ContainsKey(loginForm.Name) ||
+        !_signInCredentials[loginForm.Name].ToHashedString().ValidateOriginalValue(loginForm.Password,
+          AuthenticationOptions.HashingKey))
         return null;
 
       var claims = new Claim[]

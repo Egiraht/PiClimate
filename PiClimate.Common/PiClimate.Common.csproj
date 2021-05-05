@@ -16,8 +16,8 @@
     <Description>Climatic data common library</Description>
     <Copyright>Copyright © 2020 Maxim Yudin &lt;stibiu@yandex.ru&gt;</Copyright>
     <Company>Maxim Yudin</Company>
-    <AssemblyVersion>1.2.3</AssemblyVersion>
-    <InformationalVersion>1.2.3</InformationalVersion>
+    <AssemblyVersion>1.2.4</AssemblyVersion>
+    <InformationalVersion>1.2.4</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Common</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Egiraht/PiClimate/blob/master/License.txt</PackageLicenseUrl>

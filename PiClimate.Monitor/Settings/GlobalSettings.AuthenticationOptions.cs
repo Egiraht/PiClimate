@@ -5,6 +5,7 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Collections.Generic;
+using System.Linq;
 using PiClimate.Common.Settings;
 using PiClimate.Monitor.Components;
 
@@ -16,9 +17,19 @@ namespace PiClimate.Monitor.Settings
   public class AuthenticationOptions : SettingsSection
   {
     /// <summary>
+    ///   Defines the hashing key.
+    /// </summary>
+    public const string HashingKey = nameof(PiClimate) + "." + nameof(Monitor);
+
+    /// <summary>
     ///   Defines the default authentication cookie expiration period in seconds.
     /// </summary>
     public const int DefaultCookieExpirationPeriod = TimePeriods.Week;
+
+    /// <summary>
+    ///   The backing field for the <see cref="SignInCredentials" /> property.
+    /// </summary>
+    private readonly Dictionary<string, string> _signInCredentials = new();
 
     /// <summary>
     ///   Gets or sets the authentication cookie expiration period in seconds.
@@ -26,18 +37,29 @@ namespace PiClimate.Monitor.Settings
     /// </summary>
     [Comment("Sets the authentication cookie expiration period in seconds.")]
     [Comment("This value is used when the 'Remember' option is selected in the login form.")]
-    [Comment("Can be a floating point numeric value.")]
     public int CookieExpirationPeriod { get; set; } = DefaultCookieExpirationPeriod;
 
     /// <summary>
-    ///   Gets or sets the list of key-value pairs representing user names and corresponding passwords used for
-    ///   signing in.
+    ///   Gets or sets the list of sign-in credentials representing user names and corresponding passwords used for
+    ///   user authentication.
     /// </summary>
-    [Comment("Defines the section of key-value pairs representing user names and corresponding passwords used for " +
-      "signing in.")]
+    [Comment("Defines the section of key-value string pairs representing user names and corresponding passwords used " +
+      "for user authentication.")]
     [Comment("Both user names and passwords are case-sensitive.")]
-    [Comment("If no login pais are defined, any user can sign in using a custom name and any password.")]
-    public Dictionary<string, string> LoginPairs { get; set; } = new();
+    [Comment("The passwords are automatically encrypted on server startup. New passwords should be defined in their " +
+      "original form.")]
+    [Comment("If no key-value pairs are defined is this section, any user can sign in using a custom name and any " +
+      "password.")]
+    public Dictionary<string, string> SignInCredentials
+    {
+      get => _signInCredentials.ToDictionary(pair => pair.Key,
+        pair => pair.Value.ToHashedString(HashingKey).ToString());
+      set
+      {
+        foreach (var (name, password) in value)
+          _signInCredentials[name] = password.ToHashedString(HashingKey).ToString();
+      }
+    }
   }
 
   public partial class GlobalSettings
