@@ -17,38 +17,33 @@
   </div>
 
   <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
-       data-empty-notice="No latest measurements found."
-       data-failed-notice="Failed to get the latest measurements.">
+       data-empty-notice="@Strings.Status_NoLatestMeasurementsFoundNotice"
+       data-failed-notice="@Strings.Status_LatestMeasurementsFailureWarning">
     <div class="d-flex flex-row flex-wrap w-100 p-2">
       @* Latest data expiration warning. *@
       @if (LatestMeasurement.Timestamp != default &&
         LatestMeasurement.Timestamp < DateTime.Now - TimeSpan.FromSeconds(_clientOptions.LatestDataExpirationPeriod))
       {
-        <div class="col-12 alert alert-warning text-center mb-3">
-          The latest measurement has been logged more than
-          @TimePeriods.GetTimePeriodString(DateTime.Now - LatestMeasurement.Timestamp,
-            LocalizationUtils.GetBrowserCultureInfo())
-          ago.
-          <br />
-          The actual data may have changed significantly since then.
-          <br />
-          Check the measurement logger for possible communication failures.
+        <div class="col-12 alert alert-warning text-center mb-3 px-5">
+          @Strings.Status_LatestDataExpirationWarningF.Format(
+            TimePeriods.GetTimePeriodString(DateTime.Now - LatestMeasurement.Timestamp,
+              LocalizationUtils.GetCurrentUiCultureInfo()))
         </div>
       }
 
       <div class="col-12 text-center text-date">
         <div class="h4">
-          Latest data
+          @Strings.Label_LatestData
         </div>
 
         <div class="h6">
-          (@LatestMeasurement.Timestamp.ToString(LocalizationUtils.GetBrowserCultureInfo()))
+          (@LatestMeasurement.Timestamp.ToString(LocalizationUtils.GetCurrentUiCultureInfo()))
         </div>
       </div>
 
       <div class="col-12 col-xl-4 text-center text-pressure p-2 mb-2">
-        <div class="h5">Pressure</div>
-        <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="h5">@Strings.Label_Pressure</div>
+        <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
         <div class="mini-chart border-pressure">
           <MiniChart Settings="@PressureChartSettings" DataPoints="@PressureDataPoints"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
@@ -56,8 +51,8 @@
       </div>
 
       <div class="col-12 col-xl-4 text-center text-temperature p-2 mb-2">
-        <div class="h5">Temperature</div>
-        <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="h5">@Strings.Label_Temperature</div>
+        <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
         <div class="mini-chart border-temperature">
           <MiniChart Settings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
@@ -65,8 +60,8 @@
       </div>
 
       <div class="col-12 col-xl-4 text-center text-humidity p-2 mb-2">
-        <div class="h5">Humidity</div>
-        <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetBrowserCultureInfo())</div>
+        <div class="h5">@Strings.Label_Humidity</div>
+        <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
         <div class="mini-chart border-humidity">
           <MiniChart Settings="@HumidityChartSettings" DataPoints="@HumidityDataPoints"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
@@ -150,7 +145,7 @@
   {
     CanvasElementId = "pressure-mini-chart",
     LineColor = "blue",
-    CultureInfo = LocalizationUtils.GetBrowserCultureInfo()
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
   };
 
   /// <summary>
@@ -160,7 +155,7 @@
   {
     CanvasElementId = "temperature-mini-chart",
     LineColor = "green",
-    CultureInfo = LocalizationUtils.GetBrowserCultureInfo()
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
   };
 
   /// <summary>
@@ -170,7 +165,7 @@
   {
     CanvasElementId = "humidity-mini-chart",
     LineColor = "red",
-    CultureInfo = LocalizationUtils.GetBrowserCultureInfo()
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
   };
 
   /// <inheritdoc />

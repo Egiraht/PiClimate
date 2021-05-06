@@ -15,7 +15,7 @@
 
     <div class="form-inline my-2">
       <div class="col-6 text-right">
-        Name:
+        @Strings.Label_Name:
       </div>
       <div class="col-6">
         <InputText @bind-Value="@LoginForm.Name" class="form-control form-control-sm" />
@@ -24,7 +24,7 @@
 
     <div class="form-inline my-2">
       <div class="col-6 text-right">
-        Password:
+        @Strings.Label_Password:
       </div>
       <div class="col-6">
         <InputText @bind-Value="@LoginForm.Password" type="password" class="form-control form-control-sm" />
@@ -33,7 +33,7 @@
 
     <div class="form-inline my-2">
       <div class="col-6 text-right">
-        Remember me:
+        @Strings.Label_RememberMe:
       </div>
       <div class="col-6">
         <InputCheckbox @bind-Value="@LoginForm.Remember" class="form-control form-control-sm" />
@@ -45,7 +45,7 @@
       </div>
       <div class="col-6">
         <button type="submit" class="btn btn-secondary">
-          Sign in
+          @Strings.Label_SignIn
         </button>
       </div>
     </div>
@@ -60,7 +60,7 @@
           }
         </ul>
 
-        <ValidationSummary AdditionalAttributes="@(new Dictionary<string, object> {{"class", "test"}})" />
+        <ValidationSummary />
       </div>
     }
   </EditForm>
@@ -100,10 +100,10 @@
     {
       AuthenticationMessages.Add(e switch
       {
-        HttpResponseException {Response: {StatusCode: HttpStatusCode.BadRequest}} => "No user name is provided.",
+        HttpResponseException {Response: {StatusCode: HttpStatusCode.BadRequest}} => Strings.AuthPanel_NoUserNameNotice,
         HttpResponseException {Response: {StatusCode: HttpStatusCode.NotAcceptable}} =>
-          "There is no user matching the provided name and password.",
-        _ => $"Failed to sign in: {e.Message}"
+          Strings.AuthPanel_WrongUserNameOrPasswordWarning,
+        _ => Strings.AuthPanel_SignInFailureF.Format(e.Message)
       });
     }
     finally
@@ -118,7 +118,7 @@
   {
     if (firstRender)
     {
-      AuthenticationMessages.Add("Sign in to proceed to the page.");
+      AuthenticationMessages.Add(Strings.AuthPanel_SignInRequiredNotice);
       StateHasChanged();
     }
   }

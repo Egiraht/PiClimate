@@ -14,10 +14,10 @@
 <ul class="navbar-nav d-flex flex-row flex-lg-column flex-wrap w-100">
   <li class="nav-item px-2">
     <a class="navbar-brand align-baseline mr-2" href="/">
-      @nameof(PiClimate) @nameof(Monitor)
+      @Strings.Title
     </a>
     <div class="d-inline-block text-sm-left text-secondary align-baseline">
-      v@(GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "???")
+      @Program.InformationalVersion
     </div>
   </li>
 
@@ -29,13 +29,16 @@
     <div class="nav-link text-light">
       <AuthorizeView Context="authContext">
         <Authorized>
-          Signed in as <span class="font-weight-bold">@authContext.User.Identity?.Name</span>
+          @Strings.Label_User:
+          <span class="font-weight-bold">
+            @authContext.User.Identity?.Name
+          </span>
         </Authorized>
         <Authorizing>
-          Signing in...
+          @Strings.NavMenu_SigningInNotice
         </Authorizing>
         <NotAuthorized>
-          You are not signed in
+          @Strings.NavPanel_NotSignedInNotice
         </NotAuthorized>
       </AuthorizeView>
     </div>
@@ -44,7 +47,7 @@
   <AuthorizeView>
     <li class="nav-item px-2">
       <a href="@_navigationManager.Uri" @onclick="@_authenticator.SignOutAsync" class="nav-link">
-        Sign out
+        @Strings.Label_SignOut
       </a>
     </li>
   </AuthorizeView>
@@ -56,14 +59,14 @@
   <AuthorizeView>
     <li class="nav-item px-2">
       <NavLink Match="@NavLinkMatch.Prefix" ActiveClass="active" href="@Status.PathPrefix" class="nav-link">
-        Status
+        @Strings.Label_Status
       </NavLink>
     </li>
 
     <li class="nav-item px-2">
       <a href="#charts-menu" data-toggle="collapse"
         class="nav-link dropdown-toggle text-wrap collapsed @(IsChartPageActive ? "active" : "")">
-        Climatic chart
+        @Strings.Label_ClimaticChart
       </a>
     </li>
 
@@ -84,7 +87,7 @@
         <li class="nav-item px-2">
           <a href="#custom-period-form" data-toggle="collapse"
              class="nav-link dropdown-toggle text-wrap collapsed pl-lg-2 @(IsCustomPeriodChartActive ? "active" : "")">
-            Custom period
+            @Strings.Label_CustomPeriod
           </a>
         </li>
 
@@ -95,24 +98,26 @@
             <EditForm Model="@this" OnValidSubmit="CustomPeriodSubmit" Context="formContext"
                       class="form-row flex-lg-column align-items-end bg-dark rounded w-100 m-0">
               <div class="form-group col-4 col-lg p-2 m-0">
-                <label class="text-light">From:</label>
+                <label class="text-light">@Strings.Label_From:</label>
                 <InputDate @bind-Value="@CustomPeriodStartDate" class="form-control form-control-sm mb-1" />
                 <input @bind="@CustomPeriodStartTime" type="time" class="form-control form-control-sm" />
               </div>
 
               <div class="form-group col-4 col-lg p-2 m-0">
-                <label class="text-light">To:</label>
+                <label class="text-light">@Strings.Label_To:</label>
                 <InputDate @bind-Value="@CustomPeriodEndDate" class="form-control form-control-sm mb-1" />
                 <input @bind="@CustomPeriodEndTime" type="time" class="form-control form-control-sm" />
               </div>
 
               <div class="form-group col-4 col-lg p-2 m-0">
                 <label class="text-light">
-                  Resolution (@MeasurementFilter.MinimalResolution-@MeasurementFilter.MaximalResolution):
+                  @Strings.Label_Resolution (@MeasurementFilter.MinimalResolution-@MeasurementFilter.MaximalResolution):
                 </label>
                 <InputNumber @bind-Value="@CustomResolution" class="form-control form-control-sm mb-1"
                              min="@MeasurementFilter.MinimalResolution" max="@MeasurementFilter.MaximalResolution" />
-                <button type="submit" class="btn btn-block btn-sm btn-light">Show</button>
+                <button type="submit" class="btn btn-block btn-sm btn-light">
+                  @Strings.Label_Show
+                </button>
               </div>
             </EditForm>
           </div>
@@ -129,9 +134,9 @@
   /// </summary>
   private static readonly Dictionary<string, int> StandardOffsets = new()
   {
-    {"Last day", TimePeriods.Day},
-    {"Last week", TimePeriods.Week},
-    {"Last month", TimePeriods.Month}
+    {Strings.Label_LastDay, TimePeriods.Day},
+    {Strings.Label_LastWeek, TimePeriods.Week},
+    {Strings.Label_LastMonth, TimePeriods.Month}
   };
 
   /// <summary>

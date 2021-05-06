@@ -1,0 +1,155 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="App_AuthorizingNotice" xml:space="preserve">
+        <value>Авторизация...</value>
+    </data>
+    <data name="App_NotAuthorizedNotice" xml:space="preserve">
+        <value>Вы не авторизованы для просмотра этой страницы.</value>
+    </data>
+    <data name="App_RouteNotFoundWarning" xml:space="preserve">
+        <value>По этому адресу ничего нет.</value>
+    </data>
+    <data name="Label_Back" xml:space="preserve">
+        <value>Назад</value>
+    </data>
+    <data name="Status_LatestDataExpirationWarningF" xml:space="preserve">
+        <value>Последнее измерение было сделано более чем {0} назад. Рельные данные могли значительно измениться с тех пор. Проверьте логгер измерений на возможные проблемы с соединением.</value>
+    </data>
+    <data name="Label_LatestData" xml:space="preserve">
+        <value>Последние данные</value>
+    </data>
+    <data name="Label_Pressure" xml:space="preserve">
+        <value>Давление</value>
+    </data>
+    <data name="Label_Temperature" xml:space="preserve">
+        <value>Температура</value>
+    </data>
+    <data name="Label_Humidity" xml:space="preserve">
+        <value>Влажность</value>
+    </data>
+    <data name="Status_NoLatestMeasurementsFoundNotice" xml:space="preserve">
+        <value>Не найдено последних измерений.</value>
+    </data>
+    <data name="Status_LatestMeasurementsFailureWarning" xml:space="preserve">
+        <value>Не удалось получить последние измерения.</value>
+    </data>
+    <data name="Chart_NoPeriodMeasurementsFoundNotice" xml:space="preserve">
+        <value>Не найдено измерений за указанный период.</value>
+    </data>
+    <data name="Chart_PeriodMeasurementsFailureWarning" xml:space="preserve">
+        <value>На удалось получить измерения за указанный период.</value>
+    </data>
+    <data name="Label_Update" xml:space="preserve">
+        <value>Обновить</value>
+    </data>
+    <data name="Label_Password" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="Label_Name" xml:space="preserve">
+        <value>Имя</value>
+    </data>
+    <data name="Label_RememberMe" xml:space="preserve">
+        <value>Запомнить меня</value>
+    </data>
+    <data name="Label_SignIn" xml:space="preserve">
+        <value>Войти</value>
+    </data>
+    <data name="Label_SignOut" xml:space="preserve">
+        <value>Выйти</value>
+    </data>
+    <data name="AuthPanel_NoUserNameNotice" xml:space="preserve">
+        <value>Не указано имя пользователя.</value>
+    </data>
+    <data name="AuthPanel_WrongUserNameOrPasswordWarning" xml:space="preserve">
+        <value>Пользователь с указанными именем и паролем не найден.</value>
+    </data>
+    <data name="AuthPanel_SignInFailureF" xml:space="preserve">
+        <value>Не удалось войти: {0}</value>
+    </data>
+    <data name="AuthPanel_SignInRequiredNotice" xml:space="preserve">
+        <value>Войдите, чтобы перейти на страницу.</value>
+    </data>
+    <data name="Label_DataSummary" xml:space="preserve">
+        <value>Сводка по данным</value>
+    </data>
+    <data name="Label_PeriodStart" xml:space="preserve">
+        <value>Начало периода</value>
+    </data>
+    <data name="Label_PeriodEnd" xml:space="preserve">
+        <value>Конец периода</value>
+    </data>
+    <data name="Label_MaxHumidity" xml:space="preserve">
+        <value>Макс. влажность</value>
+    </data>
+    <data name="Label_MaxPressure" xml:space="preserve">
+        <value>Макс. давление</value>
+    </data>
+    <data name="Label_MaxTemperature" xml:space="preserve">
+        <value>Макс. температура</value>
+    </data>
+    <data name="Label_MinHumidity" xml:space="preserve">
+        <value>Мин. влажность</value>
+    </data>
+    <data name="Label_MinPressure" xml:space="preserve">
+        <value>Мин. давление</value>
+    </data>
+    <data name="Label_MinTemperature" xml:space="preserve">
+        <value>Мин. температура</value>
+    </data>
+    <data name="Label_PointsDisplayed" xml:space="preserve">
+        <value>Точек изображено</value>
+    </data>
+    <data name="NavMenu_SigningInNotice" xml:space="preserve">
+        <value>Вход...</value>
+    </data>
+    <data name="Label_User" xml:space="preserve">
+        <value>Пользователь</value>
+    </data>
+    <data name="NavPanel_NotSignedInNotice" xml:space="preserve">
+        <value>Вы не вошли.</value>
+    </data>
+    <data name="Label_Status" xml:space="preserve">
+        <value>Статус</value>
+    </data>
+    <data name="Label_ClimaticChart" xml:space="preserve">
+        <value>Климатический график</value>
+    </data>
+    <data name="Label_CustomPeriod" xml:space="preserve">
+        <value>Заданный период</value>
+    </data>
+    <data name="Label_From" xml:space="preserve">
+        <value>От</value>
+    </data>
+    <data name="Label_To" xml:space="preserve">
+        <value>До</value>
+    </data>
+    <data name="Label_Resolution" xml:space="preserve">
+        <value>Разрешение</value>
+    </data>
+    <data name="Label_LastDay" xml:space="preserve">
+        <value>Последний день</value>
+    </data>
+    <data name="Label_LastMonth" xml:space="preserve">
+        <value>Последний месяц</value>
+    </data>
+    <data name="Label_LastWeek" xml:space="preserve">
+        <value>Последняя неделя</value>
+    </data>
+    <data name="Label_Show" xml:space="preserve">
+        <value>Показать</value>
+    </data>
+    <data name="AppFooter_CreatedByNotice" xml:space="preserve">
+        <value>Автор: Максим Юдин &lt;stibiu@yandex.ru&gt;</value>
+    </data>
+</root>

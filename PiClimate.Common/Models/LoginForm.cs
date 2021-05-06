@@ -5,6 +5,7 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System.ComponentModel.DataAnnotations;
+using PiClimate.Common.Localization;
 
 namespace PiClimate.Common.Models
 {
@@ -16,7 +17,8 @@ namespace PiClimate.Common.Models
     /// <summary>
     ///   Gets the username.
     /// </summary>
-    [Required]
+    [Required(ErrorMessageResourceType = typeof(Strings),
+      ErrorMessageResourceName = nameof(Strings.LoginForm_NameIsRequiredNotice))]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>

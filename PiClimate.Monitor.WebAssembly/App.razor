@@ -11,13 +11,20 @@
     <Found Context="routeData">
       <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout)">
         <Authorizing>
-          Authorizing...
+          <div class="alert alert-secondary h5 text-center m-3 p-3">
+            @Strings.App_AuthorizingNotice
+          </div>
         </Authorizing>
         <NotAuthorized>
           @if (context.User.Identity?.IsAuthenticated == true)
           {
-            <div>
-              You are not authorized to see this page.
+            <div class="alert alert-warning h5 text-center m-3 p-3">
+              <div class="mb-3">
+                @Strings.App_NotAuthorizedNotice
+              </div>
+              <button class="btn btn-warning" onclick="history.back()">
+                @Strings.Label_Back
+              </button>
             </div>
           }
           else
@@ -29,7 +36,14 @@
     </Found>
     <NotFound>
       <LayoutView Layout="@typeof(Layout)">
-        <p>Sorry, there's nothing at this address.</p>
+        <div class="alert alert-secondary h5 text-center m-3 p-3">
+          <div class="mb-3">
+            @Strings.App_RouteNotFoundWarning
+          </div>
+          <button class="btn btn-secondary" onclick="history.back()">
+            @Strings.Label_Back
+          </button>
+        </div>
       </LayoutView>
     </NotFound>
   </Router>

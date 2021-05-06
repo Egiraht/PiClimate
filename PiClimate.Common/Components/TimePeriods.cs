@@ -5,6 +5,7 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using PiClimate.Common.Localization;
 
 namespace PiClimate.Common.Components
 {
@@ -34,25 +35,29 @@ namespace PiClimate.Common.Components
     /// <returns>
     ///   A string containing a number of minutes/hours/days describing the specified time scale period.
     /// </returns>
+    /// <remarks>
+    ///   This method does not provide calendar-precise descriptions as time period calculations are performed using
+    ///   constant time periods, e.g. a year is always 365 days.
+    /// </remarks>
     public static string GetTimePeriodString(int periodSeconds, IFormatProvider? formatProvider = null)
     {
       periodSeconds = Math.Abs(periodSeconds);
       return periodSeconds switch
       {
-        < Minute =>
-          $"{periodSeconds.ToString("0.#", formatProvider)} second(s)",
-        < Hour =>
-          $"{(periodSeconds / Minute).ToString("0.#", formatProvider)} minute(s)",
-        < Day =>
-          $"{(periodSeconds / Hour).ToString("0.#", formatProvider)} hour(s)",
-        < Week =>
-          $"{(periodSeconds / Day).ToString("0.#", formatProvider)} day(s)",
-        < Month =>
-          $"{(periodSeconds / Week).ToString("0.#", formatProvider)} week(s)",
-        < Year =>
-          $"{(periodSeconds / Month).ToString("0.#", formatProvider)} month(s)",
-        _ =>
-          $"{(periodSeconds / Year).ToString("0.#", formatProvider)} year(s)"
+        < Minute => Strings.TimePeriods_SecondOrSecondsF.Format(formatProvider,
+          periodSeconds.ToString("0.#", formatProvider)),
+        < Hour => Strings.TimePeriods_MinuteOrMinutesF.Format(formatProvider,
+          (periodSeconds / Minute).ToString("0.#", formatProvider)),
+        < Day => Strings.TimePeriods_HourOrHoursF.Format(formatProvider,
+          (periodSeconds / Hour).ToString("0.#", formatProvider)),
+        < Week => Strings.TimePeriods_DayOrDaysF.Format(formatProvider,
+          (periodSeconds / Day).ToString("0.#", formatProvider)),
+        < Month => Strings.TimePeriods_WeekOrWeeksF.Format(formatProvider,
+          (periodSeconds / Week).ToString("0.#", formatProvider)),
+        < Year => Strings.TimePeriods_MonthOrMonthsF.Format(formatProvider,
+          (periodSeconds / Month).ToString("0.#", formatProvider)),
+        _ => Strings.TimePeriods_YearOrYearsF.Format(formatProvider,
+          (periodSeconds / Year).ToString("0.#", formatProvider))
       };
     }
 
@@ -68,10 +73,7 @@ namespace PiClimate.Common.Components
     /// <returns>
     ///   A string containing a number of minutes/hours/days describing the specified time scale period.
     /// </returns>
-    public static string GetTimePeriodString(TimeSpan timeSpan, IFormatProvider? formatProvider = null)
-    {
-      timeSpan = timeSpan.Duration();
-      return GetTimePeriodString((int) timeSpan.TotalSeconds, formatProvider);
-    }
+    public static string GetTimePeriodString(TimeSpan timeSpan, IFormatProvider? formatProvider = null) =>
+      GetTimePeriodString((int) timeSpan.Duration().TotalSeconds, formatProvider);
   }
 }

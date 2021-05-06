@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace PiClimate.Monitor.WebAssembly.Components
+namespace PiClimate.Common.Localization
 {
   /// <summary>
   ///   The static class with various localization-related utility methods.
@@ -141,13 +142,16 @@ namespace PiClimate.Monitor.WebAssembly.Components
     };
 
     /// <summary>
-    ///   Gets the culture information object for the current browser.
+    ///   Gets the current UI culture information object.
     /// </summary>
-    public static CultureInfo GetBrowserCultureInfo()
+    /// <remarks>
+    ///   Short locale names are converted into their default long variants with explicit country codes (in format
+    ///   <c>xx-XX</c>, see the <see cref="DefaultLocaleNames" /> dictionary).
+    ///   This is necessary for <see cref="UnitsNet" /> library compatibility as it provides localizations only for
+    ///   locales with country codes specified.
+    /// </remarks>
+    public static CultureInfo GetCurrentUiCultureInfo()
     {
-      // Converting some short locale names to their long variants with explicit country codes (xx-XX).
-      // This is necessary for UnitsNet library compatibility as it provides localizations only for locales with a
-      // country code being specified.
       var locale = CultureInfo.CurrentUICulture;
       var localeName = locale.Name;
 
@@ -164,5 +168,16 @@ namespace PiClimate.Monitor.WebAssembly.Components
 
       return locale;
     }
+
+    /// <inheritdoc cref="string.Format(IFormatProvider?,string,object?[])" />
+    public static string Format(this string format, IFormatProvider? provider, params object?[] args) =>
+      string.Format(provider, format, args);
+
+    /// <inheritdoc cref="string.Format(string,object?[])" />
+    /// <remarks>
+    ///   The <see cref="GetCurrentUiCultureInfo()" /> method is used when performing culture-specific formatting.
+    /// </remarks>
+    public static string Format(this string format, params object?[] args) =>
+      format.Format(GetCurrentUiCultureInfo(), args);
   }
 }

@@ -5,13 +5,17 @@
 // Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using PiClimate.Common.Localization;
 using PiClimate.Common.Models;
 using PiClimate.Common.Settings;
 using PiClimate.Monitor.WebAssembly.Services;
+using CommonStrings = PiClimate.Common.Localization.Strings;
+using ClientStrings = PiClimate.Monitor.WebAssembly.Localization.Strings;
 
 namespace PiClimate.Monitor.WebAssembly
 {
@@ -21,6 +25,14 @@ namespace PiClimate.Monitor.WebAssembly
   internal static class Program
   {
     /// <summary>
+    ///   Gets the program's informational version string.
+    /// </summary>
+    public static string InformationalVersion =>
+      typeof(App).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>() is { } attribute
+        ? $"v{attribute.InformationalVersion}"
+        : string.Empty;
+
+    /// <summary>
     ///   The program's entry point.
     /// </summary>
     /// <param name="args">
@@ -28,6 +40,9 @@ namespace PiClimate.Monitor.WebAssembly
     /// </param>
     public static async Task Main(string[] args)
     {
+      CommonStrings.Culture = LocalizationUtils.GetCurrentUiCultureInfo();
+      ClientStrings.Culture = LocalizationUtils.GetCurrentUiCultureInfo();
+
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
       builder.RootComponents.Add<App>("#app");
 

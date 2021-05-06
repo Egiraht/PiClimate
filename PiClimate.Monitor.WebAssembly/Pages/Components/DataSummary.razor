@@ -15,7 +15,7 @@
   <div class="text-center w-100">
     <a href="#data-summary" data-toggle="collapse"
        class="d-inline-block dropdown-toggle bg-dark text-light text-decoration-none text-wrap rounded-top px-2 py-1 collapsed">
-      Data summary
+      @Strings.Label_DataSummary
     </a>
   </div>
 
@@ -23,13 +23,13 @@
     <div class="p-2">
       <div class="text-date row">
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Period start:
+          @Strings.Label_PeriodStart:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @Measurements.Min(measurement => measurement.Timestamp).ToString(CultureInfo)
         </div>
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Period end:
+          @Strings.Label_PeriodEnd:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @Measurements.Max(measurement => measurement.Timestamp).ToString(CultureInfo)
@@ -38,7 +38,7 @@
 
       <div class="text-pressure row">
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Min pressure:
+          @Strings.Label_MinPressure:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -49,7 +49,7 @@
           }
         </div>
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Max pressure:
+          @Strings.Label_MaxPressure:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -63,7 +63,7 @@
 
       <div class="text-temperature row">
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Min temperature:
+          @Strings.Label_MinTemperature:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -74,7 +74,7 @@
           }
         </div>
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Max temperature:
+          @Strings.Label_MaxTemperature:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -88,7 +88,7 @@
 
       <div class="text-humidity row">
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Min humidity:
+          @Strings.Label_MinHumidity:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -99,7 +99,7 @@
           }
         </div>
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Max humidity:
+          @Strings.Label_MaxHumidity:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @{
@@ -113,7 +113,7 @@
 
       <div class="text-info statistics row">
         <div class="text-left text-sm-right col-12 col-sm-3 col-xl-2">
-          Entries displayed:
+          @Strings.Label_PointsDisplayed:
         </div>
         <div class="text-right text-sm-left col-12 col-sm-9 col-xl-4">
           @Measurements.Count()

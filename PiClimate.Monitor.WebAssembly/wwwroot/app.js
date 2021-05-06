@@ -6,6 +6,8 @@
  * Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
  */
 
+"use strict";
+
 /**
  * @summary Initializes a new <i>Chart.js</i> mini-chart object.
  * @param canvasId {string} The HTML <i>canvas</i> element ID to be used for mini-chart rendering.
@@ -14,8 +16,6 @@
  */
 function initializeMiniChart(canvasId, config)
 {
-  "use strict";
-
   if (!canvasId)
   {
     console.error("No mini-chart canvas element ID is provided.");
@@ -59,8 +59,6 @@ function initializeMiniChart(canvasId, config)
  */
 function initializeClimaticChart(canvasId, config)
 {
-  "use strict";
-
   if (!canvasId)
   {
     console.error("No chart canvas element ID is provided.");

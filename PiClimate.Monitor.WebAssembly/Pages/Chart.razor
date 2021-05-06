@@ -16,8 +16,8 @@
   </div>
 
   <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
-       data-empty-notice="No measurements found for the period."
-       data-failed-notice="Failed to get the measurements.">
+       data-empty-notice="@Strings.Chart_NoPeriodMeasurementsFoundNotice"
+       data-failed-notice="@Strings.Chart_PeriodMeasurementsFailureWarning">
     <div class="flex-fill pb-4">
       <ClimaticChart Settings="@ChartSettings" Measurements="@Measurements"
                      PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
@@ -108,7 +108,10 @@
   /// </summary>
   private ClimaticChartSettings ChartSettings { get; } = new()
   {
-    CultureInfo = LocalizationUtils.GetBrowserCultureInfo()
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo(),
+    PressureChartLabel = Strings.Label_Pressure,
+    TemperatureChartLabel = Strings.Label_Temperature,
+    HumidityChartLabel = Strings.Label_Humidity
   };
 
   /// <inheritdoc />

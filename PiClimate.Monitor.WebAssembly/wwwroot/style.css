@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /*
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,12 +40,20 @@
 {
   display: none;
   background-color: rgba(127, 127, 127, 0.75);
-  z-index: var(--z-critical);
 }
 
 .dropdown-toggle::after
 {
   vertical-align: 0.5ex;
+}
+
+.full-screen
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .top-0
@@ -110,12 +120,9 @@
 {
   position: relative !important;
   display: inline-block;
-  border-color: var(--dark);
-  color: transparent;
-  text-overflow: clip;
+  border-color: inherit;
   width: 3em;
   height: 3em;
-  margin-right: 1em;
 }
 
 .loading-block::before,
@@ -169,12 +176,4 @@
   background: var(--secondary);
   border-top-color: var(--light);
   border-bottom-color: var(--light);
-}
-
-.loading-text
-{
-  display: inline-block !important;
-  font-size: 1.5rem;
-  color: var(--dark);
-  margin: 0;
 }
