@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using PiClimate.Common.Settings;
-using PiClimate.Monitor.Components;
 using PiClimate.Monitor.Sources;
 
 namespace PiClimate.Monitor.Settings
@@ -33,11 +32,6 @@ namespace PiClimate.Monitor.Settings
     public const string DefaultProtectionKeysDirectoryPath = "./Keys";
 
     /// <summary>
-    ///   Defines the default time period in seconds beyond which the latest data can be treated obsolete.
-    /// </summary>
-    public const int DefaultObsoleteDataPeriod = 10 * TimePeriods.Minute;
-
-    /// <summary>
     ///   Gets or sets the name of the used measurement source.
     /// </summary>
     [Comment("Sets the used measurement source.")]
@@ -52,15 +46,6 @@ namespace PiClimate.Monitor.Settings
     [Comment("Sets the path to the directory where the data protection keys will be stored.")]
     [Comment("The directory must be accessible for file reading and writing.")]
     public string ProtectionKeysDirectoryPath { get; set; } = DefaultProtectionKeysDirectoryPath;
-
-    /// <summary>
-    ///   Gets or sets the time period in seconds from the latest logged measurement till the current moment beyond which
-    ///   the data can be treated obsolete, so the corresponding warning will appear.
-    /// </summary>
-    [Comment("Sets the time period in seconds from the latest logged measurement beyond which the data can be " +
-      "treated obsolete, so the corresponding warning will appear.")]
-    [Comment("This feature helps to detect communication failures between the data logger and the measurement source.")]
-    public int ObsoleteDataPeriod { get; set; } = DefaultObsoleteDataPeriod;
 
     /// <summary>
     ///   Gets or sets the dictionary of connection strings providing the database connection parameters.

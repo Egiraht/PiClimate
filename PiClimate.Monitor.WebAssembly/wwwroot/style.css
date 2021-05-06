@@ -1,0 +1,179 @@
+@charset "UTF-8";
+
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+ */
+
+:root
+{
+  --time-color: lightgrey;
+  --pressure-color: lightblue;
+  --temperature-color: lightgreen;
+  --humidity-color: lightcoral;
+  --dark-time-color: grey;
+  --dark-pressure-color: blue;
+  --dark-temperature-color: green;
+  --dark-humidity-color: red;
+
+  --z-above: 1;
+  --z-notice: 10;
+  --z-control: 100;
+  --z-loading: 1000;
+  --z-critical: 10000;
+}
+
+#wrapper
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-width: 300px;
+}
+
+#blazor-error-ui
+{
+  display: none;
+  background-color: rgba(127, 127, 127, 0.75);
+}
+
+.dropdown-toggle::after
+{
+  vertical-align: 0.5ex;
+}
+
+.full-screen
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.top-0
+{
+  top: 0 !important;
+}
+
+.bottom-0
+{
+  bottom: 0 !important;
+}
+
+.left-0
+{
+  left: 0 !important;
+}
+
+.right-0
+{
+  right: 0 !important;
+}
+
+.z-above
+{
+  z-index: var(--z-above);
+}
+
+.z-notice
+{
+  z-index: var(--z-notice);
+}
+
+.z-control
+{
+  z-index: var(--z-control);
+}
+
+.z-loading
+{
+  z-index: var(--z-loading);
+}
+
+.z-critical
+{
+  z-index: var(--z-critical);
+}
+
+.loading
+{
+  position: relative !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -moz-user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+.loading > *
+{
+  filter: opacity(60%) blur(0.1em) !important;
+}
+
+.loading-block
+{
+  position: relative !important;
+  display: inline-block;
+  border-color: inherit;
+  width: 3em;
+  height: 3em;
+}
+
+.loading-block::before,
+.loading::before
+{
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem;
+  background: transparent;
+  border: solid 0.25em;
+  border-color: inherit;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-radius: 50%;
+  vertical-align: middle;
+  z-index: var(--z-loading);
+  content: "";
+  animation: spinner-border 1s normal linear infinite;
+  -o-animation: spinner-border 1s normal linear infinite;
+  -webkit-animation: spinner-border 1s normal linear infinite;
+}
+
+.loading-block::after,
+.loading::after
+{
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem;
+  border: solid 0.25em;
+  border-color: inherit;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-radius: 50%;
+  vertical-align: middle;
+  z-index: var(--z-loading);
+  content: "";
+  animation: spinner-border 1s reverse linear infinite;
+  -o-animation: spinner-border 1s reverse linear infinite;
+  -webkit-animation: spinner-border 1s reverse linear infinite;
+}
+
+.loading::before,
+.loading::after
+{
+  background: var(--secondary);
+  border-top-color: var(--light);
+  border-bottom-color: var(--light);
+}

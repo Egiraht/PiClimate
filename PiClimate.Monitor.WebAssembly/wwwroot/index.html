@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PiClimate Monitor</title>
+    <base href="/" />
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+
+    <link rel="stylesheet" href="/libs/bootstrap.min.css" />
+    <link rel="stylesheet" href="/strings.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/PiClimate.Monitor.WebAssembly.styles.css" />
+
+    <script>
+      // Setting the document's locale to the current browser's locale for CSS localization.
+      document.documentElement.lang = navigator.language;
+    </script>
+
+    <script src="/libs/jquery.min.js"></script>
+    <script src="/libs/bootstrap.bundle.min.js"></script>
+    <script src="/libs/moment-with-locales.min.js"></script>
+    <script src="/libs/chart.min.js"></script>
+    <script src="/libs/chartjs-adapter-moment.js"></script>
+    <script src="/app.js"></script>
+    <script src="/_framework/blazor.webassembly.js"></script>
+  </head>
+
+  <body class="overflow-hidden">
+    <div id="wrapper">
+      <div id="blazor-error-ui" class="full-screen z-critical">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div class="alert alert-danger h5 text-danger text-center m-0">
+            <div class="m-3 strings_blazor-error-ui-notice"></div>
+            <button class="btn btn-outline-danger mb-3 strings_label-reload" onclick="location.reload()"></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="app" class="full-screen overflow-auto">
+        <div class="d-flex flex-row justify-content-center align-items-center bg-dark h-100">
+          <div class="loading-block border-light mr-3"></div>
+          <div class="h4 text-light m-0 strings_loading-notice"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

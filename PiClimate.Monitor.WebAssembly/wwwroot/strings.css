@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+ */
+
+/* Default (English) localizable strings. */
+:root
+{
+  --strings_label-reload: "Reload";
+  --strings_loading-notice: "Loading...";
+  --strings_blazor-error-ui-warning: "An application error has occured. Page reload is required";
+}
+
+/* Russian localizable strings. */
+:lang("ru")
+{
+  --strings_label-reload: "Обновить";
+  --strings_loading-notice: "Загрузка...";
+  --strings_blazor-error-ui-warning: "В приложении возникла ошибка. Требуется обновить страницу.";
+}
+
+/* CSS class definitions for localized strings. */
+
+.strings_label-reload::before
+{
+  content: var(--strings_label-reload) !important;
+}
+
+.strings_loading-notice::before
+{
+  content: var(--strings_loading-notice) !important;
+}
+
+.strings_blazor-error-ui-notice::before
+{
+  content: var(--strings_blazor-error-ui-warning) !important;
+}

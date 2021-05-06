@@ -1,0 +1,175 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@attribute [Route(PathRoute), Route(OffsetPathRoute), Route(PeriodPathRoute), Authorize]
+@implements IUpdatable
+@inject IHttpClientFactory _httpClientFactory
+
+<CascadingValue Value="@this">
+  <div class="position-absolute z-control">
+    <UpdateButton />
+  </div>
+
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
+       data-empty-notice="@Strings.Chart_NoPeriodMeasurementsFoundNotice"
+       data-failed-notice="@Strings.Chart_PeriodMeasurementsFailureWarning">
+    <div class="flex-fill pb-4">
+      <ClimaticChart Settings="@ChartSettings" Measurements="@Measurements"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+    </div>
+
+    <div class="position-sticky bottom-0">
+      <DataSummary Measurements="@Measurements" CultureInfo="@ChartSettings.CultureInfo" />
+    </div>
+  </div>
+</CascadingValue>
+
+@code
+{
+  /// <summary>
+  ///   Defines the base <see cref="Chart" /> page path prefix.
+  /// </summary>
+  public const string PathPrefix = "/" + nameof(Chart);
+
+  /// <summary>
+  ///   Defines the base <see cref="Chart" /> page path route string.
+  /// </summary>
+  public const string PathRoute = PathPrefix;
+
+  /// <summary>
+  ///   Defines the <see cref="Chart" /> page path prefix to be used with the offset type period definition.
+  /// </summary>
+  public const string OffsetPathPrefix = PathPrefix + "/Offset";
+
+  /// <summary>
+  ///   Defines the <see cref="Chart" /> page path route string to be used with the offset type period definition.
+  /// </summary>
+  public const string OffsetPathRoute =
+    OffsetPathPrefix + "/{" + nameof(Offset) + ":int}/{" + nameof(Resolution) + ":int?}";
+
+  /// <summary>
+  ///   Defines the <see cref="Chart" /> page path prefix to be used with the timestamp type period definition.
+  /// </summary>
+  public const string PeriodPathPrefix = PathPrefix + "/Period";
+
+  /// <summary>
+  ///   Defines the <see cref="Chart" /> page path route string to be used with the timestamp type period definition.
+  /// </summary>
+  public const string PeriodPathRoute =
+    PeriodPathPrefix + "/{" + nameof(PeriodStart) + ":datetime}/{" + nameof(PeriodEnd) + ":datetime}/{" + nameof(Resolution) + ":int?}";
+
+  /// <summary>
+  ///   Gets or sets the starting timestamp of the period to be displayed.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodStart { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the ending timestamp of the period to be displayed.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodEnd { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the time offset in seconds back to the past from the current moment.
+  /// </summary>
+  [Parameter]
+  public int Offset { get; set; }
+
+  /// <summary>
+  ///   Gets or sets the period resolution.
+  /// </summary>
+  [Parameter]
+  public int Resolution { get; set; }
+
+  /// <summary>
+  ///   Gets or sets an enumeration of measurements to be displayed on a chart.
+  /// </summary>
+  public IEnumerable<Measurement>? Measurements { get; private set; }
+
+  /// <inheritdoc />
+  public bool IsUpdating { get; private set; }
+
+  /// <inheritdoc />
+  public bool HasUpdateFailed { get; private set; }
+
+  /// <summary>
+  ///   Checks if empty measurements data have been acquired from the last request.
+  /// </summary>
+  public bool AreMeasurementsEmpty => !IsUpdating && !HasUpdateFailed && Measurements?.Any() != true;
+
+  /// <summary>
+  ///   Gets the climatic chart settings object.
+  /// </summary>
+  private ClimaticChartSettings ChartSettings { get; } = new()
+  {
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo(),
+    PressureChartLabel = Strings.Label_Pressure,
+    TemperatureChartLabel = Strings.Label_Temperature,
+    HumidityChartLabel = Strings.Label_Humidity
+  };
+
+  /// <inheritdoc />
+  public async Task UpdateAsync()
+  {
+    if (IsUpdating)
+      return;
+
+    try
+    {
+      HasUpdateFailed = false;
+      IsUpdating = true;
+      StateHasChanged();
+
+      if (Offset == default)
+      {
+        if (PeriodEnd == default)
+          PeriodEnd = DateTime.Now;
+        if (PeriodStart == default)
+          PeriodStart = PeriodEnd - MeasurementFilter.DefaultTimePeriod;
+      }
+      else
+      {
+        PeriodEnd = DateTime.Now;
+        PeriodStart = PeriodEnd - TimeSpan.FromSeconds(Offset);
+      }
+
+      if (Resolution == default)
+        Resolution = MeasurementFilter.DefaultResolution;
+
+      using var httpClient = _httpClientFactory.CreateClient();
+        var response = await httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
+          ApiEndpoints.FilteredMeasurementsDataEndpoint, new MeasurementFilter
+          {
+            PeriodStart = PeriodStart.ToUniversalTime(),
+            PeriodEnd = PeriodEnd.ToUniversalTime(),
+            Resolution = Resolution
+          });
+
+      if (response?.StatusCode == 200)
+        Measurements = response.Data;
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Failed to receive the measurements data: {e.Message}");
+      HasUpdateFailed = true;
+    }
+    finally
+    {
+      IsUpdating = false;
+      StateHasChanged();
+    }
+  }
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync() => await UpdateAsync();
+}

@@ -2,14 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
-using PiClimate.Logger.Models;
+using PiClimate.Common.Models;
 using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Loggers
@@ -59,9 +58,9 @@ namespace PiClimate.Logger.Loggers
       VALUES
       (
         @{nameof(Measurement.Timestamp)},
-        @{nameof(Measurement.Pressure)},
-        @{nameof(Measurement.Temperature)},
-        @{nameof(Measurement.Humidity)}
+        @{nameof(Measurement.PressureInMmHg)},
+        @{nameof(Measurement.TemperatureInDegC)},
+        @{nameof(Measurement.HumidityInPercent)}
       );
     ";
 
@@ -93,13 +92,7 @@ namespace PiClimate.Logger.Loggers
         throw new InvalidOperationException($"{nameof(MySqlLogger)} is not configured.");
 
       await using var connection = new MySqlConnection(ConnectionString);
-      await connection.ExecuteAsync(InsertSqlTemplate, new Dictionary<string, object>
-      {
-        {nameof(Measurement.Timestamp), measurement.Timestamp},
-        {nameof(Measurement.Pressure), measurement.Pressure.MillimetersOfMercury},
-        {nameof(Measurement.Temperature), measurement.Temperature.DegreesCelsius},
-        {nameof(Measurement.Humidity), measurement.Humidity.Percent}
-      });
+      await connection.ExecuteAsync(InsertSqlTemplate, measurement);
     }
 
     /// <inheritdoc />

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
-using PiClimate.Monitor.Models;
+using PiClimate.Common.Models;
 using PiClimate.Monitor.Settings;
 
 namespace PiClimate.Monitor.Sources
@@ -36,18 +36,18 @@ namespace PiClimate.Monitor.Sources
         FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`)))
           AS `{nameof(Measurement.Timestamp)}`,
         ROUND(AVG(`{nameof(Measurement.Pressure)}`), 3)
-          AS `{nameof(Measurement.Pressure)}`,
+          AS `{nameof(Measurement.PressureInMmHg)}`,
         ROUND(AVG(`{nameof(Measurement.Temperature)}`), 3)
-          AS `{nameof(Measurement.Temperature)}`,
+          AS `{nameof(Measurement.TemperatureInDegC)}`,
         ROUND(AVG(`{nameof(Measurement.Humidity)}`), 3)
-          AS `{nameof(Measurement.Humidity)}`
+          AS `{nameof(Measurement.HumidityInPercent)}`
       FROM `{_measurementsTableName}`
-      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.FromTime)} AND
-        @{nameof(MeasurementFilter.ToTime)}
+      WHERE `{nameof(Measurement.Timestamp)}` BETWEEN @{nameof(MeasurementFilter.PeriodStart)} AND
+        @{nameof(MeasurementFilter.PeriodEnd)}
       GROUP BY
-        (UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) - UNIX_TIMESTAMP(@{nameof(MeasurementFilter.FromTime)}))
+        (UNIX_TIMESTAMP(`{nameof(Measurement.Timestamp)}`) - UNIX_TIMESTAMP(@{nameof(MeasurementFilter.PeriodStart)}))
           DIV @{nameof(MeasurementFilter.TimeStep)}
-       ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
+      ORDER BY `{nameof(Measurement.Timestamp)}` ASC;
     ";
 
     /// <summary>
@@ -57,11 +57,11 @@ namespace PiClimate.Monitor.Sources
       SELECT
         `{nameof(Measurement.Timestamp)}`,
         ROUND(`{nameof(Measurement.Pressure)}`, 3) 
-          AS `{nameof(Measurement.Pressure)}`,
+          AS `{nameof(Measurement.PressureInMmHg)}`,
         ROUND(`{nameof(Measurement.Temperature)}`, 3)
-          AS `{nameof(Measurement.Temperature)}`,
+          AS `{nameof(Measurement.TemperatureInDegC)}`,
         ROUND(`{nameof(Measurement.Humidity)}`, 3)
-          AS `{nameof(Measurement.Humidity)}`
+          AS `{nameof(Measurement.HumidityInPercent)}`
       FROM `{_measurementsTableName}`
       ORDER BY `{nameof(Measurement.Timestamp)}` DESC
       LIMIT @{nameof(LatestDataRequest.MaxRows)};
@@ -90,6 +90,8 @@ namespace PiClimate.Monitor.Sources
     /// <inheritdoc />
     public async Task<IEnumerable<Measurement>> GetMeasurementsAsync(MeasurementFilter filter)
     {
+      filter.PeriodStart = filter.PeriodStart.ToLocalTime();
+      filter.PeriodEnd = filter.PeriodEnd.ToLocalTime();
       await using var connection = new MySqlConnection(_connectionString);
       return await connection.QueryAsync<Measurement>(FilterMeasurementsSqlTemplate, filter);
     }

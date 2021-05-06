@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+-->
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <data name="App_AuthorizingNotice" xml:space="preserve">
+    <value>Authorizing...</value>
+  </data>
+  <data name="App_NotAuthorizedNotice" xml:space="preserve">
+    <value>You are not authorized to see this page.</value>
+  </data>
+  <data name="App_RouteNotFoundWarning" xml:space="preserve">
+    <value>There is nothing at this address.</value>
+  </data>
+  <data name="Label_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Status_LatestDataExpirationWarningF" xml:space="preserve">
+    <value>The latest measurement has been logged more than {0} ago. The actual data may have changed significantly since then. Check the measurement logger for possible communication failures.</value><comment>Parameter {0} stands for a time period like "2 day(s)".</comment>
+  </data>
+  <data name="Label_LatestData" xml:space="preserve">
+    <value>Latest data</value>
+  </data>
+  <data name="Label_Pressure" xml:space="preserve">
+    <value>Pressure</value>
+  </data>
+  <data name="Label_Temperature" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="Label_Humidity" xml:space="preserve">
+    <value>Humidity</value>
+  </data>
+  <data name="Status_NoLatestMeasurementsFoundNotice" xml:space="preserve">
+    <value>No latest measurements found.</value>
+  </data>
+  <data name="Status_LatestMeasurementsFailureWarning" xml:space="preserve">
+    <value>Failed to get the latest measurements.</value>
+  </data>
+  <data name="Chart_NoPeriodMeasurementsFoundNotice" xml:space="preserve">
+    <value>No measurements found for the specified period.</value>
+  </data>
+  <data name="Chart_PeriodMeasurementsFailureWarning" xml:space="preserve">
+    <value>Failed to get the measurements for the specified period.</value>
+  </data>
+  <data name="Label_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="AppFooter_RepositoryLink" xml:space="preserve">
+    <value>https://github.com/Egiraht/PiClimate</value><comment>Does not require localization.</comment>
+  </data>
+  <data name="AppFooter_RepositoryName" xml:space="preserve">
+    <value>GitHub</value><comment>Does not require localization.</comment>
+  </data>
+  <data name="Label_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Label_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Label_RememberMe" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="Label_SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Label_SignOut" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="AuthPanel_NoUserNameNotice" xml:space="preserve">
+    <value>No user name is provided.</value>
+  </data>
+  <data name="AuthPanel_WrongUserNameOrPasswordWarning" xml:space="preserve">
+    <value>There is no user matching the provided name and password.</value>
+  </data>
+  <data name="AuthPanel_SignInFailureF" xml:space="preserve">
+    <value>Failed to sign in: {0}</value><comment>Parameter {0} stands for a failure description message.</comment>
+  </data>
+  <data name="AuthPanel_SignInRequiredNotice" xml:space="preserve">
+    <value>Sign in to proceed to the page.</value>
+  </data>
+  <data name="Label_DataSummary" xml:space="preserve">
+    <value>Data summary</value>
+  </data>
+  <data name="Label_PeriodStart" xml:space="preserve">
+    <value>Period start</value>
+  </data>
+  <data name="Label_PeriodEnd" xml:space="preserve">
+    <value>Period end</value>
+  </data>
+  <data name="Label_MinPressure" xml:space="preserve">
+    <value>Min pressure</value>
+  </data>
+  <data name="Label_MaxPressure" xml:space="preserve">
+    <value>Max pressure</value>
+  </data>
+  <data name="Label_MinTemperature" xml:space="preserve">
+    <value>Min temperature</value>
+  </data>
+  <data name="Label_MaxTemperature" xml:space="preserve">
+    <value>Max temperature</value>
+  </data>
+  <data name="Label_MinHumidity" xml:space="preserve">
+    <value>Min humidity</value>
+  </data>
+  <data name="Label_MaxHumidity" xml:space="preserve">
+    <value>Max humidity</value>
+  </data>
+  <data name="Label_PointsDisplayed" xml:space="preserve">
+    <value>Points displayed</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>PiClimate Monitor</value><comment>Does not require localization.</comment>
+  </data>
+  <data name="NavMenu_SigningInNotice" xml:space="preserve">
+    <value>Signing in...</value>
+  </data>
+  <data name="Label_User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="NavPanel_NotSignedInNotice" xml:space="preserve">
+    <value>You are not signed in.</value>
+  </data>
+  <data name="Label_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Label_ClimaticChart" xml:space="preserve">
+    <value>Climatic chart</value>
+  </data>
+  <data name="Label_CustomPeriod" xml:space="preserve">
+    <value>Custom period</value>
+  </data>
+  <data name="Label_From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Label_To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Label_Resolution" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Label_LastDay" xml:space="preserve">
+    <value>Last day</value>
+  </data>
+  <data name="Label_LastWeek" xml:space="preserve">
+    <value>Last week</value>
+  </data>
+  <data name="Label_LastMonth" xml:space="preserve">
+    <value>Last month</value>
+  </data>
+  <data name="Label_Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="AppFooter_CreatedByNotice" xml:space="preserve">
+    <value>Created by Maxim Yudin &lt;stibiu@yandex.ru&gt;</value>
+  </data>
+</root>

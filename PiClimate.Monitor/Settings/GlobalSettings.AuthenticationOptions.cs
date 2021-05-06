@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using PiClimate.Common.Components;
 using PiClimate.Common.Settings;
 using PiClimate.Monitor.Components;
 

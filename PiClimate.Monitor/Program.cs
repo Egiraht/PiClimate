@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
 using System.IO;
@@ -85,9 +85,7 @@ namespace PiClimate.Monitor
     /// </returns>
     private static IHostBuilder CreateHostBuilder(string[] args) => Host
       .CreateDefaultBuilder(args)
-      .ConfigureWebHostDefaults(builder => builder
-        .UseStartup<Startup>()
-        .UseWebRoot("Static"));
+      .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>());
 
     /// <summary>
     ///   Prints the essential settings information read from the configuration file.

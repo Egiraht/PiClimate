@@ -2,9 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System.Collections.Generic;
+using PiClimate.Common.Components;
 using PiClimate.Common.Settings;
 using PiClimate.Logger.Limiters;
 using PiClimate.Logger.Loggers;
@@ -31,7 +32,7 @@ namespace PiClimate.Logger.Settings
     /// <summary>
     ///   The default measurement loop delay in seconds.
     /// </summary>
-    public const int DefaultMeasurementLoopDelay = 1;
+    public const int DefaultMeasurementLoopDelay = TimePeriods.Minute;
 
     /// <summary>
     ///   The default measurement provider class name.

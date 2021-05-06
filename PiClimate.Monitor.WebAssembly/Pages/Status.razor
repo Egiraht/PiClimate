@@ -1,0 +1,223 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@attribute [Route(PathRoute), Authorize]
+@implements IUpdatable
+@inject IHttpClientFactory _httpClientFactory
+@inject ClientOptions _clientOptions
+
+<CascadingValue Value="@this">
+  <div class="position-absolute z-control">
+    <UpdateButton />
+  </div>
+
+  <div class="position-relative d-flex flex-column h-100 @(IsUpdating ? "loading" : HasUpdateFailed ? "failed" : AreMeasurementsEmpty ? "empty" : "")"
+       data-empty-notice="@Strings.Status_NoLatestMeasurementsFoundNotice"
+       data-failed-notice="@Strings.Status_LatestMeasurementsFailureWarning">
+    <div class="d-flex flex-row flex-wrap w-100 p-2">
+      @* Latest data expiration warning. *@
+      @if (LatestMeasurement.Timestamp != default &&
+        LatestMeasurement.Timestamp < DateTime.Now - TimeSpan.FromSeconds(_clientOptions.LatestDataExpirationPeriod))
+      {
+        <div class="col-12 alert alert-warning text-center mb-3 px-5">
+          @Strings.Status_LatestDataExpirationWarningF.Format(
+            TimePeriods.GetTimePeriodString(DateTime.Now - LatestMeasurement.Timestamp,
+              LocalizationUtils.GetCurrentUiCultureInfo()))
+        </div>
+      }
+
+      <div class="col-12 text-center text-date">
+        <div class="h4">
+          @Strings.Label_LatestData
+        </div>
+
+        <div class="h6">
+          (@LatestMeasurement.Timestamp.ToString(LocalizationUtils.GetCurrentUiCultureInfo()))
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-pressure p-2 mb-2">
+        <div class="h5">@Strings.Label_Pressure</div>
+        <div class="h4">@LatestMeasurement.Pressure.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
+        <div class="mini-chart border-pressure">
+          <MiniChart Settings="@PressureChartSettings" DataPoints="@PressureDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-temperature p-2 mb-2">
+        <div class="h5">@Strings.Label_Temperature</div>
+        <div class="h4">@LatestMeasurement.Temperature.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
+        <div class="mini-chart border-temperature">
+          <MiniChart Settings="@TemperatureChartSettings" DataPoints="@TemperatureDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4 text-center text-humidity p-2 mb-2">
+        <div class="h5">@Strings.Label_Humidity</div>
+        <div class="h4">@LatestMeasurement.Humidity.ToString(LocalizationUtils.GetCurrentUiCultureInfo())</div>
+        <div class="mini-chart border-humidity">
+          <MiniChart Settings="@HumidityChartSettings" DataPoints="@HumidityDataPoints"
+                     PeriodStart="@PeriodStart" PeriodEnd="@PeriodEnd" />
+        </div>
+      </div>
+    </div>
+  </div>
+</CascadingValue>
+
+@code
+{
+  /// <summary>
+  ///   Defines the <see cref="Status" /> page path prefix.
+  /// </summary>
+  public const string PathPrefix = "/" + nameof(Status);
+
+  /// <summary>
+  ///   Defines the <see cref="Status" /> page path route string.
+  /// </summary>
+  public const string PathRoute = PathPrefix;
+
+  /// <summary>
+  ///   Gets the status period start timestamp.
+  /// </summary>
+  private DateTime PeriodStart => PeriodEnd - TimeSpan.FromSeconds(_clientOptions.StatusPageTimeScale);
+
+  /// <summary>
+  ///   Gets the status period end timestamp.
+  /// </summary>
+  private DateTime PeriodEnd => DateTime.Now;
+
+  /// <summary>
+  ///   Gets the chart data resolution.
+  /// </summary>
+  private int ChartResolution => 50;
+
+  /// <summary>
+  ///   Gets or sets the latest logged measurement.
+  /// </summary>
+  private Measurement LatestMeasurement { get; set; } = Measurement.Empty;
+
+  /// <summary>
+  ///   Gets or sets the enumeration of measurements to be displayed on the mini-charts.
+  /// </summary>
+  private IEnumerable<Measurement> Measurements { get; set; } = Array.Empty<Measurement>();
+
+  /// <summary>
+  ///   Gets the enumeration of pressure data points to be displayed on the pressure mini-chart.
+  /// </summary>
+  private IEnumerable<(DateTime Timestamp, double Value)> PressureDataPoints =>
+    Measurements.Select(measurement => (measurement.Timestamp, measurement.PressureInMmHg));
+
+  /// <summary>
+  ///   Gets the enumeration of temperature data points to be displayed on the temperature mini-chart.
+  /// </summary>
+  private IEnumerable<(DateTime Timestamp, double Value)> TemperatureDataPoints =>
+    Measurements.Select(measurement => (measurement.Timestamp, measurement.TemperatureInDegC));
+
+  /// <summary>
+  ///   Gets the enumeration of humidity data points to be displayed on the humidity mini-chart.
+  /// </summary>
+  private IEnumerable<(DateTime Timestamp, double Value)> HumidityDataPoints =>
+    Measurements.Select(measurement => (measurement.Timestamp, measurement.HumidityInPercent));
+
+  /// <inheritdoc />
+  public bool IsUpdating { get; private set; }
+
+  /// <inheritdoc />
+  public bool HasUpdateFailed { get; private set; }
+
+  /// <summary>
+  ///   Checks if empty measurements data have been acquired from the last request.
+  /// </summary>
+  private bool AreMeasurementsEmpty => !IsUpdating && !HasUpdateFailed &&
+    (!Measurements.Any() || LatestMeasurement == Measurement.Empty);
+
+  /// <summary>
+  ///   Gets the pressure mini-chart settings object.
+  /// </summary>
+  private MiniChartSettings PressureChartSettings { get; } = new()
+  {
+    CanvasElementId = "pressure-mini-chart",
+    LineColor = "blue",
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
+  };
+
+  /// <summary>
+  ///   Gets the temperature mini-chart settings object.
+  /// </summary>
+  private MiniChartSettings TemperatureChartSettings { get; } = new()
+  {
+    CanvasElementId = "temperature-mini-chart",
+    LineColor = "green",
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
+  };
+
+  /// <summary>
+  ///   Gets the humidity mini-chart settings object.
+  /// </summary>
+  private MiniChartSettings HumidityChartSettings { get; } = new()
+  {
+    CanvasElementId = "humidity-mini-chart",
+    LineColor = "red",
+    CultureInfo = LocalizationUtils.GetCurrentUiCultureInfo()
+  };
+
+  /// <inheritdoc />
+  public async Task UpdateAsync()
+  {
+    if (IsUpdating)
+      return;
+
+    try
+    {
+      HasUpdateFailed = false;
+      IsUpdating = true;
+      StateHasChanged();
+
+      using var httpClient = _httpClientFactory.CreateClient();
+      var response = await httpClient.PostJsonAsync<LatestDataRequest, JsonPayload<IEnumerable<Measurement>>>(
+        ApiEndpoints.LatestMeasurementsDataEndpoint, new LatestDataRequest {MaxRows = 1});
+
+      if (response?.StatusCode == 200)
+        LatestMeasurement = response.Data?.FirstOrDefault() ?? new Measurement();
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
+
+      response = await httpClient.PostJsonAsync<MeasurementFilter, JsonPayload<IEnumerable<Measurement>>>(
+        ApiEndpoints.FilteredMeasurementsDataEndpoint, new MeasurementFilter
+        {
+          PeriodStart = PeriodStart,
+          PeriodEnd = PeriodEnd,
+          Resolution = ChartResolution
+        });
+
+      if (response?.StatusCode == 200)
+        Measurements = response.Data ?? Array.Empty<Measurement>();
+      else
+        throw new HttpResponseException(response != null
+          ? $"[{response.StatusCode}] {response.Description}"
+          : "The response object is null.");
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Failed to receive the measurements data: {e.Message}");
+      HasUpdateFailed = true;
+    }
+    finally
+    {
+      IsUpdating = false;
+      StateHasChanged();
+    }
+  }
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync() => await UpdateAsync();
+}

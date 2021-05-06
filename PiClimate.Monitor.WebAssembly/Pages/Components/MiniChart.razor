@@ -1,0 +1,58 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inject IJSRuntime _jsRuntime
+
+<canvas id="@Settings.CanvasElementId" class="mini-chart-canvas"></canvas>
+
+@code
+{
+  /// <summary>
+  ///   Defines the chart initialization function name.
+  /// </summary>
+  private const string ChartInitializationFunctionName = "initializeMiniChart";
+
+  /// <summary>
+  ///   Gets or sets the mini-chart settings object.
+  /// </summary>
+  [Parameter]
+  public MiniChartSettings Settings { get; set; } = new();
+
+  /// <summary>
+  ///   Gets or sets the starting timestamp of the chart.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodStart { get; set; } = DateTime.Now - TimeSpan.FromDays(1);
+
+  /// <summary>
+  ///   Gets or sets the ending timestamp of the chart.
+  /// </summary>
+  [Parameter]
+  public DateTime PeriodEnd { get; set; } = DateTime.Now;
+
+  /// <summary>
+  ///   Gets or sets the enumeration of data points to display.
+  /// </summary>
+  [Parameter]
+  public IEnumerable<(DateTime Timestamp, double Value)> DataPoints { get; set; } =
+    new List<(DateTime Timestamp, double Value)>();
+
+  /// <inheritdoc />
+  protected override async Task OnParametersSetAsync()
+  {
+    try
+    {
+      await _jsRuntime.InvokeVoidAsync(ChartInitializationFunctionName, Settings.CanvasElementId,
+        Settings.CreateChartJsConfiguration(PeriodStart, PeriodEnd, DataPoints));
+    }
+    catch
+    {
+      // Suppress exceptions.
+    }
+  }
+}

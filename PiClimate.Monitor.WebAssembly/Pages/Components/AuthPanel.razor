@@ -1,0 +1,125 @@
+@*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+*@
+
+@inject IUserAuthenticator<LoginForm, AuthInfo> _authenticator
+
+<div class="alert alert-secondary m-3 @(IsAuthenticating ? "loading" : "")">
+  <EditForm Model="@LoginForm" OnInvalidSubmit="@(() => AuthenticationMessages.Clear())" OnValidSubmit="OnSubmitAsync"
+            Context="editContext">
+    <DataAnnotationsValidator />
+
+    <div class="form-inline my-2">
+      <div class="col-6 text-right">
+        @Strings.Label_Name:
+      </div>
+      <div class="col-6">
+        <InputText @bind-Value="@LoginForm.Name" class="form-control form-control-sm" />
+      </div>
+    </div>
+
+    <div class="form-inline my-2">
+      <div class="col-6 text-right">
+        @Strings.Label_Password:
+      </div>
+      <div class="col-6">
+        <InputText @bind-Value="@LoginForm.Password" type="password" class="form-control form-control-sm" />
+      </div>
+    </div>
+
+    <div class="form-inline my-2">
+      <div class="col-6 text-right">
+        @Strings.Label_RememberMe:
+      </div>
+      <div class="col-6">
+        <InputCheckbox @bind-Value="@LoginForm.Remember" class="form-control form-control-sm" />
+      </div>
+    </div>
+
+    <div class="form-inline my-2">
+      <div class="col-6 text-right">
+      </div>
+      <div class="col-6">
+        <button type="submit" class="btn btn-secondary">
+          @Strings.Label_SignIn
+        </button>
+      </div>
+    </div>
+
+    @if (AuthenticationMessages.Any() || editContext.GetValidationMessages().Any())
+    {
+      <div class="alert alert-dark text-info text-center mt-3 mb-0">
+        <ul class="list-unstyled m-0">
+          @foreach (var message in AuthenticationMessages)
+          {
+            <li>@message</li>
+          }
+        </ul>
+
+        <ValidationSummary />
+      </div>
+    }
+  </EditForm>
+</div>
+
+@code
+{
+  /// <summary>
+  ///   Gets or sets the login form used for authentication.
+  /// </summary>
+  private LoginForm LoginForm { get; set; } = new();
+
+  /// <summary>
+  ///   Gets the list of messages describing the current authentication state.
+  /// </summary>
+  private List<string> AuthenticationMessages { get; } = new();
+
+  /// <summary>
+  ///   Gets or sets the flag indicating if the authentication process is running.
+  /// </summary>
+  private bool IsAuthenticating { get; set; } = false;
+
+  /// <summary>
+  ///   Submits the login form and checks the authentication result.
+  /// </summary>
+  private async Task OnSubmitAsync(EditContext context)
+  {
+    try
+    {
+      IsAuthenticating = true;
+      AuthenticationMessages.Clear();
+      StateHasChanged();
+
+      await _authenticator.SignInAsync(LoginForm);
+    }
+    catch (Exception e)
+    {
+      AuthenticationMessages.Add(e switch
+      {
+        HttpResponseException {Response: {StatusCode: HttpStatusCode.BadRequest}} => Strings.AuthPanel_NoUserNameNotice,
+        HttpResponseException {Response: {StatusCode: HttpStatusCode.NotAcceptable}} =>
+          Strings.AuthPanel_WrongUserNameOrPasswordWarning,
+        _ => Strings.AuthPanel_SignInFailureF.Format(e.Message)
+      });
+    }
+    finally
+    {
+      IsAuthenticating = false;
+      StateHasChanged();
+    }
+  }
+
+  /// <inheritdoc />
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (firstRender)
+    {
+      AuthenticationMessages.Add(Strings.AuthPanel_SignInRequiredNotice);
+      StateHasChanged();
+    }
+  }
+}

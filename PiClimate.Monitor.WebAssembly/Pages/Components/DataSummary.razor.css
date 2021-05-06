@@ -1,0 +1,33 @@
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+ */
+
+.text-date
+{
+  color: var(--time-color) !important;
+}
+
+.text-pressure
+{
+  color: var(--pressure-color) !important;
+}
+
+.text-temperature
+{
+  color: var(--temperature-color) !important;
+}
+
+.text-humidity
+{
+  color: var(--humidity-color) !important;
+}
+
+.dropdown-toggle.collapsed::after
+{
+  border-top: 0;
+  border-bottom: solid .3em;
+}

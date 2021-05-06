@@ -2,11 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright © 2020 Maxim Yudin <stibiu@yandex.ru>
+// Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
 
 using System;
 using System.Threading.Tasks;
-using PiClimate.Logger.Models;
+using PiClimate.Common.Models;
 using PiClimate.Logger.Settings;
 
 namespace PiClimate.Logger.Providers

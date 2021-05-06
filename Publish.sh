@@ -39,14 +39,13 @@ if [ ! "$(command -v $DOTNET_EXECUTABLE)" ]; then
   exit
 fi
 
-rm -rf ${PUBLISH_DIR:?}
 mkdir -p $PUBLISH_DIR
 
-rm -rf "${PUBLISH_DIR:?}/${LOGGER_PROJECT:?}"
+rm -rf "${PUBLISH_DIR:?}/$LOGGER_PROJECT"
 $DOTNET_EXECUTABLE publish -c "Release" -o "$PUBLISH_DIR/$LOGGER_PROJECT" --no-self-contained --nologo $LOGGER_PROJECT
 echo "Logger is published to the \"$PUBLISH_DIR/$LOGGER_PROJECT\" directory."
 
-rm -rf "${PUBLISH_DIR:?}/${MONITOR_PROJECT:?}"
+rm -rf "${PUBLISH_DIR:?}/$MONITOR_PROJECT"
 $DOTNET_EXECUTABLE publish -c "Release" -o "$PUBLISH_DIR/$MONITOR_PROJECT" --no-self-contained --nologo $MONITOR_PROJECT
 echo "Monitor is published to the \"$PUBLISH_DIR/$MONITOR_PROJECT\" directory."
 

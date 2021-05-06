@@ -1,0 +1,100 @@
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Copyright © 2020-2021 Maxim Yudin <stibiu@yandex.ru>
+ */
+
+.empty::before,
+.failed::before
+{
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  visibility: visible !important;
+  content: "";
+  z-index: var(--z-notice);
+}
+
+.empty::after,
+.failed::after
+{
+  display: block;
+  position: absolute;
+  top: calc(50% - 0.8em);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  visibility: visible !important;
+  content: "";
+  z-index: var(--z-notice);
+}
+
+.empty::after
+{
+  color: darkcyan;
+  content: attr(data-empty-notice);
+}
+
+.failed::after
+{
+  color: darkred;
+  content: attr(data-failed-notice) !important;
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+.loading ::deep *,
+.failed ::deep *,
+.empty ::deep *
+{
+  display: none;
+  visibility: collapse;
+}
+
+.text-date
+{
+  color: var(--dark-time-color) !important;
+}
+
+.text-pressure
+{
+  color: var(--dark-pressure-color) !important;
+}
+
+.text-temperature
+{
+  color: var(--dark-temperature-color) !important;
+}
+
+.text-humidity
+{
+  color: var(--dark-humidity-color) !important;
+}
+
+.border-pressure
+{
+  border-color: var(--dark-pressure-color) !important;
+}
+
+.border-temperature
+{
+  border-color: var(--dark-temperature-color) !important;
+}
+
+.border-humidity
+{
+  border-color: var(--dark-humidity-color) !important;
+}
+
+.mini-chart
+{
+  display: inline-block;
+  border: 1px solid transparent;
+  width: 250px;
+}
