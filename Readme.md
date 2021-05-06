@@ -1,14 +1,17 @@
 # PiClimate
 
-PiClimate is a software for logging and displaying climatic data.
+PiClimate is a software for collecting and visualizing climatic data. The software consists of two parts:
 
-It consists of two parts:
+* **[PiClimate.Logger](https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Logger)** service program allows to
+  collect climatic data using various data providers such as hardware sensors, and then log them into data storages like
+  SQL databases.
+* **[PiClimate.Monitor](https://github.com/Egiraht/PiClimate/tree/master/PiClimate.Monitor)** represents a web-hosted
+  single page application (SPA) that can be used to visualize collected climatic data in a chart form for selected time
+  periods.
 
-* **PiClimate.Logger** service is responsible for data measuring and logging.
-* **PiClimate.Monitor** represents a web server used for measured data visualization.
+For more detailed information see **Readme.md** files in the corresponding project directories.
 
-Using **PiClimate.Logger**, climatic data are collected using various data providers such as hardware sensors, and then
-are logged into data storages like SQL databases. Using **PiClimate.Monitor**, the logged data can be visualized as
-parametric charts for selected time periods.
+## License
 
-For more detailed information see the *Readme* files in the corresponding project directories.
+The software is licensed under **Mozilla Public License v2.0**. See the
+**[License.txt](https://github.com/Egiraht/PiClimate/blob/master/License.txt)** file for a full license statement.

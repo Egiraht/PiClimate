@@ -43,17 +43,20 @@ The program requires the *.NET Runtime 5.0* package to be installed in the syste
 
 ## References
 
-The program is based on the open-source *.NET* framework. Also for functioning it uses these third-party open-source
+The program is based on the open-source *.NET* platform. Also for functioning it uses these third-party open-source
 libraries:
 
 * **Iot.Device.Bindings** - provides an abstraction layer for accessing the *BME280* sensor using *I2C* bus,
 * **Dapper** - the SQL query object mapper,
-* **MySqlConnector** - the MySQL database driver.
+* **MySqlConnector** - the MySQL database driver,
+* **UnitsNet** - the physical units manipulation and conversion library.
 
 ## Links
 
-* **PiClimate** <https://github.com/Egiraht/PiClimate>
-* **.NET** <https://dotnet.microsoft.com/>
-* **Iot.Device.Bindings** <https://github.com/dotnet/iot>
-* **Dapper** <https://stackexchange.github.io/Dapper/>
-* **MySqlConnector** <https://mysqlconnector.net/>
+* **[PiClimate repository](https://github.com/Egiraht/PiClimate)**
+* **[.NET platform site](https://dotnet.microsoft.com/)**
+* **[.NET runtime packages](https://dotnet.microsoft.com/download/dotnet/5.0)**
+* **[Iot.Device.Bindings repository](https://github.com/dotnet/iot)**
+* **[Dapper site](https://dapperlib.github.io/Dapper/)**
+* **[MySqlConnector site](https://mysqlconnector.net/)**
+* **[UnitsNet repository](https://github.com/angularsen/UnitsNet)**
