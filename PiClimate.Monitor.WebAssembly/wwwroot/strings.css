@@ -17,7 +17,7 @@
 }
 
 /* Russian localizable strings. */
-:lang("ru")
+:lang(ru)
 {
   --strings_label-reload: "Обновить";
   --strings_loading-notice: "Загрузка...";
